@@ -1,7 +1,7 @@
 package chess;
 
 import java.util.Arrays;
-import java.util.Objects;
+
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -59,7 +59,7 @@ public class ChessBoard {
         }
 
         ChessPiece black_pawn = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        for (int column = 1; column < 9; column++) {
+        for (int column = 1; column < 9; column++) { //place black pawn
             int row = 7;
             addPiece(new ChessPosition(row, column), black_pawn);
         }
