@@ -19,6 +19,30 @@ public class ChessPiece {
 
     private final PieceType piece_type;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return piece_color == that.piece_color && piece_type == that.piece_type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(piece_color, piece_type);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "piece_color=" + piece_color +
+                ", piece_type=" + piece_type +
+                '}';
+    }
+
     /**
      * The various different chess piece options
      */
