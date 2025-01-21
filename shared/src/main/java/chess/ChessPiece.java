@@ -1,5 +1,7 @@
 package chess;
 
+import chess.rook.RookMoves;
+
 import java.util.*;
 
 /**
@@ -79,6 +81,22 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        ChessPiece selected_piece = board.getPiece(myPosition);
+        switch (piece_type) {
+            case KING:
+                return selected_piece.pieceMoves(board, myPosition);
+            case QUEEN:
+                return selected_piece.pieceMoves(board, myPosition);
+            case BISHOP:
+                return selected_piece.pieceMoves(board, myPosition);
+            case KNIGHT:
+                return selected_piece.pieceMoves(board, myPosition);
+            case ROOK:
+                return RookMoves.calculate_rook_moves(board, myPosition, selected_piece);
+            case PAWN:
+                return selected_piece.pieceMoves(board, myPosition);
+        }
+
         return new ArrayList<>();
     }
 }
