@@ -76,13 +76,6 @@ public class RookMoves {
             }
             valid_moves.add(new ChessMove(piece_position, new_position, null));
         }
-
-
-
-
         return valid_moves;
     }
-
-
-
 }

@@ -90,7 +90,7 @@ public class PawnMoves {
                 // attack down right
                 int column_r = current_column + 1;
                 if (column_r < 9) {
-                    enemy_position_black(Board, piece_position, selected_piece, valid_moves, row, column_l);
+                    enemy_position_black(Board, piece_position, selected_piece, valid_moves, row, column_r);
                 }
             }
 
@@ -121,22 +121,23 @@ public class PawnMoves {
 
     private static void black_promotion(ChessPosition piece_position, List<ChessMove> valid_moves, int row, ChessPosition new_position) {
         if (row == 1){
-            valid_moves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.QUEEN));
-            valid_moves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.BISHOP));
-            valid_moves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.ROOK));
-            valid_moves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.KNIGHT));
+            promotionMoves(piece_position, valid_moves, new_position);
         }
         else {
             valid_moves.add(new ChessMove(piece_position, new_position, null));
         }
     }
 
+    private static void promotionMoves(ChessPosition piece_position, List<ChessMove> valid_moves, ChessPosition new_position) {
+        valid_moves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.QUEEN));
+        valid_moves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.BISHOP));
+        valid_moves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.ROOK));
+        valid_moves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.KNIGHT));
+    }
+
     private static void white_promotion(ChessPosition piece_position, List<ChessMove> valid_moves, int row, ChessPosition new_position) {
         if (row == 8){
-            valid_moves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.QUEEN));
-            valid_moves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.BISHOP));
-            valid_moves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.ROOK));
-            valid_moves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.KNIGHT));
+            promotionMoves(piece_position, valid_moves, new_position);
         }
         else {
             valid_moves.add(new ChessMove(piece_position, new_position, null));
