@@ -10,7 +10,6 @@ public class PawnMoves {
         List<ChessMove> valid_moves = new ArrayList<>();
         int current_row = piece_position.getRow();
         int current_column = piece_position.getColumn();
-
         // White Pawn
         if (selected_piece.getTeamColor() == ChessGame.TeamColor.WHITE){
             // Initial Pawn Movement
@@ -23,7 +22,6 @@ public class PawnMoves {
                     }
                     else{break;}
                 }
-
                 int row = current_row + 1;
                 //attack up left
                 int column_l = current_column - 1;
@@ -69,7 +67,6 @@ public class PawnMoves {
             }
 
         }
-
         // Black Pawn
         else{
             // Initial Pawn Movement
@@ -119,8 +116,6 @@ public class PawnMoves {
                 }
             }
         }
-
-
         return valid_moves;
     }
 
@@ -147,7 +142,6 @@ public class PawnMoves {
             valid_moves.add(new ChessMove(piece_position, new_position, null));
         }
     }
-
     private static void enemy_position_white(ChessBoard Board, ChessPosition piece_position, ChessPiece selected_piece, List<ChessMove> valid_moves, int row, int column) {
         ChessPosition enemy_position_l = new ChessPosition(row, column);
         ChessPiece enemy = Board.getPiece(enemy_position_l);
@@ -157,7 +151,6 @@ public class PawnMoves {
             }
         }
     }
-
     private static void enemy_position_black(ChessBoard Board, ChessPosition piece_position, ChessPiece selected_piece, List<ChessMove> valid_moves, int row, int column) {
         ChessPosition enemy_position = new ChessPosition(row, column);
         ChessPiece enemy = Board.getPiece(enemy_position);

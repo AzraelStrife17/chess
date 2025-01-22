@@ -8,95 +8,95 @@ import java.util.List;
 import java.util.*;
 
 public class KnightMoves {
-    public static Collection<ChessMove> knight_moves_calculator(ChessBoard Board, ChessPosition piece_position, ChessPiece selected_piece){
-        List<ChessMove> valid_moves = new ArrayList<>();
-        int current_row = piece_position.getRow();
-        int current_column = piece_position.getColumn();
+    public static Collection<ChessMove> knightMovesCalculator(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece){
+        List<ChessMove> validMoves = new ArrayList<>();
+        int currentRow = piecePosition.getRow();
+        int currentColumn = piecePosition.getColumn();
 
         // reverse 7 move
-        int row = current_row + 2;
-        int column = current_column + 1;
-        ChessPosition new_position_1 = new ChessPosition(row, column);
+        int row = currentRow + 2;
+        int column = currentColumn + 1;
+        ChessPosition newPosition1 = new ChessPosition(row, column);
         if(row <= 8 && column < 8){
-            horse_move(Board, piece_position, selected_piece, valid_moves, new_position_1);
+            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition1);
         }
 
 
         // 7 move
-        row = current_row + 2;
-        column = current_column - 1;
-        ChessPosition new_position_2 = new ChessPosition(row, column);
+        row = currentRow + 2;
+        column = currentColumn - 1;
+        ChessPosition newPosition2 = new ChessPosition(row, column);
         if(row <=8  && column >= 1){
-            horse_move(Board, piece_position, selected_piece, valid_moves, new_position_2);
+            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition2);
         }
 
 
         // right side 7
-        row = current_row + 1;
-        column = current_column + 2;
-        ChessPosition new_position_3 = new ChessPosition(row, column);
+        row = currentRow + 1;
+        column = currentColumn + 2;
+        ChessPosition newPosition3 = new ChessPosition(row, column);
         if(row <= 8 && column <=8){
-            horse_move(Board, piece_position, selected_piece, valid_moves, new_position_3);
+            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition3);
         }
 
 
         // left side 7
-        row = current_row + 1;
-        column = current_column - 2;
-        ChessPosition new_position_4 = new ChessPosition(row, column);
+        row = currentRow + 1;
+        column = currentColumn - 2;
+        ChessPosition newPosition4 = new ChessPosition(row, column);
         if(row <= 8 && column >=1){
-            horse_move(Board, piece_position, selected_piece, valid_moves, new_position_4);
+            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition4);
         }
 
 
         // L move
-        row = current_row - 2;
-        column = current_column + 1;
-        ChessPosition new_position_5 = new ChessPosition(row, column);
+        row = currentRow - 2;
+        column = currentColumn + 1;
+        ChessPosition newPosition5 = new ChessPosition(row, column);
         if(row >= 1 && column <=8){
-            horse_move(Board, piece_position, selected_piece, valid_moves, new_position_5);
+            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition5);
         }
 
         // reverse L move
-        row = current_row - 2;
-        column = current_column - 1;
-        ChessPosition new_position_6 = new ChessPosition(row, column);
+        row = currentRow - 2;
+        column = currentColumn - 1;
+        ChessPosition newPosition6 = new ChessPosition(row, column);
         if(row >= 1 && column >=1){
-            horse_move(Board, piece_position, selected_piece, valid_moves, new_position_6);
+            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition6);
         }
 
 
         // right side L
-        row = current_row - 1;
-        column = current_column + 2;
-        ChessPosition new_position_7 = new ChessPosition(row, column);
+        row = currentRow - 1;
+        column = currentColumn + 2;
+        ChessPosition newPosition7 = new ChessPosition(row, column);
         if(row >= 1 && column <=8){
-            horse_move(Board, piece_position, selected_piece, valid_moves, new_position_7);
+            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition7);
         }
 
 
         // left side L
-        row = current_row - 1;
-        column = current_column - 2;
-        ChessPosition new_position_8 = new ChessPosition(row, column);
+        row = currentRow - 1;
+        column = currentColumn - 2;
+        ChessPosition newPosition8 = new ChessPosition(row, column);
         if(row >= 1 && column >= 1){
-            horse_move(Board, piece_position, selected_piece, valid_moves, new_position_8);
+            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition8);
         }
 
 
 
-        return valid_moves;
+        return validMoves;
     }
 
-    public static void horse_move(ChessBoard Board, ChessPosition piece_position, ChessPiece selected_piece, List<ChessMove> valid_moves, ChessPosition new_position_1) {
-        ChessPiece another_piece = Board.getPiece(new_position_1);
-        if(another_piece != null){
-            if(selected_piece.getTeamColor() != another_piece.getTeamColor()){
-                valid_moves.add(new ChessMove(piece_position, new_position_1, null));
+    public static void horse_move(ChessBoard Board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, ChessPosition newPosition) {
+        ChessPiece anotherPiece = Board.getPiece(newPosition);
+        if(anotherPiece != null){
+            if(selectedPiece.getTeamColor() != anotherPiece.getTeamColor()){
+                validMoves.add(new ChessMove(piecePosition, newPosition, null));
             }
         }
         else{
-            valid_moves.add(new ChessMove(piece_position, new_position_1, null));
+            validMoves.add(new ChessMove(piecePosition, newPosition, null));
         }
     }
 }

@@ -89,13 +89,13 @@ public class ChessPiece {
         ChessPiece selected_piece = board.getPiece(myPosition);
         switch (piece_type) {
             case KING:
-                return KingMoves.king_moves_calculator(board, myPosition, selected_piece);
+                return KingMoves.kingMovesCalculator(board, myPosition, selected_piece);
             case QUEEN:
                 return QueenMoves.queen_moves_calculator(board, myPosition, selected_piece);
             case BISHOP:
-                return BishopMoves.bishop_moves_calculator(board, myPosition, selected_piece);
+                return BishopMoves.bishopMovesCalculator(board, myPosition, selected_piece);
             case KNIGHT:
-                return KnightMoves.knight_moves_calculator(board, myPosition, selected_piece);
+                return KnightMoves.knightMovesCalculator(board, myPosition, selected_piece);
             case ROOK:
                 return RookMoves.rook_moves_calculator(board, myPosition, selected_piece);
             case PAWN:

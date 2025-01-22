@@ -8,94 +8,77 @@ import java.util.List;
 import java.util.*;
 
 public class BishopMoves {
-    public static Collection<ChessMove> bishop_moves_calculator(ChessBoard Board, ChessPosition piece_position, ChessPiece selected_piece) {
-        List<ChessMove> valid_moves = new ArrayList<>();
-        int current_row = piece_position.getRow();
-        int current_column = piece_position.getColumn();
-        int row = current_row;
+    public static Collection<ChessMove> bishopMovesCalculator(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece) {
+        List<ChessMove> validMoves = new ArrayList<>();
+        int currentRow = piecePosition.getRow();
+        int currentColumn = piecePosition.getColumn();
+        int row = currentRow;
 
-        for (int column = current_column + 1; column < 9; column++) {
+        for (int column = currentColumn + 1; column < 9; column++) {
             row ++;
-            if (row < 9) {
-                ChessPosition new_position = new ChessPosition(row, column);
-                ChessPiece another_piece = Board.getPiece(new_position);
-                if(another_piece != null) {
-                    if(selected_piece.getTeamColor() == another_piece.getTeamColor()) {
-                        break;
-                    }
-                    else{
-                        valid_moves.add(new ChessMove(piece_position, new_position, null));
-                        break;
-                    }
+            if(row < 9) {
+                ChessPosition newPosition = new ChessPosition(row, column);
+                ChessPiece anotherPiece = board.getPiece(newPosition);
+                checkForOtherPieces(piecePosition, selectedPiece, validMoves, newPosition, anotherPiece);
+                if (anotherPiece != null) {
+                    break;
                 }
-                valid_moves.add(new ChessMove(piece_position, new_position, null));
             }
-            else{break;}
         }
 
-        row = current_row;
+        row = currentRow;
 
-        for (int column = current_column - 1; column > 0; column--) {
+        for (int column = currentColumn - 1; column > 0; column--) {
             row ++;
-            if (row < 9) {
-                ChessPosition new_position = new ChessPosition(row, column);
-                ChessPiece another_piece = Board.getPiece(new_position);
-                if(another_piece != null) {
-                    if(selected_piece.getTeamColor() == another_piece.getTeamColor()) {
-                        break;
-                    }
-                    else{
-                        valid_moves.add(new ChessMove(piece_position, new_position, null));
-                        break;
-                    }
+            if(row < 9) {
+                ChessPosition newPosition = new ChessPosition(row, column);
+                ChessPiece anotherPiece = board.getPiece(newPosition);
+                checkForOtherPieces(piecePosition, selectedPiece, validMoves, newPosition, anotherPiece);
+                if (anotherPiece != null) {
+                    break;
                 }
-                valid_moves.add(new ChessMove(piece_position, new_position, null));
             }
-            else{break;}
         }
 
-        row = current_row;
+        row = currentRow;
 
-        for (int column = current_column + 1; column < 9; column++) {
+        for (int column = currentColumn + 1; column < 9; column++) {
             row --;
             if (row > 0) {
-                ChessPosition new_position = new ChessPosition(row, column);
-                ChessPiece another_piece = Board.getPiece(new_position);
-                if(another_piece != null) {
-                    if(selected_piece.getTeamColor() == another_piece.getTeamColor()) {
-                        break;
-                    }
-                    else{
-                        valid_moves.add(new ChessMove(piece_position, new_position, null));
-                        break;
-                    }
+                ChessPosition newPosition = new ChessPosition(row, column);
+                ChessPiece anotherPiece = board.getPiece(newPosition);
+                checkForOtherPieces(piecePosition, selectedPiece, validMoves, newPosition, anotherPiece);
+                if (anotherPiece != null) {
+                    break;
                 }
-                valid_moves.add(new ChessMove(piece_position, new_position, null));
             }
-            else{break;}
         }
 
-        row = current_row;
+        row = currentRow;
 
-        for (int column = current_column - 1; column > 0; column--) {
+        for (int column = currentColumn - 1; column > 0; column--) {
             row --;
             if (row > 0) {
-                ChessPosition new_position = new ChessPosition(row, column);
-                ChessPiece another_piece = Board.getPiece(new_position);
-                if(another_piece != null) {
-                    if(selected_piece.getTeamColor() == another_piece.getTeamColor()) {
-                        break;
-                    }
-                    else{
-                        valid_moves.add(new ChessMove(piece_position, new_position, null));
-                        break;
-                    }
+                ChessPosition newPosition = new ChessPosition(row, column);
+                ChessPiece anotherPiece = board.getPiece(newPosition);
+                checkForOtherPieces(piecePosition, selectedPiece, validMoves, newPosition, anotherPiece);
+                if (anotherPiece != null) {
+                    break;
                 }
-                valid_moves.add(new ChessMove(piece_position, new_position, null));
             }
-            else{break;}
         }
-
-        return valid_moves;
+        return validMoves;
     }
-}
+
+    private static void checkForOtherPieces(ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, ChessPosition newPosition, ChessPiece anotherPiece) {
+        if(anotherPiece != null) {
+            if(selectedPiece.getTeamColor() != anotherPiece.getTeamColor()) {
+                validMoves.add(new ChessMove(piecePosition, newPosition, null));
+            }
+        }
+        else {
+            validMoves.add(new ChessMove(piecePosition, newPosition, null));
+        }
+    }}
+
+
