@@ -1,6 +1,7 @@
 package chess;
 
 import chess.bishop.BishopMoves;
+import chess.king.KingMoves;
 import chess.knights.KnightMoves;
 import chess.pawn.PawnMoves;
 import chess.queen.QueenMoves;
@@ -88,7 +89,7 @@ public class ChessPiece {
         ChessPiece selected_piece = board.getPiece(myPosition);
         switch (piece_type) {
             case KING:
-                return selected_piece.pieceMoves(board, myPosition);
+                return KingMoves.king_moves_calculator(board, myPosition, selected_piece);
             case QUEEN:
                 return QueenMoves.queen_moves_calculator(board, myPosition, selected_piece);
             case BISHOP:
