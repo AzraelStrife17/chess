@@ -2,6 +2,7 @@ package chess;
 
 import chess.bishop.BishopMoves;
 import chess.knights.KnightMoves;
+import chess.pawn.PawnMoves;
 import chess.queen.QueenMoves;
 import chess.rook.RookMoves;
 
@@ -97,7 +98,7 @@ public class ChessPiece {
             case ROOK:
                 return RookMoves.rook_moves_calculator(board, myPosition, selected_piece);
             case PAWN:
-                return selected_piece.pieceMoves(board, myPosition);
+                return PawnMoves.pawn_moves_calculator(board, myPosition, selected_piece);
         }
 
         return new ArrayList<>();
