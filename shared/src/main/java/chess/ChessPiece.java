@@ -1,5 +1,8 @@
 package chess;
 
+import chess.bishop.BishopMoves;
+import chess.knights.KnightMoves;
+import chess.queen.QueenMoves;
 import chess.rook.RookMoves;
 
 import java.util.*;
@@ -86,13 +89,13 @@ public class ChessPiece {
             case KING:
                 return selected_piece.pieceMoves(board, myPosition);
             case QUEEN:
-                return selected_piece.pieceMoves(board, myPosition);
+                return QueenMoves.queen_moves_calculator(board, myPosition, selected_piece);
             case BISHOP:
-                return selected_piece.pieceMoves(board, myPosition);
+                return BishopMoves.bishop_moves_calculator(board, myPosition, selected_piece);
             case KNIGHT:
-                return selected_piece.pieceMoves(board, myPosition);
+                return KnightMoves.knight_moves_calculator(board, myPosition, selected_piece);
             case ROOK:
-                return RookMoves.calculate_rook_moves(board, myPosition, selected_piece);
+                return RookMoves.rook_moves_calculator(board, myPosition, selected_piece);
             case PAWN:
                 return selected_piece.pieceMoves(board, myPosition);
         }

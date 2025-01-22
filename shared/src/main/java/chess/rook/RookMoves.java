@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.*;
 
 public class RookMoves {
-    public static Collection<ChessMove> calculate_rook_moves(ChessBoard Board, ChessPosition piece_position, ChessPiece selected_piece){
+    public static Collection<ChessMove> rook_moves_calculator(ChessBoard Board, ChessPosition piece_position, ChessPiece selected_piece){
         List<ChessMove> valid_moves = new ArrayList<>();
         int current_row = piece_position.getRow();
         int current_column = piece_position.getColumn();
