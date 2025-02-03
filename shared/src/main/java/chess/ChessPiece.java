@@ -20,11 +20,11 @@ public class ChessPiece {
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.piece_color = pieceColor;
-        this.piece_type = type;
+        this.pieceType = type;
     }
 
     private final ChessGame.TeamColor piece_color;
-    private final PieceType piece_type;
+    private final PieceType pieceType;
 
 
 
@@ -36,19 +36,19 @@ public class ChessPiece {
             return false;
         }
         ChessPiece that = (ChessPiece) o;
-        return piece_color == that.piece_color && piece_type == that.piece_type;
+        return piece_color == that.piece_color && pieceType == that.pieceType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(piece_color, piece_type);
+        return Objects.hash(piece_color, pieceType);
     }
 
     @Override
     public String toString() {
         return "ChessPiece{" +
                 "piece_color=" + piece_color +
-                ", piece_type=" + piece_type +
+                ", piece_type=" + pieceType +
                 '}';
     }
 
@@ -77,7 +77,7 @@ public class ChessPiece {
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        return piece_type;
+        return pieceType;
     }
 
     /**
@@ -89,7 +89,7 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece selected_piece = board.getPiece(myPosition);
-        switch (piece_type) {
+        switch (pieceType) {
             case KING:
                 return KingMoves.kingMovesCalculator(board, myPosition, selected_piece);
             case QUEEN:
