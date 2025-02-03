@@ -50,24 +50,12 @@ public class ChessGame {
      * startPosition
      */
 
-    public ChessBoard clone(){
-        for (int row = 1; row < 9; row ++){
-            for (int col = 1; col < 9; col++){
-                ChessPosition checkPosition = new ChessPosition(row, col);
-                ChessPiece checkPiece = currentBoard.getPiece(checkPosition);
-                if(checkPiece != null){
-                    addPiece(new ChessPosition(row, col), checkPiece);
-                }
-            }
-        }
-    }
-
 
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         List<ChessMove> validMoves = new ArrayList<>();
         ChessPiece selectedPiece = currentBoard.getPiece(startPosition);
-        ChessBoard simulationBoard = currentBoard.clone();
-        Collection<ChessMove> moves = selectedPiece.pieceMoves(simulationBoard, startPosition);
+
+        Collection<ChessMove> moves = selectedPiece.pieceMoves(currentBoard, startPosition);
 
         for (ChessMove move: moves){
             if(isInCheck(selectedPiece.getTeamColor())){
@@ -119,8 +107,11 @@ public class ChessGame {
                 if(enemyPiece != null){
                     if(enemyPiece.getTeamColor() != teamColor){
                         Collection<ChessMove> attackKing = enemyPiece.pieceMoves(currentBoard, enemyPosition);
-                        if(attackKing.contains(kingPosition)){
-                            return true;
+                        for(ChessMove move: attackKing) {
+                            ChessPosition endPosition = move.getEndPosition();
+                            if(endPosition.equals(kingPosition)){
+                                return true;
+                            }
                         }
                     }
                 }
