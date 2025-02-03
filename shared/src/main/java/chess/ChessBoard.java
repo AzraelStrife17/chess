@@ -17,7 +17,7 @@ public class ChessBoard {
         
     }
 
-    public int Base_1_Translation(int index) {
+    public int base1Translation(int index) {
         return index - 1;
     }
 
@@ -28,7 +28,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        squares[Base_1_Translation(position.getRow())][Base_1_Translation(position.getColumn())] = piece;
+        squares[base1Translation(position.getRow())][base1Translation(position.getColumn())] = piece;
     }
     /**
      * Gets a chess piece on the chessboard
@@ -38,7 +38,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-       return squares[Base_1_Translation(position.getRow())][Base_1_Translation(position.getColumn())];
+       return squares[base1Translation(position.getRow())][base1Translation(position.getColumn())];
     }
 
     /**
@@ -47,58 +47,58 @@ public class ChessBoard {
      */
     public void resetBoard() {
         for (int row = 0; row < 7; row++) {
-            for (int column = 0; column < 7; column++) {
-                squares[row][column] = null;
+            for(int col = 0; col < 7;col ++){
+                squares[row][col] = null;
             }
         }
 
-        ChessPiece white_pawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+        ChessPiece whitePawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         for (int column = 1; column < 9; column++) { //place white pawn
             int row = 2;
-            addPiece(new ChessPosition(row, column), white_pawn);
+            addPiece(new ChessPosition(row, column), whitePawn);
         }
 
-        ChessPiece black_pawn = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+        ChessPiece blackPawn = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         for (int column = 1; column < 9; column++) { //place black pawn
             int row = 7;
-            addPiece(new ChessPosition(row, column), black_pawn);
+            addPiece(new ChessPosition(row, column), blackPawn);
         }
 
-        ChessPiece white_rook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-        addPiece(new ChessPosition(1, 1), white_rook);
-        addPiece(new ChessPosition(1, 8), white_rook);
+        ChessPiece whiteRook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        addPiece(new ChessPosition(1, 1), whiteRook);
+        addPiece(new ChessPosition(1, 8), whiteRook);
 
-        ChessPiece white_knight = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-        addPiece(new ChessPosition(1, 2), white_knight);
-        addPiece(new ChessPosition(1, 7), white_knight);
+        ChessPiece whiteKnight = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        addPiece(new ChessPosition(1, 2), whiteKnight);
+        addPiece(new ChessPosition(1, 7), whiteKnight);
 
-        ChessPiece white_bishop = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-        addPiece(new ChessPosition(1, 3), white_bishop);
-        addPiece(new ChessPosition(1, 6), white_bishop);
+        ChessPiece whiteBishop = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        addPiece(new ChessPosition(1, 3), whiteBishop);
+        addPiece(new ChessPosition(1, 6), whiteBishop);
 
-        ChessPiece white_queen = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-        addPiece(new ChessPosition(1, 4), white_queen);
+        ChessPiece whiteQueen = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+        addPiece(new ChessPosition(1, 4), whiteQueen);
 
-        ChessPiece white_king = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-        addPiece(new ChessPosition(1, 5), white_king);
+        ChessPiece whiteKing = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+        addPiece(new ChessPosition(1, 5), whiteKing);
 
-        ChessPiece black_rook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-        addPiece(new ChessPosition(8, 1), black_rook);
-        addPiece(new ChessPosition(8, 8), black_rook);
+        ChessPiece blackRook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        addPiece(new ChessPosition(8, 1), blackRook);
+        addPiece(new ChessPosition(8, 8), blackRook);
 
-        ChessPiece black_knight = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-        addPiece(new ChessPosition(8, 2), black_knight);
-        addPiece(new ChessPosition(8, 7), black_knight);
+        ChessPiece blackKnight = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        addPiece(new ChessPosition(8, 2), blackKnight);
+        addPiece(new ChessPosition(8, 7), blackKnight);
 
-        ChessPiece black_bishop = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-        addPiece(new ChessPosition(8, 3), black_bishop);
-        addPiece(new ChessPosition(8, 6), black_bishop);
+        ChessPiece blackBishop = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        addPiece(new ChessPosition(8, 3), blackBishop);
+        addPiece(new ChessPosition(8, 6), blackBishop);
 
-        ChessPiece black_queen = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-        addPiece(new ChessPosition(8, 4), black_queen);
+        ChessPiece blackQueen = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+        addPiece(new ChessPosition(8, 4), blackQueen);
 
-        ChessPiece black_king = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
-        addPiece(new ChessPosition(8, 5), black_king);
+        ChessPiece blackKing = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        addPiece(new ChessPosition(8, 5), blackKing);
     }
 
     @Override

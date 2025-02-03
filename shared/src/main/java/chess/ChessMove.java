@@ -43,7 +43,7 @@ public class ChessMove {
      */
     public ChessPiece.PieceType getPromotionPiece() {
         if (promotionPiece == ChessPiece.PieceType.PAWN){
-            throw new RuntimeException("Not Yet Implemented");
+            return promotionPiece;
         }
         else{
             return null;

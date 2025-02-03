@@ -17,14 +17,16 @@ import java.util.*;
  */
 public class ChessPiece {
 
+
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.piece_color = pieceColor;
         this.piece_type = type;
     }
 
     private final ChessGame.TeamColor piece_color;
-
     private final PieceType piece_type;
+
+
 
     @Override
     public boolean equals(Object o) {
