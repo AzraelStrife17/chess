@@ -9,12 +9,11 @@ import java.util.Arrays;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessBoard {
+public class ChessBoard implements Cloneable {
 
-    private final ChessPiece[][] squares = new ChessPiece[8][8];
+    private ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
-        
     }
 
     public int base1Translation(int index) {
@@ -136,5 +135,26 @@ public class ChessBoard {
             sb.append("\n");
         }
         return sb.toString();
+    }
+
+    @Override
+    public ChessBoard clone() {
+        try {
+            ChessBoard clone = (ChessBoard) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+
+            ChessBoard clonedSquares = new ChessBoard();
+            for(int row = 1; row < 9; row++){
+                for(int col = 1; col < 9; col++){
+                    ChessPosition clonePosition = new ChessPosition(row, col);
+                    ChessPiece clonedPiece = getPiece(clonePosition);
+                    clonedSquares.addPiece(clonePosition,clonedPiece);
+                }
+            }
+
+            return clonedSquares;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

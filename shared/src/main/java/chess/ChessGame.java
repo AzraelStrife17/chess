@@ -54,14 +54,19 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         List<ChessMove> validMoves = new ArrayList<>();
         ChessPiece selectedPiece = currentBoard.getPiece(startPosition);
-
         Collection<ChessMove> moves = selectedPiece.pieceMoves(currentBoard, startPosition);
 
         for (ChessMove move: moves){
-            if(isInCheck(selectedPiece.getTeamColor())){
+            ChessBoard simulationBoard = currentBoard.clone();
+            ChessPosition endPosition = move.getEndPosition();
+            int startRow = startPosition.getRow();
+            int startCol = startPosition.getColumn();
+            int endRow = endPosition.getRow();
+            int endCol = endPosition.getColumn();
+            simulationBoard.addPiece(new ChessPosition (startRow, startCol), null);
+            simulationBoard.addPiece(new ChessPosition (endRow, endCol), selectedPiece);
 
-            }
-            else{
+            if(!(isInCheck(selectedPiece.getTeamColor()))){
                 validMoves.add(move);
             }
         }
@@ -156,9 +161,10 @@ public class ChessGame {
      * @return the chessboard
      */
 
-    private ChessBoard currentBoard;
-
     public ChessBoard getBoard() {
         return currentBoard;
     }
+
+    private ChessBoard currentBoard;
+
 }

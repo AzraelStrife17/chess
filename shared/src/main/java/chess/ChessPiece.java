@@ -15,7 +15,7 @@ import java.util.*;
  * Note: You can add to this class, but you may not alter
  * signature of the existing methods.
  */
-public class ChessPiece {
+public class ChessPiece implements Cloneable {
 
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
@@ -50,6 +50,16 @@ public class ChessPiece {
                 "piece_color=" + piece_color +
                 ", piece_type=" + pieceType +
                 '}';
+    }
+
+    @Override
+    public ChessPiece clone() {
+        try {
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return (ChessPiece) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
     /**
