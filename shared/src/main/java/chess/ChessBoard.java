@@ -11,7 +11,7 @@ import java.util.Arrays;
  */
 public class ChessBoard implements Cloneable {
 
-    private ChessPiece[][] squares = new ChessPiece[8][8];
+    private final ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
     }
