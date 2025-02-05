@@ -13,6 +13,8 @@ import java.util.List;
 public class ChessGame {
 
     public ChessGame() {
+        getBoard();
+        getTeamTurn();
     }
 
     /**
@@ -22,6 +24,9 @@ public class ChessGame {
     private TeamColor currentTeam;
 
     public TeamColor getTeamTurn() {
+        if(currentTeam == null){
+            currentTeam = TeamColor.WHITE;
+        }
         return currentTeam;
     }
 
@@ -118,7 +123,7 @@ public class ChessGame {
         }
         else{
             setTeamTurn(TeamColor.WHITE);
-        };
+        }
 
     }
 
@@ -234,6 +239,11 @@ public class ChessGame {
         currentBoard = board;
     }
 
+    public ChessGame(TeamColor currentTeam, ChessBoard currentBoard) {
+        this.currentTeam = currentTeam;
+        this.currentBoard = currentBoard;
+    }
+
     /**
      * Gets the current chessboard
      *
@@ -241,8 +251,13 @@ public class ChessGame {
      */
 
     public ChessBoard getBoard() {
+        if(currentBoard == null){
+            currentBoard = new ChessBoard();
+            currentBoard.resetBoard();
+        }
         return currentBoard;
     }
+
 
     private ChessBoard currentBoard;
 
