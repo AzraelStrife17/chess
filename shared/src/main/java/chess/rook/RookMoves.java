@@ -26,8 +26,9 @@ public class RookMoves {
                     break;
                 }
             }
-
-            valid_moves.add(new ChessMove(piece_position, new_position, null));
+            else {
+                valid_moves.add(new ChessMove(piece_position, new_position, null));
+            }
         }
 
         for (int column = current_column - 1; column > 0; column--) {
@@ -41,7 +42,10 @@ public class RookMoves {
                     valid_moves.add(new ChessMove(piece_position, new_position, null));
                 }
             }
-            valid_moves.add(new ChessMove(piece_position, new_position, null));
+
+            else {
+                valid_moves.add(new ChessMove(piece_position, new_position, null));
+            }
         }
 
         // Vertical movement
@@ -58,8 +62,9 @@ public class RookMoves {
                 }
             }
 
-
-            valid_moves.add(new ChessMove(piece_position, new_position, null));
+            else {
+                valid_moves.add(new ChessMove(piece_position, new_position, null));
+            }
         }
 
         for (int row = current_row - 1; row > 0; row--) {
@@ -74,7 +79,9 @@ public class RookMoves {
                     break;
                 }
             }
-            valid_moves.add(new ChessMove(piece_position, new_position, null));
+            else {
+                valid_moves.add(new ChessMove(piece_position, new_position, null));
+            }
         }
         return valid_moves;
     }
