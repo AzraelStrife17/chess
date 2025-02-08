@@ -72,10 +72,8 @@ public class ChessGame {
             currentBoard.addPiece(new ChessPosition (endRow, endCol), selectedPiece);
 
             if(!(isInCheck(selectedPiece.getTeamColor()))){
-
                 validMoves.add(move);
             }
-
             currentBoard = simulationBoard;
         }
         return validMoves;
@@ -124,7 +122,6 @@ public class ChessGame {
         else{
             setTeamTurn(TeamColor.WHITE);
         }
-
     }
 
     /**
@@ -257,8 +254,5 @@ public class ChessGame {
         }
         return currentBoard;
     }
-
-
     private ChessBoard currentBoard;
-
 }
