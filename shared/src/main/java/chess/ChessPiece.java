@@ -109,7 +109,7 @@ public class ChessPiece implements Cloneable {
             case KNIGHT:
                 return KnightMoves.knightMovesCalculator(board, myPosition, selected_piece);
             case ROOK:
-                return RookMoves.rook_moves_calculator(board, myPosition, selected_piece);
+                return RookMoves.rookMovesCalculator(board, myPosition, selected_piece);
             case PAWN:
                 return PawnMoves.pawn_moves_calculator(board, myPosition, selected_piece);
         }
