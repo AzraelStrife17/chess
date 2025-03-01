@@ -9,7 +9,7 @@ public class UserService {
         this.dataAccess = dataAccess;
     }
 
-    public User registerUser(User user) throws ResponseException{
+    public User registerUser(User user)
 
     }
 }
