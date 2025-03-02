@@ -18,6 +18,9 @@ public class UserService {
 
     public AuthData registerUser(UserData user){
         UserData userData = userDataAccess.createUser(user);
+        if(userData == null){
+            return null;
+        }
         String username = userData.username();
         return AuthDataAccess.createAuth(username);
     }
