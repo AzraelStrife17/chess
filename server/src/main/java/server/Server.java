@@ -1,10 +1,25 @@
 package server;
+import dataaccess.AuthDAO;
+import dataaccess.AuthMemoryDAO;
+import dataaccess.UserDAO;
+import dataaccess.UserMemoryDAO;
 import service.UserService;
 import com.google.gson.Gson;
+import model.UserData;
+import model.AuthData;
+import service.UserService;
 
 import spark.*;
 
 public class Server {
+    private UserService userService;
+
+    public Server() {
+        UserDAO userData = new UserMemoryDAO();
+        AuthDAO authData = new AuthMemoryDAO();
+
+        this.userService = new UserService(userData, authData);
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -26,5 +41,10 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object registerUser(Request req, Response res);
+    private Object registerUser(Request req, Response res){
+        var user = new Gson().fromJson(req.body(), UserData.class);
+        AuthData authData = userService.registerUser(user);
+        res.status(200);
+        return new Gson().toJson(authData);
+    }
 }
