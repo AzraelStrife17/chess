@@ -1,15 +1,24 @@
 package service;
+import model.UserData;
+import model.AuthData;
 import java.util.Collection;
+import dataaccess.UserDAO;
+import dataaccess.AuthDAO;
 
 public class UserService {
 
-    private final DataAccess dataAccess;
+    private final UserDAO userDataAccess;
+    private final AuthDAO AuthDataAccess;
 
-    public UserService(DataAccess dataAccess){
-        this.dataAccess = dataAccess;
+    public UserService(UserDAO userDataAccess, AuthDAO authDataAccess) {
+        this.userDataAccess = userDataAccess;
+        this.AuthDataAccess = authDataAccess;
     }
 
-    public User registerUser(User user)
 
+    public AuthData registerUser(UserData user){
+        UserData userData = userDataAccess.createUser(user);
+        String username = userData.username();
+        return AuthDataAccess.createAuth(username);
     }
 }

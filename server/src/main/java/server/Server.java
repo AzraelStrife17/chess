@@ -1,4 +1,6 @@
 package server;
+import service.UserService;
+import com.google.gson.Gson;
 
 import spark.*;
 
@@ -23,4 +25,6 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
+
+    private Object registerUser(Request req, Response res);
 }
