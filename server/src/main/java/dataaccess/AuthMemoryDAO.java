@@ -16,6 +16,23 @@ public class AuthMemoryDAO implements AuthDAO{
         return newAuth;
     }
 
+    public boolean getAuth(String authToken){
+        AuthData userAuth = authData.get(authToken);
+        return userAuth != null;
+    }
+
+    public String deleteAuthToken(String authToken){
+        authData.remove(authToken);
+        boolean verifyDeletion = getAuth(authToken);
+        if (!verifyDeletion){
+            return "";
+        }
+        else{
+            return authToken;
+        }
+
+    }
+
     public void clearAuths(){
         authData.clear();
     }
