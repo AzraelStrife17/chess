@@ -3,4 +3,5 @@ import model.UserData;
 
 public interface UserDAO {
     UserData createUser(UserData user);
+    void clearUsers();
 }
