@@ -1,13 +1,9 @@
 package server;
-import dataaccess.AuthDAO;
-import dataaccess.AuthMemoryDAO;
-import dataaccess.UserDAO;
-import dataaccess.UserMemoryDAO;
+import dataaccess.*;
+import model.*;
+import service.GameService;
 import service.UserService;
 import com.google.gson.Gson;
-import model.UserData;
-import model.AuthData;
-import model.LoginRecord;
 import service.ClearService;
 
 import service.UserService;
@@ -19,14 +15,17 @@ import java.util.Objects;
 
 public class Server {
     private UserService userService;
+    private GameService gameService;
     private ClearService clearService;
 
     public Server() {
         UserDAO userData = new UserMemoryDAO();
         AuthDAO authData = new AuthMemoryDAO();
+        GameDAO gameData = new GameMemoryDAO();
 
         this.userService = new UserService(userData, authData);
         this.clearService = new ClearService(userData, authData);
+        this.gameService = new GameService(authData, gameData);
     }
 
     public int run(int desiredPort) {
@@ -40,7 +39,6 @@ public class Server {
         Spark.post("/session", this::loginUser);
         Spark.delete("/session", this::logoutUser);
         Spark.post("/game", this::createGame);
-
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -90,6 +88,15 @@ public class Server {
         }
         res.status(200);
         return "{}";
+    }
+
+    private Object createGame(Request req, Response res){
+        var gameName = new Gson().fromJson(req.body(), GameNameRecord.class);
+        String authToken = req.headers("authorization");
+        Integer gameId = gameService.createGame(gameName.gameName(), authToken);
+        GameIdRecord id = new GameIdRecord(gameId);
+        res.status(200);
+        return new Gson().toJson(id);
     }
 
     private Object clearDatabase(Request req, Response res){
