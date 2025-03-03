@@ -1,6 +1,8 @@
 package service;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
+import model.JoinGameRecord;
+import chess.ChessGame.TeamColor;
 import model.GameData;
 import model.AuthData;
 import model.GameNameRecord;
@@ -15,10 +17,20 @@ public class GameService {
     }
 
     public Integer createGame(String gameName, String authToken){
-        boolean authExist = authDataAccess.getAuth(authToken);
-        if(authExist){
+        AuthData authExist = authDataAccess.getAuth(authToken);
+        if(authExist != null){
             return gameDataAccess.createGame(gameName);
         }
         return null;
     }
+
+    public String joinGame(JoinGameRecord joinGameInfo, String authToken){
+        AuthData authExist = authDataAccess.getAuth(authToken);
+        if(authExist != null){
+            return gameDataAccess.joinGame(joinGameInfo, authExist);
+
+        }
+        return "no authToken";
+    }
+
 }

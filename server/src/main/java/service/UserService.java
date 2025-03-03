@@ -37,8 +37,8 @@ public class UserService {
     }
 
     public String logoutUser(String authToken){
-        boolean authExist = authDataAccess.getAuth(authToken);
-        if(authExist){
+        AuthData authExist = authDataAccess.getAuth(authToken);
+        if(authExist != null){
             return authDataAccess.deleteAuthToken(authToken);
         }
         else{

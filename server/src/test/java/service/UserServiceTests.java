@@ -5,10 +5,8 @@ import dataaccess.UserDAO;
 import dataaccess.UserMemoryDAO;
 import dataaccess.GameDAO;
 import dataaccess.GameMemoryDAO;
-import model.GameNameRecord;
-import model.LoginRecord;
-import model.UserData;
-import model.AuthData;
+import chess.ChessGame.TeamColor;
+import model.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -120,5 +118,59 @@ public class UserServiceTests {
         var gameName2 = new GameNameRecord("SecondGame");
         Integer gameID = gameService.createGame(gameName2.gameName(), authData.authToken());
         assertNotNull(gameID);
+    }
+
+    @Test
+    void createUnauthorizedTest(){
+        var user = new UserData("James", "007", "BOND@gmail.com");
+        service.registerUser(user);
+        var gameName1 = new GameNameRecord("FirstName");
+        Integer gameID = gameService.createGame(gameName1.gameName(), "a");
+        assertNull(gameID);
+    }
+
+    @Test
+    void joinBlackTestSuccess(){
+        var user = new UserData("James", "007", "BOND@gmail.com");
+        AuthData authData = service.registerUser(user);
+
+        Integer gameID = gameService.createGame("GameTestName", authData.authToken());
+
+        var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID);
+        String successfulJoin = gameService.joinGame(joinGameInfo, authData.authToken());
+        assertEquals("success", successfulJoin);
+    }
+
+    @Test
+    void joinWhiteTestSuccess(){
+        var user = new UserData("James", "007", "BOND@gmail.com");
+        AuthData authData = service.registerUser(user);
+
+        Integer gameID = gameService.createGame("GameTestName", authData.authToken());
+
+        var joinGameInfo = new JoinGameRecord(TeamColor.WHITE, gameID);
+        String successfulJoin = gameService.joinGame(joinGameInfo, authData.authToken());
+        assertEquals("success", successfulJoin);
+    }
+
+    @Test
+    void joinWhiteAndBlackSuccess(){
+        var user1 = new UserData("James", "007", "BOND@gmail.com");
+        AuthData authData1 = service.registerUser(user1);
+
+        Integer gameID = gameService.createGame("GameTestName", authData1.authToken());
+
+        var joinGameInfoBlack = new JoinGameRecord(TeamColor.BLACK, gameID);
+        String successfulJoin1 = gameService.joinGame(joinGameInfoBlack, authData1.authToken());
+
+        var user2 = new UserData("Bond", "007", "JAMES@gmail.com");
+        AuthData authData2 = service.registerUser(user2);
+
+
+        var joinGameInfo2 = new JoinGameRecord(TeamColor.WHITE, gameID);
+        String successfulJoin2 = gameService.joinGame(joinGameInfo2, authData2.authToken());
+
+        assertEquals("success", successfulJoin1);
+        assertEquals("success", successfulJoin2);
     }
 }

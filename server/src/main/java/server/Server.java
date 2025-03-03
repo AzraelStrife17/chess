@@ -39,6 +39,7 @@ public class Server {
         Spark.post("/session", this::loginUser);
         Spark.delete("/session", this::logoutUser);
         Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -92,11 +93,40 @@ public class Server {
 
     private Object createGame(Request req, Response res){
         var gameName = new Gson().fromJson(req.body(), GameNameRecord.class);
+        if (gameName == null || gameName.gameName().isBlank()){
+            res.status(400);
+            return new Gson().toJson(Map.of("message", "Error: bad request"));
+        }
         String authToken = req.headers("authorization");
         Integer gameId = gameService.createGame(gameName.gameName(), authToken);
+        if(gameId == null){
+            res.status(401);
+            return new Gson().toJson(Map.of("message", "Error: Unauthorized"));
+        }
         GameIdRecord id = new GameIdRecord(gameId);
         res.status(200);
         return new Gson().toJson(id);
+    }
+
+    private Object joinGame(Request req, Response res){
+        var joinGameInfo = new Gson().fromJson(req.body(), JoinGameRecord.class);
+        if(joinGameInfo.playerColor() == null || joinGameInfo.gameID() == null){
+            res.status(400);
+            return new Gson().toJson(Map.of("message", "Error: bad requests"));
+        }
+        String authToken = req.headers("authorization");
+        String joinGameSuccess = gameService.joinGame(joinGameInfo, authToken);
+        if(Objects.equals(joinGameSuccess, "success")){
+            res.status(200);
+            return "{}";
+        }
+        else if(Objects.equals(joinGameSuccess, "team color taken")){
+            res.status(403);
+            return new Gson().toJson(Map.of("message", "Error: already taken"));
+        }
+
+        res.status(401);
+        return new  Gson().toJson(Map.of("message", "Error: Unauthorized"));
     }
 
     private Object clearDatabase(Request req, Response res){
