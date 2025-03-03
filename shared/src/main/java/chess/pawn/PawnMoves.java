@@ -132,12 +132,12 @@ public class PawnMoves {
         }
     }
     private static void enemyPositionWhite(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece,
-                                           List<ChessMove> valid_moves, int row, int column) {
+                                           List<ChessMove> validMoves, int row, int column) {
         ChessPosition enemyPositionL = new ChessPosition(row, column);
         ChessPiece enemy = board.getPiece(enemyPositionL);
         if (enemy != null) {
             if (selectedPiece.getTeamColor() != enemy.getTeamColor()) {
-                whitePromotion(piecePosition, valid_moves, row, enemyPositionL);
+                whitePromotion(piecePosition, validMoves, row, enemyPositionL);
             }
         }
     }
