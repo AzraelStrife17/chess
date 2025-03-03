@@ -16,12 +16,9 @@ public class PawnMoves {
             // Initial Pawn Movement
             if (currentRow == 2){
                 for (int initialRow = currentRow + 1; initialRow < 5 ; initialRow++){
-                    ChessPosition newPosition = new ChessPosition(initialRow, currentColumn);
-                    ChessPiece anotherPiece = board.getPiece(newPosition);
-                    if (anotherPiece == null){
-                        validMoves.add(new ChessMove(piecePosition, newPosition, null));
+                    if (initialMovement(board, piecePosition, initialRow, currentColumn, validMoves)) {
+                        break;
                     }
-                    else{break;}
                 }
                 int row = currentRow + 1;
                 //attack up left
@@ -44,12 +41,9 @@ public class PawnMoves {
             // Initial Pawn Movement
             if (currentRow == 7){
                 for (int initialRow = currentRow - 1; initialRow > 4 ; initialRow--){
-                    ChessPosition newPosition = new ChessPosition(initialRow, currentColumn);
-                    ChessPiece anotherPiece = board.getPiece(newPosition);
-                    if (anotherPiece == null){
-                        validMoves.add(new ChessMove(piecePosition, newPosition, null));
+                    if (initialMovement(board, piecePosition, initialRow, currentColumn, validMoves)) {
+                        break;
                     }
-                    else{break;}
                 }
 
                 int row = currentRow - 1;
@@ -67,6 +61,19 @@ public class PawnMoves {
             }
         }
         return validMoves;
+    }
+
+    private static boolean initialMovement(ChessBoard board, ChessPosition piecePosition, int initialRow,
+                                           int currentColumn, List<ChessMove> validMoves) {
+        ChessPosition newPosition = new ChessPosition(initialRow, currentColumn);
+        ChessPiece anotherPiece = board.getPiece(newPosition);
+        if (anotherPiece == null){
+            validMoves.add(new ChessMove(piecePosition, newPosition, null));
+        }
+        else{
+            return true;
+        }
+        return false;
     }
 
     private static void whiteAttack(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece,
