@@ -15,33 +15,37 @@ public class RookMoves {
 
         // Horizontal Movement
         for (int column = currentColumn + 1; column < 9; column++) {
-            if (rookMoves(board, piecePosition, selectedPiece, validMoves, column, currentRow)) {
+            if (validMove(board, piecePosition, selectedPiece, validMoves, column, currentRow)) {
                 break;
             }
         }
 
         for (int column = currentColumn - 1; column > 0; column--) {
-            if (rookMoves(board, piecePosition, selectedPiece, validMoves, column, currentRow)) {
+            if (validMove(board, piecePosition, selectedPiece, validMoves, column, currentRow)) {
                 break;
             }
         }
 
         // Vertical movement
         for (int row = currentRow + 1; row < 9; row++) {
-            if (rookMoves(board, piecePosition, selectedPiece, validMoves, currentColumn, row)) {
+            if (validMove(board, piecePosition, selectedPiece, validMoves, currentColumn, row)) {
                 break;
             }
         }
 
         for (int row = currentRow - 1; row > 0; row--) {
-            if (rookMoves(board, piecePosition, selectedPiece, validMoves, currentColumn, row)) {
+            if (validMove(board, piecePosition, selectedPiece, validMoves, currentColumn, row)) {
                 break;
             }
         }
         return validMoves;
     }
 
-    private static boolean rookMoves(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, int column, int row) {
+    public static boolean validMove(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, int column, int row) {
+        return e(board, piecePosition, selectedPiece, validMoves, column, row);
+    }
+
+    public static boolean e(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, int column, int row) {
         ChessPosition newPosition = new ChessPosition(row, column);
         ChessPiece anotherPiece = board.getPiece(newPosition);
         if (anotherPiece != null) {

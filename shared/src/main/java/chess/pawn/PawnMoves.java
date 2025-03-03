@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.*;
 
 public class PawnMoves {
-    public static Collection<ChessMove> pawnMovesCalculator(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece){
+    public static Collection<ChessMove> pawnMovesCalculator(ChessBoard board, ChessPosition piecePosition,
+                                                            ChessPiece selectedPiece){
         List<ChessMove> validMoves = new ArrayList<>();
         int currentRow = piecePosition.getRow();
         int currentColumn = piecePosition.getColumn();
@@ -119,7 +120,12 @@ public class PawnMoves {
         return validMoves;
     }
 
-    private static void blackPromotion(ChessPosition piece_position, List<ChessMove> validMoves, int row, ChessPosition newPosition) {
+    private static void blackAttackMoves(){
+
+    }
+
+    private static void blackPromotion(ChessPosition piece_position, List<ChessMove> validMoves, int row,
+                                       ChessPosition newPosition) {
         if (row == 1){
             promotionMoves(piece_position, validMoves, newPosition);
         }
@@ -128,14 +134,16 @@ public class PawnMoves {
         }
     }
 
-    private static void promotionMoves(ChessPosition piece_position, List<ChessMove> validMoves, ChessPosition newPosition) {
+    private static void promotionMoves(ChessPosition piece_position, List<ChessMove> validMoves,
+                                       ChessPosition newPosition) {
         validMoves.add(new ChessMove(piece_position, newPosition, ChessPiece.PieceType.QUEEN));
         validMoves.add(new ChessMove(piece_position, newPosition, ChessPiece.PieceType.BISHOP));
         validMoves.add(new ChessMove(piece_position, newPosition, ChessPiece.PieceType.ROOK));
         validMoves.add(new ChessMove(piece_position, newPosition, ChessPiece.PieceType.KNIGHT));
     }
 
-    private static void whitePromotion(ChessPosition piecePosition, List<ChessMove> validMoves, int row, ChessPosition newPosition) {
+    private static void whitePromotion(ChessPosition piecePosition, List<ChessMove> validMoves, int row,
+                                       ChessPosition newPosition) {
         if (row == 8){
             promotionMoves(piecePosition, validMoves, newPosition);
         }
@@ -143,7 +151,8 @@ public class PawnMoves {
             validMoves.add(new ChessMove(piecePosition, newPosition, null));
         }
     }
-    private static void enemyPositionWhite(ChessBoard Board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> valid_moves, int row, int column) {
+    private static void enemyPositionWhite(ChessBoard Board, ChessPosition piecePosition, ChessPiece selectedPiece,
+                                           List<ChessMove> valid_moves, int row, int column) {
         ChessPosition enemyPositionL = new ChessPosition(row, column);
         ChessPiece enemy = Board.getPiece(enemyPositionL);
         if (enemy != null) {
@@ -152,7 +161,8 @@ public class PawnMoves {
             }
         }
     }
-    private static void enemyPositionBlack(ChessBoard Board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, int row, int column) {
+    private static void enemyPositionBlack(ChessBoard Board, ChessPosition piecePosition, ChessPiece selectedPiece,
+                                           List<ChessMove> validMoves, int row, int column) {
         ChessPosition enemyPosition = new ChessPosition(row, column);
         ChessPiece enemy = Board.getPiece(enemyPosition);
         if (enemy != null) {
