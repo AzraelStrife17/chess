@@ -9,9 +9,9 @@ public class ClearService {
     private final GameDAO gameDataAccess;
 
     public ClearService(UserDAO userDataAccess, AuthDAO authDataAccess, GameDAO gameDataAccess) {
+        this.gameDataAccess = gameDataAccess;
         this.userDataAccess = userDataAccess;
         this.authDataAccess = authDataAccess;
-        this.gameDataAccess = gameDataAccess;
     }
 
     public void clearDatabase(){

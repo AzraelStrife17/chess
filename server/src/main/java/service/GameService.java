@@ -2,12 +2,11 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import model.JoinGameRecord;
-import chess.ChessGame.TeamColor;
 import model.GameData;
 import model.AuthData;
-import model.GameNameRecord;
 
 import java.util.Collection;
+import java.util.List;
 
 public class GameService {
     private final AuthDAO authDataAccess;
@@ -40,7 +39,8 @@ public class GameService {
         if(authExist != null) {
             return gameDataAccess.listGames();
         }
-        return null;
+
+        return List.of(new GameData(0, null, null, null, null));
     }
 
 

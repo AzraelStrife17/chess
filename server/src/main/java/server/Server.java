@@ -6,17 +6,15 @@ import service.UserService;
 import com.google.gson.Gson;
 import service.ClearService;
 
-import service.UserService;
-
 import spark.*;
 
 import java.util.Map;
 import java.util.Objects;
 
 public class Server {
-    private UserService userService;
-    private GameService gameService;
-    private ClearService clearService;
+    private final UserService userService;
+    private final GameService gameService;
+    private final ClearService clearService;
 
     public Server() {
         UserDAO userData = new UserMemoryDAO();
@@ -134,6 +132,10 @@ public class Server {
         res.type("application/json");
         String authToken = req.headers("authorization");
         var list = gameService.listGames(authToken).toArray();
+        if(list.length > 0 && ((GameData) list[0]).gameID() == 0){
+            res.status(401);
+            return new  Gson().toJson(Map.of("message", "Error: Unauthorized"));
+        }
         res.status(200);
         return new Gson().toJson(Map.of("games", list));
     }
