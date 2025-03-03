@@ -39,6 +39,7 @@ public class Server {
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::loginUser);
         Spark.delete("/session", this::logoutUser);
+        Spark.post("/game", this::createGame);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -54,7 +55,9 @@ public class Server {
 
     private Object registerUser(Request req, Response res){
         var user = new Gson().fromJson(req.body(), UserData.class);
-        if ( user.username().isBlank() || user.password().isBlank() || user.email().isBlank()){
+        if ( user.username() == null || user.username().isBlank()
+             || user.password() == null || user.password().isBlank()
+             || user.email() == null   || user.email().isBlank()){
                     res.status(400);
                     return new Gson().toJson(Map.of("message", "Error: bad request"));
         }
@@ -92,6 +95,6 @@ public class Server {
     private Object clearDatabase(Request req, Response res){
         clearService.clearDatabase();
         res.status(200);
-        return new Gson().toJson(null);
+        return "{}";
     }
 }
