@@ -104,22 +104,22 @@ public class PawnMoves {
         }
     }
 
-    private static void blackPromotion(ChessPosition piece_position, List<ChessMove> validMoves, int row,
+    private static void blackPromotion(ChessPosition piecePosition, List<ChessMove> validMoves, int row,
                                        ChessPosition newPosition) {
         if (row == 1){
-            promotionMoves(piece_position, validMoves, newPosition);
+            promotionMoves(piecePosition, validMoves, newPosition);
         }
         else {
-            validMoves.add(new ChessMove(piece_position, newPosition, null));
+            validMoves.add(new ChessMove(piecePosition, newPosition, null));
         }
     }
 
-    private static void promotionMoves(ChessPosition piece_position, List<ChessMove> validMoves,
+    private static void promotionMoves(ChessPosition piecePosition, List<ChessMove> validMoves,
                                        ChessPosition newPosition) {
-        validMoves.add(new ChessMove(piece_position, newPosition, ChessPiece.PieceType.QUEEN));
-        validMoves.add(new ChessMove(piece_position, newPosition, ChessPiece.PieceType.BISHOP));
-        validMoves.add(new ChessMove(piece_position, newPosition, ChessPiece.PieceType.ROOK));
-        validMoves.add(new ChessMove(piece_position, newPosition, ChessPiece.PieceType.KNIGHT));
+        validMoves.add(new ChessMove(piecePosition, newPosition, ChessPiece.PieceType.QUEEN));
+        validMoves.add(new ChessMove(piecePosition, newPosition, ChessPiece.PieceType.BISHOP));
+        validMoves.add(new ChessMove(piecePosition, newPosition, ChessPiece.PieceType.ROOK));
+        validMoves.add(new ChessMove(piecePosition, newPosition, ChessPiece.PieceType.KNIGHT));
     }
 
     private static void whitePromotion(ChessPosition piecePosition, List<ChessMove> validMoves, int row,
@@ -131,20 +131,20 @@ public class PawnMoves {
             validMoves.add(new ChessMove(piecePosition, newPosition, null));
         }
     }
-    private static void enemyPositionWhite(ChessBoard Board, ChessPosition piecePosition, ChessPiece selectedPiece,
+    private static void enemyPositionWhite(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece,
                                            List<ChessMove> valid_moves, int row, int column) {
         ChessPosition enemyPositionL = new ChessPosition(row, column);
-        ChessPiece enemy = Board.getPiece(enemyPositionL);
+        ChessPiece enemy = board.getPiece(enemyPositionL);
         if (enemy != null) {
             if (selectedPiece.getTeamColor() != enemy.getTeamColor()) {
                 whitePromotion(piecePosition, valid_moves, row, enemyPositionL);
             }
         }
     }
-    private static void enemyPositionBlack(ChessBoard Board, ChessPosition piecePosition, ChessPiece selectedPiece,
+    private static void enemyPositionBlack(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece,
                                            List<ChessMove> validMoves, int row, int column) {
         ChessPosition enemyPosition = new ChessPosition(row, column);
-        ChessPiece enemy = Board.getPiece(enemyPosition);
+        ChessPiece enemy = board.getPiece(enemyPosition);
         if (enemy != null) {
             if (selectedPiece.getTeamColor() != enemy.getTeamColor()) {
                 blackPromotion(piecePosition, validMoves, row, enemyPosition);

@@ -19,11 +19,11 @@ public class ChessPiece implements Cloneable {
 
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        this.piece_color = pieceColor;
+        this.pieceColor = pieceColor;
         this.pieceType = type;
     }
 
-    private final ChessGame.TeamColor piece_color;
+    private final ChessGame.TeamColor pieceColor;
     private final PieceType pieceType;
 
 
@@ -36,18 +36,18 @@ public class ChessPiece implements Cloneable {
             return false;
         }
         ChessPiece that = (ChessPiece) o;
-        return piece_color == that.piece_color && pieceType == that.pieceType;
+        return pieceColor == that.pieceColor && pieceType == that.pieceType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(piece_color, pieceType);
+        return Objects.hash(pieceColor, pieceType);
     }
 
     @Override
     public String toString() {
         return "ChessPiece{" +
-                "piece_color=" + piece_color +
+                "piece_color=" + pieceColor +
                 ", piece_type=" + pieceType +
                 '}';
     }
@@ -80,7 +80,7 @@ public class ChessPiece implements Cloneable {
      */
 
     public ChessGame.TeamColor getTeamColor() {
-        return piece_color;
+        return pieceColor;
     }
 
     /**
@@ -103,7 +103,7 @@ public class ChessPiece implements Cloneable {
             case KING:
                 return KingMoves.kingMovesCalculator(board, myPosition, selected_piece);
             case QUEEN:
-                return QueenMoves.queen_moves_calculator(board, myPosition, selected_piece);
+                return QueenMoves.queenMovesCalculator(board, myPosition, selected_piece);
             case BISHOP:
                 return BishopMoves.bishopMovesCalculator(board, myPosition, selected_piece);
             case KNIGHT:

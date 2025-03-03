@@ -10,7 +10,7 @@ import static chess.rook.RookMoves.validMove;
 import static chess.rook.RookMoves.horizontalVerticalMoves;
 
 public class QueenMoves {
-    public static Collection<ChessMove> queen_moves_calculator(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece) {
+    public static Collection<ChessMove> queenMovesCalculator(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece) {
         List<ChessMove> validMoves = new ArrayList<>();
         int currentRow = piecePosition.getRow();
         int currentColumn = piecePosition.getColumn();

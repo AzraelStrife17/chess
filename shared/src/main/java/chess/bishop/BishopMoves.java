@@ -3,6 +3,8 @@ import chess.ChessBoard;
 import chess.ChessMove;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import chess.rook.RookMoves;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
@@ -56,18 +58,8 @@ public class BishopMoves {
     }
 
 
-    private static boolean bishopMoves(ChessBoard Board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, int column, int row) {
-            ChessPosition newPosition = new ChessPosition(row, column);
-            ChessPiece anotherPiece = Board.getPiece(newPosition);
-            if (anotherPiece != null) {
-                if (anotherPiece.getTeamColor() != selectedPiece.getTeamColor()) {
-                    validMoves.add(new ChessMove(piecePosition, newPosition, null));
-                }
-                return true;
-            } else {
-                validMoves.add(new ChessMove(piecePosition, newPosition, null));
-            }
-            return false;
+    private static boolean bishopMoves(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, int column, int row) {
+        return RookMoves.addMove(board, piecePosition, selectedPiece, validMoves, column, row);
     }
 }
 

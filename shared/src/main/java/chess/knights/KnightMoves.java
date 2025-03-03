@@ -18,7 +18,7 @@ public class KnightMoves {
         int column = currentColumn + 1;
         ChessPosition newPosition1 = new ChessPosition(row, column);
         if(row <= 8 && column < 8){
-            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition1);
+            horseMove(board, piecePosition, selectedPiece, validMoves, newPosition1);
         }
 
 
@@ -27,7 +27,7 @@ public class KnightMoves {
         column = currentColumn - 1;
         ChessPosition newPosition2 = new ChessPosition(row, column);
         if(row <=8  && column >= 1){
-            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition2);
+            horseMove(board, piecePosition, selectedPiece, validMoves, newPosition2);
         }
 
 
@@ -36,7 +36,7 @@ public class KnightMoves {
         column = currentColumn + 2;
         ChessPosition newPosition3 = new ChessPosition(row, column);
         if(row <= 8 && column <=8){
-            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition3);
+            horseMove(board, piecePosition, selectedPiece, validMoves, newPosition3);
         }
 
 
@@ -45,7 +45,7 @@ public class KnightMoves {
         column = currentColumn - 2;
         ChessPosition newPosition4 = new ChessPosition(row, column);
         if(row <= 8 && column >=1){
-            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition4);
+            horseMove(board, piecePosition, selectedPiece, validMoves, newPosition4);
         }
 
 
@@ -54,7 +54,7 @@ public class KnightMoves {
         column = currentColumn + 1;
         ChessPosition newPosition5 = new ChessPosition(row, column);
         if(row >= 1 && column <=8){
-            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition5);
+            horseMove(board, piecePosition, selectedPiece, validMoves, newPosition5);
         }
 
         // reverse L move
@@ -62,7 +62,7 @@ public class KnightMoves {
         column = currentColumn - 1;
         ChessPosition newPosition6 = new ChessPosition(row, column);
         if(row >= 1 && column >=1){
-            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition6);
+            horseMove(board, piecePosition, selectedPiece, validMoves, newPosition6);
         }
 
 
@@ -71,7 +71,7 @@ public class KnightMoves {
         column = currentColumn + 2;
         ChessPosition newPosition7 = new ChessPosition(row, column);
         if(row >= 1 && column <=8){
-            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition7);
+            horseMove(board, piecePosition, selectedPiece, validMoves, newPosition7);
         }
 
 
@@ -80,7 +80,7 @@ public class KnightMoves {
         column = currentColumn - 2;
         ChessPosition newPosition8 = new ChessPosition(row, column);
         if(row >= 1 && column >= 1){
-            horse_move(board, piecePosition, selectedPiece, validMoves, newPosition8);
+            horseMove(board, piecePosition, selectedPiece, validMoves, newPosition8);
         }
 
 
@@ -88,8 +88,8 @@ public class KnightMoves {
         return validMoves;
     }
 
-    public static void horse_move(ChessBoard Board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, ChessPosition newPosition) {
-        ChessPiece anotherPiece = Board.getPiece(newPosition);
+    public static void horseMove(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, ChessPosition newPosition) {
+        ChessPiece anotherPiece = board.getPiece(newPosition);
         if(anotherPiece != null){
             if(selectedPiece.getTeamColor() != anotherPiece.getTeamColor()){
                 validMoves.add(new ChessMove(piecePosition, newPosition, null));
