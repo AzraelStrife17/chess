@@ -46,11 +46,13 @@ public class RookMoves {
         }
     }
 
-    public static boolean validMove(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, int column, int row) {
+    public static boolean validMove(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece,
+                                    List<ChessMove> validMoves, int column, int row) {
         return addMove(board, piecePosition, selectedPiece, validMoves, column, row);
     }
 
-    public static boolean addMove(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, int column, int row) {
+    public static boolean addMove(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece,
+                                  List<ChessMove> validMoves, int column, int row) {
         ChessPosition newPosition = new ChessPosition(row, column);
         ChessPiece anotherPiece = board.getPiece(newPosition);
         if (anotherPiece != null) {

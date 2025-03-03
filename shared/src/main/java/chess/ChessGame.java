@@ -147,15 +147,14 @@ public class ChessGame {
             for(int col = 1; col < 9; col++){
                 ChessPosition enemyPosition = new ChessPosition(row, col);
                 ChessPiece enemyPiece = currentBoard.getPiece(enemyPosition);
-                if(enemyPiece != null){
-                    if(enemyPiece.getTeamColor() != teamColor){
-                        Collection<ChessMove> attackKing = enemyPiece.pieceMoves(currentBoard, enemyPosition);
-                        for(ChessMove move: attackKing) {
-                            ChessPosition endPosition = move.getEndPosition();
-                            if(endPosition.equals(kingPosition)){
-                                return true;
-                            }
-                        }
+                if(enemyPiece == null || enemyPiece.getTeamColor() == teamColor){
+                        continue;
+                }
+                Collection<ChessMove> attackKing = enemyPiece.pieceMoves(currentBoard, enemyPosition);
+                for(ChessMove move: attackKing) {
+                    ChessPosition endPosition = move.getEndPosition();
+                    if(endPosition.equals(kingPosition)){
+                        return true;
                     }
                 }
             }
@@ -182,17 +181,16 @@ public class ChessGame {
             for(int col = 1; col < 9; col++){
                 ChessPosition allyPosition = new ChessPosition(row, col);
                 ChessPiece allyPiece = currentBoard.getPiece(allyPosition);
-                if(allyPiece != null){
-                    if(allyPiece.getTeamColor() == teamColor){
-                        Collection<ChessMove> validMoves = validMoves(allyPosition);
-                        for(ChessMove move: validMoves){
-                            ChessPosition startPosition = move.getStartPosition();
-                            ChessPosition endPosition = move.getEndPosition();
-                            ChessPiece.PieceType promotionPiece = move.getPromotionPiece();
-                            savingKingMoves.add(new ChessMove(startPosition, endPosition, promotionPiece));
+                if(allyPiece != null && allyPiece.getTeamColor() == teamColor){
+                    Collection<ChessMove> validMoves = validMoves(allyPosition);
+                    for(ChessMove move: validMoves){
+                        ChessPosition startPosition = move.getStartPosition();
+                        ChessPosition endPosition = move.getEndPosition();
+                        ChessPiece.PieceType promotionPiece = move.getPromotionPiece();
+                        savingKingMoves.add(new ChessMove(startPosition, endPosition, promotionPiece));
                         }
                     }
-                }
+
             }
         }
         return savingKingMoves.isEmpty();

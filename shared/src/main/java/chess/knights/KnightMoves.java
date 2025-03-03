@@ -88,7 +88,8 @@ public class KnightMoves {
         return validMoves;
     }
 
-    public static void horseMove(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, ChessPosition newPosition) {
+    public static void horseMove(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece,
+                                 List<ChessMove> validMoves, ChessPosition newPosition) {
         ChessPiece anotherPiece = board.getPiece(newPosition);
         if(anotherPiece != null){
             if(selectedPiece.getTeamColor() != anotherPiece.getTeamColor()){

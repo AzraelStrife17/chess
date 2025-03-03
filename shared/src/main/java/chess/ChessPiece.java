@@ -30,7 +30,7 @@ public class ChessPiece implements Cloneable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o) {return true;};
 
         if (o == null || getClass() != o.getClass()) {
             return false;
@@ -98,20 +98,20 @@ public class ChessPiece implements Cloneable {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ChessPiece selected_piece = board.getPiece(myPosition);
+        ChessPiece selectedPiece = board.getPiece(myPosition);
         switch (pieceType) {
             case KING:
-                return KingMoves.kingMovesCalculator(board, myPosition, selected_piece);
+                return KingMoves.kingMovesCalculator(board, myPosition, selectedPiece);
             case QUEEN:
-                return QueenMoves.queenMovesCalculator(board, myPosition, selected_piece);
+                return QueenMoves.queenMovesCalculator(board, myPosition, selectedPiece);
             case BISHOP:
-                return BishopMoves.bishopMovesCalculator(board, myPosition, selected_piece);
+                return BishopMoves.bishopMovesCalculator(board, myPosition, selectedPiece);
             case KNIGHT:
-                return KnightMoves.knightMovesCalculator(board, myPosition, selected_piece);
+                return KnightMoves.knightMovesCalculator(board, myPosition, selectedPiece);
             case ROOK:
-                return RookMoves.rookMovesCalculator(board, myPosition, selected_piece);
+                return RookMoves.rookMovesCalculator(board, myPosition, selectedPiece);
             case PAWN:
-                return PawnMoves.pawnMovesCalculator(board, myPosition, selected_piece);
+                return PawnMoves.pawnMovesCalculator(board, myPosition, selectedPiece);
         }
 
         return new ArrayList<>();

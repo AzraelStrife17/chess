@@ -58,7 +58,8 @@ public class BishopMoves {
     }
 
 
-    private static boolean bishopMoves(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, int column, int row) {
+    private static boolean bishopMoves(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece,
+                                       List<ChessMove> validMoves, int column, int row) {
         return RookMoves.addMove(board, piecePosition, selectedPiece, validMoves, column, row);
     }
 }
