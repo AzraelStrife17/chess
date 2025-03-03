@@ -7,6 +7,8 @@ import model.GameData;
 import model.AuthData;
 import model.GameNameRecord;
 
+import java.util.Collection;
+
 public class GameService {
     private final AuthDAO authDataAccess;
     private final GameDAO gameDataAccess;
@@ -32,5 +34,15 @@ public class GameService {
         }
         return "no authToken";
     }
+
+    public Collection<GameData> listGames(String authToken){
+        AuthData authExist = authDataAccess.getAuth(authToken);
+        if(authExist != null) {
+            return gameDataAccess.listGames();
+        }
+        return null;
+    }
+
+
 
 }

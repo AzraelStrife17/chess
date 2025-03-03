@@ -24,7 +24,7 @@ public class Server {
         GameDAO gameData = new GameMemoryDAO();
 
         this.userService = new UserService(userData, authData);
-        this.clearService = new ClearService(userData, authData);
+        this.clearService = new ClearService(userData, authData, gameData);
         this.gameService = new GameService(authData, gameData);
     }
 
@@ -40,6 +40,7 @@ public class Server {
         Spark.delete("/session", this::logoutUser);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
+        Spark.get("/game", this::listGames);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -127,6 +128,14 @@ public class Server {
 
         res.status(401);
         return new  Gson().toJson(Map.of("message", "Error: Unauthorized"));
+    }
+
+    private Object listGames(Request req, Response res){
+        res.type("application/json");
+        String authToken = req.headers("authorization");
+        var list = gameService.listGames(authToken).toArray();
+        res.status(200);
+        return new Gson().toJson(Map.of("games", list));
     }
 
     private Object clearDatabase(Request req, Response res){
