@@ -69,5 +69,6 @@ public class GameMemoryDAO implements GameDAO {
 
     public void clearGames(){
         gameData.clear();
+        createdIDs.clear();
     }
 }
