@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.*;
 
 public class PawnMoves {
-    public static Collection<ChessMove> pawn_moves_calculator(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece){
+    public static Collection<ChessMove> pawnMovesCalculator(ChessBoard board, ChessPosition piecePosition, ChessPiece selectedPiece){
         List<ChessMove> validMoves = new ArrayList<>();
         int currentRow = piecePosition.getRow();
         int currentColumn = piecePosition.getColumn();
@@ -15,10 +15,10 @@ public class PawnMoves {
             // Initial Pawn Movement
             if (currentRow == 2){
                 for (int initialRow = currentRow + 1; initialRow < 5 ; initialRow++){
-                    ChessPosition new_position = new ChessPosition(initialRow, currentColumn);
-                    ChessPiece anotherPiece = board.getPiece(new_position);
+                    ChessPosition newPosition = new ChessPosition(initialRow, currentColumn);
+                    ChessPiece anotherPiece = board.getPiece(newPosition);
                     if (anotherPiece == null){
-                        validMoves.add(new ChessMove(piecePosition, new_position, null));
+                        validMoves.add(new ChessMove(piecePosition, newPosition, null));
                     }
                     else{break;}
                 }
@@ -60,9 +60,9 @@ public class PawnMoves {
                     enemyPositionWhite(board, piecePosition, selectedPiece, validMoves, row, columnL);
                 }
                 // attack up right
-                int column_r = currentColumn + 1;
-                if (column_r < 9) {
-                    enemyPositionWhite(board, piecePosition, selectedPiece, validMoves, row, column_r);
+                int columnR = currentColumn + 1;
+                if (columnR < 9) {
+                    enemyPositionWhite(board, piecePosition, selectedPiece, validMoves, row, columnR);
                 }
             }
 
@@ -84,55 +84,55 @@ public class PawnMoves {
                 //attack down left
                 int columnL = currentColumn - 1;
                 if (columnL > 0) {
-                    enemy_position_black(board, piecePosition, selectedPiece, validMoves, row, columnL);
+                    enemyPositionBlack(board, piecePosition, selectedPiece, validMoves, row, columnL);
                 }
 
                 // attack down right
                 int columnR = currentColumn + 1;
                 if (columnR < 9) {
-                    enemy_position_black(board, piecePosition, selectedPiece, validMoves, row, columnR);
+                    enemyPositionBlack(board, piecePosition, selectedPiece, validMoves, row, columnR);
                 }
             }
 
             // Basic Pawn Movement
             else {
                 int row = currentRow - 1;
-                ChessPosition new_position = new ChessPosition(row, currentColumn);
-                ChessPiece another_piece = board.getPiece(new_position);
-                if (another_piece == null) {
-                    blackPromotion(piecePosition, validMoves, row, new_position);
+                ChessPosition newPosition = new ChessPosition(row, currentColumn);
+                ChessPiece anotherPiece = board.getPiece(newPosition);
+                if (anotherPiece == null) {
+                    blackPromotion(piecePosition, validMoves, row, newPosition);
                 }
 
                 //attack down left
                 int columnL = currentColumn - 1;
                 if (columnL > 0) {
-                    enemy_position_black(board, piecePosition, selectedPiece, validMoves, row, columnL);
+                    enemyPositionBlack(board, piecePosition, selectedPiece, validMoves, row, columnL);
                 }
 
                 // attack down right
                 int columnR = currentColumn + 1;
                 if (columnR < 9) {
-                    enemy_position_black(board, piecePosition, selectedPiece, validMoves, row, columnR);
+                    enemyPositionBlack(board, piecePosition, selectedPiece, validMoves, row, columnR);
                 }
             }
         }
         return validMoves;
     }
 
-    private static void blackPromotion(ChessPosition piece_position, List<ChessMove> validMoves, int row, ChessPosition new_position) {
+    private static void blackPromotion(ChessPosition piece_position, List<ChessMove> validMoves, int row, ChessPosition newPosition) {
         if (row == 1){
-            promotionMoves(piece_position, validMoves, new_position);
+            promotionMoves(piece_position, validMoves, newPosition);
         }
         else {
-            validMoves.add(new ChessMove(piece_position, new_position, null));
+            validMoves.add(new ChessMove(piece_position, newPosition, null));
         }
     }
 
-    private static void promotionMoves(ChessPosition piece_position, List<ChessMove> validMoves, ChessPosition new_position) {
-        validMoves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.QUEEN));
-        validMoves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.BISHOP));
-        validMoves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.ROOK));
-        validMoves.add(new ChessMove(piece_position, new_position, ChessPiece.PieceType.KNIGHT));
+    private static void promotionMoves(ChessPosition piece_position, List<ChessMove> validMoves, ChessPosition newPosition) {
+        validMoves.add(new ChessMove(piece_position, newPosition, ChessPiece.PieceType.QUEEN));
+        validMoves.add(new ChessMove(piece_position, newPosition, ChessPiece.PieceType.BISHOP));
+        validMoves.add(new ChessMove(piece_position, newPosition, ChessPiece.PieceType.ROOK));
+        validMoves.add(new ChessMove(piece_position, newPosition, ChessPiece.PieceType.KNIGHT));
     }
 
     private static void whitePromotion(ChessPosition piecePosition, List<ChessMove> validMoves, int row, ChessPosition newPosition) {
@@ -152,12 +152,12 @@ public class PawnMoves {
             }
         }
     }
-    private static void enemy_position_black(ChessBoard Board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> valid_moves, int row, int column) {
+    private static void enemyPositionBlack(ChessBoard Board, ChessPosition piecePosition, ChessPiece selectedPiece, List<ChessMove> validMoves, int row, int column) {
         ChessPosition enemyPosition = new ChessPosition(row, column);
         ChessPiece enemy = Board.getPiece(enemyPosition);
         if (enemy != null) {
             if (selectedPiece.getTeamColor() != enemy.getTeamColor()) {
-                blackPromotion(piecePosition, valid_moves, row, enemyPosition);
+                blackPromotion(piecePosition, validMoves, row, enemyPosition);
             }
         }
     }
