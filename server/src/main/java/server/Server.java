@@ -5,9 +5,11 @@ import service.GameService;
 import service.UserService;
 import com.google.gson.Gson;
 import service.ClearService;
+import dataaccess.DatabaseManager;
 
 import spark.*;
 
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -30,6 +32,15 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        try {
+            DatabaseManager.createDatabase();
+            System.out.println("Database initialized successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Failed to initialize database.");
+        }
+
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clearDatabase);
