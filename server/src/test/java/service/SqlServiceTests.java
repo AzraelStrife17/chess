@@ -23,6 +23,29 @@ public class SqlServiceTests {
     }
 
     @Test
+    void registerUserSuccess() throws DataAccessException {
+        clearService.clearDatabase();
+        var user = new UserData("JAMES", "007", "BOND@gmail.com");
+        AuthData authData = userService.registerUser(user);
+
+        assertNotNull(authData.authToken());
+        assertEquals("JAMES", authData.username());
+        clearService.clearDatabase();
+    }
+    @Test
+    void registerUserAlreadyTaken() throws DataAccessException {
+        clearService.clearDatabase();
+        var user1 = new UserData("James", "007", "BOND@gmail.com");
+        userService.registerUser(user1);
+
+        var user2 = new UserData("James", "007", "BOND@gmail.com");
+        AuthData authData2 = userService.registerUser(user2);
+        assertNull(authData2);
+        clearService.clearDatabase();
+    }
+
+
+    @Test
     void createGameSuccessful() throws DataAccessException {
         clearService.clearDatabase();
         var user = new UserData("BumbleBee", "BEEEZ", "Camaro@gmail.com");
