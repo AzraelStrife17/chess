@@ -4,8 +4,6 @@ import chess.ChessGame.TeamColor;
 import model.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -108,6 +106,17 @@ public class SqlServiceTests {
         Integer gameID = gameService.createGame(gameName.gameName(), authData.authToken());
         clearService.clearDatabase();
         assertNotNull(gameID);
+    }
+
+    @Test
+    void createUnauthorizedTest() throws DataAccessException {
+        clearService.clearDatabase();
+        var user = new UserData("James", "007", "BOND@gmail.com");
+        userService.registerUser(user);
+        var gameName1 = new GameNameRecord("FirstName");
+        Integer gameID = gameService.createGame(gameName1.gameName(), "a");
+        clearService.clearDatabase();
+        assertNull(gameID);
     }
 
     @Test
