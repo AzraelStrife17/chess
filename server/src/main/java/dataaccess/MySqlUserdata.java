@@ -31,9 +31,21 @@ public class MySqlUserdata implements UserDAO {
         }
     }
 
-    @Override
-    public boolean getUser(LoginRecord loginInfo) {
-        return false;
+    public boolean getUser(LoginRecord loginInfo) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()){
+            var statement = "SELECT * FROM UserDataTable WHERE username = ?";
+            try (var ps = conn.prepareStatement(statement)){
+                ps.setString(1, loginInfo.username());
+                ResultSet rs = ps.executeQuery();
+                if(rs.next()){
+                    return true;
+                }
+                return false;
+            }
+        }
+        catch (SQLException | DataAccessException e) {
+            throw new DataAccessException("Failed to search for user");
+        }
     }
 
     @Override
