@@ -108,10 +108,10 @@ public class SqlGamedata implements GameDAO{
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                    else if (param instanceof ChessGame p) ps.setString(i + 1, new Gson().toJson(p));
-                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else ps.setString(i+1, null);
+                    if (param instanceof String p) {ps.setString(i + 1, p);}
+                    else if (param instanceof ChessGame p) {ps.setString(i + 1, new Gson().toJson(p));}
+                    else if (param instanceof Integer p) {ps.setInt(i + 1, p);}
+                    else {ps.setString(i+1, null);}
                 }
                 ps.executeUpdate();
 
