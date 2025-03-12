@@ -50,11 +50,11 @@ public class SqlGamedata implements GameDAO{
         }
     }
 
-    private boolean addPlayerToTeam(JoinGameRecord joinGameInfo, AuthData authData, String storedWhite, String storedBlack) throws DataAccessException {
-        if (joinGameInfo.playerColor() == ChessGame.TeamColor.BLACK) {
+    private boolean addPlayerToTeam(JoinGameRecord playerInfo, AuthData authData, String storedWhite, String storedBlack) throws DataAccessException {
+        if (playerInfo.playerColor() == ChessGame.TeamColor.BLACK) {
             if (storedBlack == null) {
                 var addBlackPlayerStatement = "UPDATE GameTable SET blackUsername = ? WHERE gameID = ?";
-                executeUpdate(addBlackPlayerStatement, authData.username(), joinGameInfo.gameID());
+                executeUpdate(addBlackPlayerStatement, authData.username(), playerInfo.gameID());
                 return true;
 
             }
@@ -62,7 +62,7 @@ public class SqlGamedata implements GameDAO{
         } else {
             if (storedWhite == null) {
                 var addWhitePlayerStatement = "UPDATE GameTable SET whiteUsername = ? WHERE gameID = ?";
-                executeUpdate(addWhitePlayerStatement, authData.username(), joinGameInfo.gameID());
+                executeUpdate(addWhitePlayerStatement, authData.username(), playerInfo.gameID());
                 return true;
 
             }
@@ -108,10 +108,10 @@ public class SqlGamedata implements GameDAO{
             try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                    else if (param instanceof ChessGame p) ps.setString(i + 1, new Gson().toJson(p));
-                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else ps.setString(i+1, null);
+                    if (param instanceof String p) {ps.setString(i + 1, p);}
+                    else if (param instanceof ChessGame p) {ps.setString(i + 1, new Gson().toJson(p));}
+                    else if (param instanceof Integer p) {ps.setInt(i + 1, p);}
+                    else {ps.setString(i+1, null);}
                 }
                 ps.executeUpdate();
 
