@@ -1,7 +1,6 @@
 package dataaccess;
 import model.AuthData;
-import model.UserData;
-
+import dataaccess.DatabaseUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -17,7 +16,7 @@ public class SqlAuthdata implements AuthDAO {
         AuthData newAuth = new AuthData(authToken, username);
         try (var conn = DatabaseManager.getConnection()) {
             var insertAuthStatement = "INSERT INTO AuthTable (authToken, username) VALUES (?, ?)";
-            executeUpdate(insertAuthStatement, authToken, username);
+            DatabaseUtil.executeUpdate(insertAuthStatement, authToken, username);
             return newAuth;
         }
         catch (SQLException | DataAccessException e) {
@@ -45,7 +44,7 @@ public class SqlAuthdata implements AuthDAO {
 
     public String deleteAuthToken(String authToken) throws DataAccessException {
         var statement = "DELETE FROM AuthTable WHERE authToken=?";
-        executeUpdate(statement, authToken);
+        DatabaseUtil.executeUpdate(statement, authToken);
         AuthData verifyDeletion = getAuth(authToken);
         if(verifyDeletion == null){
             return "";
@@ -56,26 +55,9 @@ public class SqlAuthdata implements AuthDAO {
     }
 
 
-    public void clearAuths() {
+    public void clearAuths() throws DataAccessException {
         var statement ="TRUNCATE AuthTable";
-        executeUpdate(statement);
-    }
-
-    private void executeUpdate(String statement, Object... params) {
-        try (var conn = DatabaseManager.getConnection()){
-            try (var ps = conn.prepareStatement(statement)){
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                }
-
-                ps.executeUpdate();
-
-            }
-
-        } catch (SQLException | DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+        DatabaseUtil.executeUpdate(statement);
     }
 
 

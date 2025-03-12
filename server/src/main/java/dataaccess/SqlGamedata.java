@@ -147,7 +147,7 @@ public class SqlGamedata implements GameDAO{
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("failed to create table in userdata");
+            throw new DataAccessException("failed to create table in GameTable");
         }
     }
 }

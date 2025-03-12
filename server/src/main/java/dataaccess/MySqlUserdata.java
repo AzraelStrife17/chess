@@ -2,10 +2,10 @@ package dataaccess;
 import model.UserData;
 import model.LoginRecord;
 import org.mindrot.jbcrypt.BCrypt;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Objects;
+import static dataaccess.DatabaseUtil.executeUpdate;
+
 
 public class MySqlUserdata implements UserDAO {
 
@@ -61,21 +61,6 @@ public class MySqlUserdata implements UserDAO {
         executeUpdate(statement);
     }
 
-    private void executeUpdate(String statement, Object... params) throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()){
-            try (var ps = conn.prepareStatement(statement)){
-                for (var i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                }
-
-                ps.executeUpdate();
-            }
-
-        } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }
-    }
 
     private final String[] createStatements = {
             """
