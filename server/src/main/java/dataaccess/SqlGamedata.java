@@ -35,7 +35,7 @@ public class SqlGamedata implements GameDAO{
                 if(rs.next()) {
                     String storedWhite = rs.getString("whiteUsername");
                     String storedBlack = rs.getString("blackUsername");
-                    if (addPlayerTeam(joinGameInfo, authData, storedWhite, storedBlack)) {
+                    if (addPlayerToTeam(joinGameInfo, authData, storedWhite, storedBlack)) {
                         return "success";
                     }
                     else{
@@ -50,7 +50,7 @@ public class SqlGamedata implements GameDAO{
         }
     }
 
-    private boolean addPlayerTeam(JoinGameRecord playerInfo, AuthData authData, String storedWhite, String storedBlack) throws DataAccessException {
+    private boolean addPlayerToTeam(JoinGameRecord playerInfo, AuthData authData, String storedWhite, String storedBlack) throws DataAccessException {
         if (playerInfo.playerColor() == ChessGame.TeamColor.BLACK) {
             if (storedBlack == null) {
                 var addBlackPlayerStatement = "UPDATE GameTable SET blackUsername = ? WHERE gameID = ?";
