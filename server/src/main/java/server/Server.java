@@ -18,13 +18,17 @@ public class Server {
     private final ClearService clearService;
 
     public Server() {
-        UserDAO userData = new UserMemoryDAO();
-        AuthDAO authData = new AuthMemoryDAO();
-        GameDAO gameData = new GameMemoryDAO();
+        try {
+            UserDAO userData = new MySqlUserdata();  // This can throw DataAccessException
+            AuthDAO authData = new SqlAuthdata();  // Same for AuthDAO
+            GameDAO gameData = new GameMemoryDAO();
 
-        this.userService = new UserService(userData, authData);
-        this.clearService = new ClearService(userData, authData, gameData);
-        this.gameService = new GameService(authData, gameData);
+            this.userService = new UserService(userData, authData);
+            this.clearService = new ClearService(userData, authData, gameData);
+            this.gameService = new GameService(authData, gameData);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Error initializing Server: " + e.getMessage(), e);
+        }
     }
 
     public int run(int desiredPort) {
@@ -61,7 +65,7 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object registerUser(Request req, Response res){
+    private Object registerUser(Request req, Response res) throws DataAccessException {
         var user = new Gson().fromJson(req.body(), UserData.class);
         if ( user.username() == null || user.username().isBlank()
              || user.password() == null || user.password().isBlank()

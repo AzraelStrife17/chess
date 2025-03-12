@@ -1,10 +1,5 @@
 package service;
-import dataaccess.AuthDAO;
-import dataaccess.AuthMemoryDAO;
-import dataaccess.UserDAO;
-import dataaccess.UserMemoryDAO;
-import dataaccess.GameDAO;
-import dataaccess.GameMemoryDAO;
+import dataaccess.*;
 import chess.ChessGame.TeamColor;
 import model.*;
 import org.junit.jupiter.api.Test;
@@ -15,26 +10,29 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceTests {
-    UserDAO userData = new UserMemoryDAO();
-    AuthDAO authData = new AuthMemoryDAO();
+    UserDAO userData = new MySqlUserdata();
+    AuthDAO authData = new SqlAuthdata();
     GameDAO gameData = new GameMemoryDAO();
 
     private final UserService userService = new UserService(userData, authData);
     private final GameService gameService = new GameService(authData, gameData);
     private final ClearService clearService = new ClearService(userData, authData, gameData);
 
+    public ServiceTests() throws DataAccessException {
+    }
+
 
     @Test
-    void registerUserSuccess() {
-        var user = new UserData("James", "007", "BOND@gmail.com");
+    void registerUserSuccess() throws DataAccessException {
+        var user = new UserData("JAMES", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
 
         assertNotNull(authData.authToken());
-        assertEquals("James", authData.username());
+        assertEquals("JAMES", authData.username());
     }
 
     @Test
-    void registerUserAlreadyTaken(){
+    void registerUserAlreadyTaken() throws DataAccessException {
         var user1 = new UserData("James", "007", "BOND@gmail.com");
         userService.registerUser(user1);
 
@@ -44,7 +42,7 @@ public class ServiceTests {
     }
 
     @Test
-    void loginUserSuccess(){
+    void loginUserSuccess() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         userData.createUser(user);
 
@@ -55,7 +53,7 @@ public class ServiceTests {
     }
 
     @Test
-    void loginUserFailedPassword(){
+    void loginUserFailedPassword() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         userData.createUser(user);
 
@@ -65,7 +63,7 @@ public class ServiceTests {
     }
 
     @Test
-    void loginUserFailedUsername(){
+    void loginUserFailedUsername() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         userData.createUser(user);
 
@@ -75,7 +73,7 @@ public class ServiceTests {
     }
 
     @Test
-    void logoutUserSuccess(){
+    void logoutUserSuccess() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         userData.createUser(user);
 
@@ -89,7 +87,7 @@ public class ServiceTests {
     }
 
     @Test
-    void logoutUserFail(){
+    void logoutUserFail() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         userData.createUser(user);
 
@@ -103,7 +101,7 @@ public class ServiceTests {
     }
 
     @Test
-    void createGameSuccessful(){
+    void createGameSuccessful() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
         var gameName = new GameNameRecord("TestName");
@@ -112,7 +110,7 @@ public class ServiceTests {
     }
 
     @Test
-    void create2GameSuccessful(){
+    void create2GameSuccessful() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
 
@@ -125,7 +123,7 @@ public class ServiceTests {
     }
 
     @Test
-    void createUnauthorizedTest(){
+    void createUnauthorizedTest() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         userService.registerUser(user);
         var gameName1 = new GameNameRecord("FirstName");
@@ -134,7 +132,7 @@ public class ServiceTests {
     }
 
     @Test
-    void joinBlackTestSuccess(){
+    void joinBlackTestSuccess() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
 
@@ -146,7 +144,7 @@ public class ServiceTests {
     }
 
     @Test
-    void joinWhiteTestSuccess(){
+    void joinWhiteTestSuccess() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
 
@@ -158,7 +156,7 @@ public class ServiceTests {
     }
 
     @Test
-    void joinWhiteAndBlackSuccess(){
+    void joinWhiteAndBlackSuccess() throws DataAccessException {
         var user1 = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData1 = userService.registerUser(user1);
 
@@ -179,7 +177,7 @@ public class ServiceTests {
     }
 
     @Test
-    void joinBlackWithBlackTaken(){
+    void joinBlackWithBlackTaken() throws DataAccessException {
         var user1 = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData1 = userService.registerUser(user1);
 
@@ -200,7 +198,7 @@ public class ServiceTests {
     }
 
     @Test
-    void getListSuccess(){
+    void getListSuccess() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
 
@@ -213,7 +211,7 @@ public class ServiceTests {
     }
 
     @Test
-    void getListUnauthorizedAuth(){
+    void getListUnauthorizedAuth() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         userService.registerUser(user);
 
@@ -224,7 +222,7 @@ public class ServiceTests {
     }
 
     @Test
-    void clearTestSuccess(){
+    void clearTestSuccess() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData registerAuthData = userService.registerUser(user);
 

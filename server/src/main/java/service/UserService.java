@@ -1,8 +1,8 @@
 package service;
+import dataaccess.DataAccessException;
 import model.UserData;
 import model.AuthData;
 import model.LoginRecord;
-import java.util.Collection;
 import dataaccess.UserDAO;
 import dataaccess.AuthDAO;
 
@@ -17,7 +17,7 @@ public class UserService {
     }
 
 
-    public AuthData registerUser(UserData user){
+    public AuthData registerUser(UserData user) throws DataAccessException {
         UserData userData = userDataAccess.createUser(user);
         if(userData == null){
             return null;
