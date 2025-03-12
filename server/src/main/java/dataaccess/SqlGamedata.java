@@ -5,9 +5,12 @@ import model.AuthData;
 import model.GameData;
 import model.JoinGameRecord;
 import chess.ChessGame;
+
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
@@ -18,17 +21,46 @@ public class SqlGamedata implements GameDAO{
     }
 
     public Integer createGame(String gameName) throws DataAccessException {
-        var statement = "INSERT INTO GameTable (whiteUsername, blackUsername, gameName, json) VALUES (?, ?, ?, ?)";
+        var statement = "INSERT INTO GameTable (whiteUsername, blackUsername, gameName, ChessGame) VALUES (?, ?, ?, ?)";
         ChessGame chessGame = new ChessGame();
-        var json = new Gson().toJson(chessGame);
-        var gameID = executeUpdate(statement, null, null, gameName, json);
-
+        var gameID = executeUpdate(statement, null, null, gameName, chessGame);
+        return gameID;
     }
 
 
-    @Override
-    public String joinGame(JoinGameRecord joinGameInfo, AuthData authData) {
-        return "";
+    public String joinGame(JoinGameRecord joinGameInfo, AuthData authData) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM GameTable WHERE gameID = ?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, joinGameInfo.gameID());
+                ResultSet rs = ps.executeQuery();
+                if(rs.next()) {
+                    String storedWhite = rs.getString("whiteUsername");
+                    String storedBlack = rs.getString("blackUsername");
+                    if (joinGameInfo.playerColor() == ChessGame.TeamColor.BLACK) {
+                        if (storedBlack == null) {
+                            var addBlackPlayerStatement = "UPDATE GameTable SET blackUsername = ? WHERE gameID = ?";
+                            executeUpdate(addBlackPlayerStatement, authData.username());
+                            return "success";
+
+                        }
+                        return "team color taken";
+                    } else {
+                        if (storedWhite == null) {
+                            var addWhitePlayerStatement = "UPDATE GameTable SET whiteUsername = ? WHERE gameID = ?";
+                            executeUpdate(addWhitePlayerStatement, authData.username());
+                            return "success";
+
+                        }
+                        return "team color taken";
+                    }
+                }
+                return "gameID not found";
+            }
+        }
+        catch (SQLException e) {
+            throw new DataAccessException("Failed to join game");
+        }
     }
 
     @Override
@@ -51,6 +83,7 @@ public class SqlGamedata implements GameDAO{
                         String json = new Gson().toJson(p);
                         ps.setString(i + 1, json);
                     }
+                    else ps.setString(i+1, null);
                 }
                 int rowsAffected = ps.executeUpdate();
                 if(rowsAffected == 0){

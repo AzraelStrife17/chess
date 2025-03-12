@@ -9,7 +9,7 @@ import java.util.Collection;
 
 public interface GameDAO {
     Integer createGame(String gameName) throws DataAccessException;
-    String joinGame(JoinGameRecord joinGameInfo, AuthData authData);
+    String joinGame(JoinGameRecord joinGameInfo, AuthData authData) throws DataAccessException;
     Collection<GameData> listGames();
     void clearGames();
 
