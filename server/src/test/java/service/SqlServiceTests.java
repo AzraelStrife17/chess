@@ -5,6 +5,9 @@ import model.*;
 import org.junit.jupiter.api.Test;
 
 
+import java.util.Collection;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -162,6 +165,34 @@ public class SqlServiceTests {
 
         assertEquals("success", successfulJoin1);
         assertEquals("team color taken", failJoin);
+    }
+
+    @Test
+    void getListSuccess() throws DataAccessException {
+        clearService.clearDatabase();
+        var user = new UserData("James", "007", "BOND@gmail.com");
+        AuthData authData = userService.registerUser(user);
+
+        gameService.createGame("GameTestName", authData.authToken());
+
+        Collection<GameData> gameList = gameService.listGames(authData.authToken());
+        clearService.clearDatabase();
+
+        assertEquals(1, gameList.size());
+
+    }
+
+    @Test
+    void getListUnauthorizedAuth() throws DataAccessException {
+        clearService.clearDatabase();
+        var user = new UserData("James", "007", "BOND@gmail.com");
+        userService.registerUser(user);
+
+        Collection<GameData> gameList = gameService.listGames("unauthorized");
+        Collection<GameData> expectedList = List.of(new GameData(0, null, null, null, null));
+
+        assertEquals(expectedList, gameList);
+        clearService.clearDatabase();
     }
 
 }
