@@ -70,6 +70,36 @@ public class SqlServiceTests {
     }
 
     @Test
+    void logoutUserSuccess() throws DataAccessException {
+        clearService.clearDatabase();
+        var user = new UserData("James", "007", "BOND@gmail.com");
+        userData.createUser(user);
+
+        var userLogin = new LoginRecord("James", "007");
+        AuthData authData = userService.loginUser(userLogin);
+
+        String authToken = userService.logoutUser(authData.authToken());
+
+        assertEquals("", authToken);
+        clearService.clearDatabase();
+    }
+
+    @Test
+    void logoutUserFail() throws DataAccessException {
+        clearService.clearDatabase();
+        var user = new UserData("James", "007", "BOND@gmail.com");
+        userData.createUser(user);
+
+        var userLogin = new LoginRecord("James", "007");
+        userService.loginUser(userLogin);
+
+        String authToken = userService.logoutUser("cf6f6db8-38cb-446a-9589-8049b0154009");
+
+        assertNotEquals("", authToken);
+        clearService.clearDatabase();
+    }
+
+    @Test
     void createGameSuccessful() throws DataAccessException {
         clearService.clearDatabase();
         var user = new UserData("BumbleBee", "BEEEZ", "Camaro@gmail.com");
