@@ -9,6 +9,7 @@ import dataaccess.DatabaseManager;
 
 import spark.*;
 
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -93,7 +94,7 @@ public class Server {
         return new Gson().toJson(authData);
     }
 
-    private Object logoutUser(Request req, Response res) throws DataAccessException {
+    private Object logoutUser(Request req, Response res) throws DataAccessException, SQLException {
         String authToken = req.headers("authorization");
         String deletedAuthToken = userService.logoutUser(authToken);
         if (!Objects.equals(deletedAuthToken, "")){
@@ -154,7 +155,7 @@ public class Server {
         return new Gson().toJson(Map.of("games", list));
     }
 
-    private Object clearDatabase(Request req, Response res) throws DataAccessException {
+    private Object clearDatabase(Request req, Response res) throws DataAccessException, SQLException {
         clearService.clearDatabase();
         res.status(200);
         return "{}";

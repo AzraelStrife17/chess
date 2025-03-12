@@ -4,6 +4,7 @@ import chess.ChessGame.TeamColor;
 import model.*;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.*;
 
@@ -18,7 +19,7 @@ public class ServiceTests {
     private final GameService gameService = new GameService(authData, gameData);
     private final ClearService clearService = new ClearService(userData, authData, gameData);
 
-    public ServiceTests() throws DataAccessException {
+    public ServiceTests() {
     }
 
 
@@ -73,7 +74,7 @@ public class ServiceTests {
     }
 
     @Test
-    void logoutUserSuccess() throws DataAccessException {
+    void logoutUserSuccess() throws DataAccessException, SQLException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         userData.createUser(user);
 
@@ -87,7 +88,7 @@ public class ServiceTests {
     }
 
     @Test
-    void logoutUserFail() throws DataAccessException {
+    void logoutUserFail() throws DataAccessException, SQLException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         userData.createUser(user);
 
@@ -222,7 +223,7 @@ public class ServiceTests {
     }
 
     @Test
-    void clearTestSuccess() throws DataAccessException {
+    void clearTestSuccess() throws DataAccessException, SQLException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData registerAuthData = userService.registerUser(user);
 
@@ -245,7 +246,7 @@ public class ServiceTests {
     }
 
     @Test
-    void clearAllWhenEmpty() throws DataAccessException {
+    void clearAllWhenEmpty() throws DataAccessException, SQLException {
 
         clearService.clearDatabase();
 

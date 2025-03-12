@@ -6,6 +6,8 @@ import model.LoginRecord;
 import dataaccess.UserDAO;
 import dataaccess.AuthDAO;
 
+import java.sql.SQLException;
+
 public class UserService {
 
     private final UserDAO userDataAccess;
@@ -36,7 +38,7 @@ public class UserService {
          }
     }
 
-    public String logoutUser(String authToken) throws DataAccessException {
+    public String logoutUser(String authToken) throws DataAccessException, SQLException {
         AuthData authExist = authDataAccess.getAuth(authToken);
         if(authExist != null){
             return authDataAccess.deleteAuthToken(authToken);

@@ -54,7 +54,7 @@ public class MySqlUserdata implements UserDAO {
     }
 
 
-    public void clearUsers() throws DataAccessException {
+    public void clearUsers() throws DataAccessException, SQLException {
         var statement = "TRUNCATE UserDataTable";
         executeUpdate(statement);
     }

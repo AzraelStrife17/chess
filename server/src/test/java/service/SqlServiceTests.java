@@ -5,6 +5,7 @@ import model.*;
 import org.junit.jupiter.api.Test;
 
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void registerUserSuccess() throws DataAccessException {
+    void registerUserSuccess() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user = new UserData("JAMES", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
@@ -34,7 +35,7 @@ public class SqlServiceTests {
         clearService.clearDatabase();
     }
     @Test
-    void registerUserAlreadyTaken() throws DataAccessException {
+    void registerUserAlreadyTaken() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user1 = new UserData("James", "007", "BOND@gmail.com");
         userService.registerUser(user1);
@@ -46,7 +47,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void loginUserSuccess() throws DataAccessException {
+    void loginUserSuccess() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user = new UserData("James", "007", "BOND@gmail.com");
         userData.createUser(user);
@@ -59,7 +60,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void loginUserFailedPassword() throws DataAccessException {
+    void loginUserFailedPassword() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user = new UserData("James", "007", "BOND@gmail.com");
         userData.createUser(user);
@@ -71,7 +72,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void logoutUserSuccess() throws DataAccessException {
+    void logoutUserSuccess() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user = new UserData("James", "007", "BOND@gmail.com");
         userData.createUser(user);
@@ -86,7 +87,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void logoutUserFail() throws DataAccessException {
+    void logoutUserFail() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user = new UserData("James", "007", "BOND@gmail.com");
         userData.createUser(user);
@@ -101,7 +102,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void createGameSuccessful() throws DataAccessException {
+    void createGameSuccessful() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user = new UserData("BumbleBee", "BEEEZ", "Camaro@gmail.com");
         AuthData authData = userService.registerUser(user);
@@ -112,7 +113,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void createUnauthorizedTest() throws DataAccessException {
+    void createUnauthorizedTest() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user = new UserData("James", "007", "BOND@gmail.com");
         userService.registerUser(user);
@@ -123,7 +124,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void joinWhiteBlackTestSuccess() throws DataAccessException {
+    void joinWhiteBlackTestSuccess() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user = new UserData("Megatron", "cyber", "megatronus@gmail.com");
         AuthData authData = userService.registerUser(user);
@@ -145,7 +146,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void joinBlackWithBlackTaken() throws DataAccessException {
+    void joinBlackWithBlackTaken() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user1 = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData1 = userService.registerUser(user1);
@@ -168,7 +169,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void getListSuccess() throws DataAccessException {
+    void getListSuccess() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
@@ -183,7 +184,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void getListUnauthorizedAuth() throws DataAccessException {
+    void getListUnauthorizedAuth() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user = new UserData("James", "007", "BOND@gmail.com");
         userService.registerUser(user);
@@ -196,7 +197,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void clearTestSuccess() throws DataAccessException {
+    void clearTestSuccess() throws DataAccessException, SQLException {
         clearService.clearDatabase();
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData registerAuthData = userService.registerUser(user);
@@ -220,7 +221,7 @@ public class SqlServiceTests {
     }
 
     @Test
-    void clearAllWhenEmpty() throws DataAccessException {
+    void clearAllWhenEmpty() throws DataAccessException, SQLException {
 
         clearService.clearDatabase();
 

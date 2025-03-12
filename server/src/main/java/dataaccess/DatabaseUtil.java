@@ -11,9 +11,10 @@ public class DatabaseUtil {
                     if (param instanceof String p) {
                         ps.setString(i + 1, p);
                     }
-
-                    ps.executeUpdate();
                 }
+
+                ps.executeUpdate();
+
 
             } catch (SQLException e) {
                 throw new DataAccessException(e.getMessage());

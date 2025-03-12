@@ -41,7 +41,7 @@ public class SqlAuthdata implements AuthDAO {
         }
     }
 
-    public String deleteAuthToken(String authToken) throws DataAccessException {
+    public String deleteAuthToken(String authToken) throws DataAccessException, SQLException {
         var statement = "DELETE FROM AuthTable WHERE authToken=?";
         DatabaseUtil.executeUpdate(statement, authToken);
         AuthData verifyDeletion = getAuth(authToken);
@@ -54,7 +54,7 @@ public class SqlAuthdata implements AuthDAO {
     }
 
 
-    public void clearAuths() throws DataAccessException {
+    public void clearAuths() throws DataAccessException, SQLException {
         var statement ="TRUNCATE AuthTable";
         DatabaseUtil.executeUpdate(statement);
     }

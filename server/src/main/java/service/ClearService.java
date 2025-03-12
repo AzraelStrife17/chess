@@ -4,6 +4,8 @@ import dataaccess.UserDAO;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 
+import java.sql.SQLException;
+
 public class ClearService {
     private final UserDAO userDataAccess;
     private final AuthDAO authDataAccess;
@@ -15,7 +17,7 @@ public class ClearService {
         this.authDataAccess = authDataAccess;
     }
 
-    public void clearDatabase() throws DataAccessException {
+    public void clearDatabase() throws DataAccessException, SQLException {
         userDataAccess.clearUsers();
         authDataAccess.clearAuths();
         gameDataAccess.clearGames();
