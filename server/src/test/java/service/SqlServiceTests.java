@@ -24,6 +24,7 @@ public class SqlServiceTests {
 
     @Test
     void createGameSuccessful() throws DataAccessException {
+        clearService.clearDatabase();
         var user = new UserData("BumbleBee", "BEEEZ", "Camaro@gmail.com");
         AuthData authData = userService.registerUser(user);
         var gameName = new GameNameRecord("TestName");
@@ -33,8 +34,9 @@ public class SqlServiceTests {
     }
 
     @Test
-    void joinBlackTestSuccess() throws DataAccessException {
-        var user = new UserData("Megatron3", "cyber", "megatronus@gmail.com");
+    void joinWhiteBlackTestSuccess() throws DataAccessException {
+        clearService.clearDatabase();
+        var user = new UserData("Megatron", "cyber", "megatronus@gmail.com");
         AuthData authData = userService.registerUser(user);
 
         Integer gameID = gameService.createGame("GameTestName", authData.authToken());
@@ -42,16 +44,15 @@ public class SqlServiceTests {
         var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID);
         String successfulJoin = gameService.joinGame(joinGameInfo, authData.authToken());
         assertEquals("success", successfulJoin);
+
+        var user2 = new UserData("OptimusPrime", "cyber", "megatronus@gmail.com");
+        AuthData authData2 = userService.registerUser(user2);
+
+
+        var joinGameInfo2 = new JoinGameRecord(TeamColor.WHITE,gameID);
+        String successfulJoin2 = gameService.joinGame(joinGameInfo2, authData2.authToken());
+        assertEquals("success", successfulJoin2);
+        clearService.clearDatabase();
     }
 
-    @Test
-    void joinWhiteTestSuccess() throws DataAccessException {
-        var user = new UserData("OptimusPrime2", "cyber", "megatronus@gmail.com");
-        AuthData authData = userService.registerUser(user);
-
-
-        var joinGameInfo = new JoinGameRecord(TeamColor.WHITE, 8);
-        String successfulJoin = gameService.joinGame(joinGameInfo, authData.authToken());
-        assertEquals("success", successfulJoin);
-    }
 }
