@@ -141,4 +141,27 @@ public class SqlServiceTests {
         clearService.clearDatabase();
     }
 
+    @Test
+    void joinBlackWithBlackTaken() throws DataAccessException {
+        clearService.clearDatabase();
+        var user1 = new UserData("James", "007", "BOND@gmail.com");
+        AuthData authData1 = userService.registerUser(user1);
+
+        Integer gameID = gameService.createGame("GameTestName", authData1.authToken());
+
+        var joinGameInfoBlack = new JoinGameRecord(TeamColor.BLACK, gameID);
+        String successfulJoin1 = gameService.joinGame(joinGameInfoBlack, authData1.authToken());
+
+        var user2 = new UserData("Bond", "007", "JAMES@gmail.com");
+        AuthData authData2 = userService.registerUser(user2);
+
+
+        var joinGameInfo2 = new JoinGameRecord(TeamColor.BLACK, gameID);
+        String failJoin = gameService.joinGame(joinGameInfo2, authData2.authToken());
+        clearService.clearDatabase();
+
+        assertEquals("success", successfulJoin1);
+        assertEquals("team color taken", failJoin);
+    }
+
 }
