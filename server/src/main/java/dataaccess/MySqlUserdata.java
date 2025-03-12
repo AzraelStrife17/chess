@@ -43,9 +43,7 @@ public class MySqlUserdata implements UserDAO {
                 ResultSet rs = ps.executeQuery();
                 if(rs.next()){
                     String storedHashPassword = rs.getString("password");
-                    if (BCrypt.checkpw(loginInfo.password(), storedHashPassword)){
-                        return true;
-                    }
+                    return BCrypt.checkpw(loginInfo.password(), storedHashPassword);
                 }
                 return false;
             }

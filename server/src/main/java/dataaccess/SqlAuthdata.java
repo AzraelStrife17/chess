@@ -1,6 +1,5 @@
 package dataaccess;
 import model.AuthData;
-import dataaccess.DatabaseUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;

@@ -10,8 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
@@ -24,8 +22,7 @@ public class SqlGamedata implements GameDAO{
     public Integer createGame(String gameName) throws DataAccessException {
         var statement = "INSERT INTO GameTable (whiteUsername, blackUsername, gameName, ChessGame) VALUES (?, ?, ?, ?)";
         ChessGame chessGame = new ChessGame();
-        var gameID = executeUpdate(statement, null, null, gameName, chessGame);
-        return gameID;
+        return executeUpdate(statement, null, null, gameName, chessGame);
     }
 
 
@@ -38,22 +35,11 @@ public class SqlGamedata implements GameDAO{
                 if(rs.next()) {
                     String storedWhite = rs.getString("whiteUsername");
                     String storedBlack = rs.getString("blackUsername");
-                    if (joinGameInfo.playerColor() == ChessGame.TeamColor.BLACK) {
-                        if (storedBlack == null) {
-                            var addBlackPlayerStatement = "UPDATE GameTable SET blackUsername = ? WHERE gameID = ?";
-                            executeUpdate(addBlackPlayerStatement, authData.username(), joinGameInfo.gameID());
-                            return "success";
-
-                        }
-                        return "team color taken";
-                    } else {
-                        if (storedWhite == null) {
-                            var addWhitePlayerStatement = "UPDATE GameTable SET whiteUsername = ? WHERE gameID = ?";
-                            executeUpdate(addWhitePlayerStatement, authData.username(), joinGameInfo.gameID());
-                            return "success";
-
-                        }
-                        return "team color taken";
+                    if (addPlayerToTeam(joinGameInfo, authData, storedWhite, storedBlack)) {
+                        return "success";
+                    }
+                    else{
+                        return "false";
                     }
                 }
                 return "gameID not found";
@@ -61,6 +47,26 @@ public class SqlGamedata implements GameDAO{
         }
         catch (SQLException e) {
             throw new DataAccessException("Failed to join game");
+        }
+    }
+
+    private boolean addPlayerToTeam(JoinGameRecord joinGameInfo, AuthData authData, String storedWhite, String storedBlack) throws DataAccessException {
+        if (joinGameInfo.playerColor() == ChessGame.TeamColor.BLACK) {
+            if (storedBlack == null) {
+                var addBlackPlayerStatement = "UPDATE GameTable SET blackUsername = ? WHERE gameID = ?";
+                executeUpdate(addBlackPlayerStatement, authData.username(), joinGameInfo.gameID());
+                return true;
+
+            }
+            return false;
+        } else {
+            if (storedWhite == null) {
+                var addWhitePlayerStatement = "UPDATE GameTable SET whiteUsername = ? WHERE gameID = ?";
+                executeUpdate(addWhitePlayerStatement, authData.username(), joinGameInfo.gameID());
+                return true;
+
+            }
+            return false;
         }
     }
 
