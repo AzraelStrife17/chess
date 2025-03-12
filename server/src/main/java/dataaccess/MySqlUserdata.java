@@ -55,23 +55,21 @@ public class MySqlUserdata implements UserDAO {
         }
     }
 
-    @Override
-    public void clearUsers() {
 
+    public void clearUsers() throws DataAccessException {
+        var statement = "TRUNCATE UserDataTable";
+        executeUpdate(statement);
     }
 
-    private void executeUpdate(String insertUserStatement, String username, String password, String email) throws DataAccessException {
+    private void executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
-            try (var ps = conn.prepareStatement(insertUserStatement)){
-                ps.setString(1, username);
-                ps.setString(2, password);
-                ps.setString(3, email);
-
-                int rowsAffected = ps.executeUpdate();
-                if(rowsAffected == 0){
-                    throw new DataAccessException("failed to update users");
-
+            try (var ps = conn.prepareStatement(statement)){
+                for (var i = 0; i < params.length; i++) {
+                    var param = params[i];
+                    if (param instanceof String p) ps.setString(i + 1, p);
                 }
+
+                ps.executeUpdate();
             }
 
         } catch (SQLException e) {

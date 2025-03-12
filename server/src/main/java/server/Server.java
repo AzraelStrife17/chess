@@ -154,7 +154,7 @@ public class Server {
         return new Gson().toJson(Map.of("games", list));
     }
 
-    private Object clearDatabase(Request req, Response res){
+    private Object clearDatabase(Request req, Response res) throws DataAccessException {
         clearService.clearDatabase();
         res.status(200);
         return "{}";

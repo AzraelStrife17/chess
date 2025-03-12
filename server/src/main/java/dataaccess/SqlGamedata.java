@@ -92,9 +92,9 @@ public class SqlGamedata implements GameDAO{
         return new GameData(gameID, whiteUser, blackUser, gameName, game);
     }
 
-    @Override
-    public void clearGames() {
-
+    public void clearGames() throws DataAccessException {
+        var statement = "TRUNCATE GameTable";
+        executeUpdate(statement);
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
@@ -110,10 +110,8 @@ public class SqlGamedata implements GameDAO{
                     else if (param instanceof Integer p) ps.setInt(i + 1, p);
                     else ps.setString(i+1, null);
                 }
-                int rowsAffected = ps.executeUpdate();
-                if(rowsAffected == 0){
-                    throw new DataAccessException("failed to update users");
-                }
+                ps.executeUpdate();
+
                 var rs = ps.getGeneratedKeys();
                 if (rs.next()) {
                     return rs.getInt(1);

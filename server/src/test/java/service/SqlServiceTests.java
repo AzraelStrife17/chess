@@ -24,10 +24,11 @@ public class SqlServiceTests {
 
     @Test
     void createGameSuccessful() throws DataAccessException {
-        var user = new UserData("BumbleBee5", "BEEEZ", "Camaro@gmail.com");
+        var user = new UserData("BumbleBee", "BEEEZ", "Camaro@gmail.com");
         AuthData authData = userService.registerUser(user);
         var gameName = new GameNameRecord("TestName");
         Integer gameID = gameService.createGame(gameName.gameName(), authData.authToken());
+        clearService.clearDatabase();
         assertNotNull(gameID);
     }
 

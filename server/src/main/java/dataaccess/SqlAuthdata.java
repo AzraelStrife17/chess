@@ -55,6 +55,12 @@ public class SqlAuthdata implements AuthDAO {
         }
     }
 
+
+    public void clearAuths() {
+        var statement ="TRUNCATE AuthTable";
+        executeUpdate(statement);
+    }
+
     private void executeUpdate(String statement, Object... params) {
         try (var conn = DatabaseManager.getConnection()){
             try (var ps = conn.prepareStatement(statement)){
@@ -63,11 +69,8 @@ public class SqlAuthdata implements AuthDAO {
                     if (param instanceof String p) ps.setString(i + 1, p);
                 }
 
-                int rowsAffected = ps.executeUpdate();
-                if(rowsAffected == 0){
-                    throw new DataAccessException("failed to update users");
+                ps.executeUpdate();
 
-                }
             }
 
         } catch (SQLException | DataAccessException e) {
@@ -75,11 +78,6 @@ public class SqlAuthdata implements AuthDAO {
         }
     }
 
-
-    @Override
-    public void clearAuths() {
-
-    }
 
     private final String[] createStatements = {
             """
