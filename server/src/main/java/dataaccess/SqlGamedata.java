@@ -8,6 +8,7 @@ import chess.ChessGame;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -63,9 +64,32 @@ public class SqlGamedata implements GameDAO{
         }
     }
 
-    @Override
-    public Collection<GameData> listGames() {
-        return List.of();
+    public Collection<GameData> listGames() throws DataAccessException {
+        var result = new ArrayList<GameData>();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName, ChessGame FROM GameTable";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        result.add(readGameTable(rs));
+                    }
+                }
+            }
+        }
+        catch (SQLException e) {
+            throw new DataAccessException("failed to retrieve list");
+        }
+        return result;
+    }
+
+    private GameData readGameTable(ResultSet rs) throws SQLException {
+        var gameID = rs.getInt("gameID");
+        var whiteUser = rs.getString("whiteUsername");
+        var blackUser = rs.getString("blackUsername");
+        var gameName = rs.getString("gameName");
+        var chessGame = rs.getString("ChessGame");
+        ChessGame game = new Gson().fromJson(chessGame, ChessGame.class);
+        return new GameData(gameID, whiteUser, blackUser, gameName, game);
     }
 
     @Override
