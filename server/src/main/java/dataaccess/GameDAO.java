@@ -8,7 +8,7 @@ import model.JoinGameRecord;
 import java.util.Collection;
 
 public interface GameDAO {
-    Integer createGame(String gameName);
+    Integer createGame(String gameName) throws DataAccessException;
     String joinGame(JoinGameRecord joinGameInfo, AuthData authData);
     Collection<GameData> listGames();
     void clearGames();

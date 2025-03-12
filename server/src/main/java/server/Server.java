@@ -21,7 +21,7 @@ public class Server {
         try {
             UserDAO userData = new MySqlUserdata();  // This can throw DataAccessException
             AuthDAO authData = new SqlAuthdata();  // Same for AuthDAO
-            GameDAO gameData = new GameMemoryDAO();
+            GameDAO gameData = new SqlGamedata();
 
             this.userService = new UserService(userData, authData);
             this.clearService = new ClearService(userData, authData, gameData);
@@ -82,7 +82,7 @@ public class Server {
         return new Gson().toJson(authData);
     }
 
-    private Object loginUser(Request req, Response res){
+    private Object loginUser(Request req, Response res) throws DataAccessException {
         var userLogin = new Gson().fromJson(req.body(), LoginRecord.class);
         AuthData authData = userService.loginUser(userLogin);
         if(authData == null){
@@ -93,7 +93,7 @@ public class Server {
         return new Gson().toJson(authData);
     }
 
-    private Object logoutUser(Request req, Response res){
+    private Object logoutUser(Request req, Response res) throws DataAccessException {
         String authToken = req.headers("authorization");
         String deletedAuthToken = userService.logoutUser(authToken);
         if (!Objects.equals(deletedAuthToken, "")){
@@ -104,7 +104,7 @@ public class Server {
         return "{}";
     }
 
-    private Object createGame(Request req, Response res){
+    private Object createGame(Request req, Response res) throws DataAccessException {
         var gameName = new Gson().fromJson(req.body(), GameNameRecord.class);
         if (gameName == null || gameName.gameName().isBlank()){
             res.status(400);
@@ -121,7 +121,7 @@ public class Server {
         return new Gson().toJson(id);
     }
 
-    private Object joinGame(Request req, Response res){
+    private Object joinGame(Request req, Response res) throws DataAccessException {
         var joinGameInfo = new Gson().fromJson(req.body(), JoinGameRecord.class);
         if(joinGameInfo.playerColor() == null || joinGameInfo.gameID() == null){
             res.status(400);
@@ -142,7 +142,7 @@ public class Server {
         return new  Gson().toJson(Map.of("message", "Error: Unauthorized"));
     }
 
-    private Object listGames(Request req, Response res){
+    private Object listGames(Request req, Response res) throws DataAccessException {
         res.type("application/json");
         String authToken = req.headers("authorization");
         var list = gameService.listGames(authToken).toArray();

@@ -10,8 +10,8 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceTests {
-    UserDAO userData = new MySqlUserdata();
-    AuthDAO authData = new SqlAuthdata();
+    UserDAO userData = new UserMemoryDAO();
+    AuthDAO authData = new AuthMemoryDAO();
     GameDAO gameData = new GameMemoryDAO();
 
     private final UserService userService = new UserService(userData, authData);
@@ -245,7 +245,7 @@ public class ServiceTests {
     }
 
     @Test
-    void clearAllWhenEmpty() {
+    void clearAllWhenEmpty() throws DataAccessException {
 
         clearService.clearDatabase();
 

@@ -2,6 +2,7 @@ package dataaccess;
 import model.AuthData;
 import model.UserData;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -24,11 +25,43 @@ public class SqlAuthdata implements AuthDAO {
         }
     }
 
-    private void executeUpdate(String insertAuthStatement, String authToken, String username) {
+
+    public AuthData getAuth(String authToken) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
-            try (var ps = conn.prepareStatement(insertAuthStatement)){
+            var statement = "SELECT * FROM AuthTable WHERE authToken = ?";
+            try (var ps = conn.prepareStatement(statement)){
                 ps.setString(1, authToken);
-                ps.setString(2, username);
+                ResultSet rs = ps.executeQuery();
+                if(rs.next()){
+                    String username = rs.getString("username");
+                    return new AuthData(authToken, username);
+                }
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String deleteAuthToken(String authToken) throws DataAccessException {
+        var statement = "DELETE FROM AuthTable WHERE authToken=?";
+        executeUpdate(statement, authToken);
+        AuthData verifyDeletion = getAuth(authToken);
+        if(verifyDeletion == null){
+            return "";
+        }
+        else{
+            return authToken;
+        }
+    }
+
+    private void executeUpdate(String statement, Object... params) {
+        try (var conn = DatabaseManager.getConnection()){
+            try (var ps = conn.prepareStatement(statement)){
+                for (var i = 0; i < params.length; i++) {
+                    var param = params[i];
+                    if (param instanceof String p) ps.setString(i + 1, p);
+                }
 
                 int rowsAffected = ps.executeUpdate();
                 if(rowsAffected == 0){
@@ -42,16 +75,6 @@ public class SqlAuthdata implements AuthDAO {
         }
     }
 
-
-    @Override
-    public AuthData getAuth(String auth) {
-        return null;
-    }
-
-    @Override
-    public String deleteAuthToken(String authToken) {
-        return "";
-    }
 
     @Override
     public void clearAuths() {

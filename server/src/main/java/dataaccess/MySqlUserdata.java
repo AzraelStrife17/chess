@@ -1,8 +1,11 @@
 package dataaccess;
 import model.UserData;
 import model.LoginRecord;
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class MySqlUserdata implements UserDAO {
 
@@ -17,8 +20,9 @@ public class MySqlUserdata implements UserDAO {
                 ps.setString(1, user.username());
                 ResultSet rs = ps.executeQuery();
                 if(!rs.next()){
+                    String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
                     var insertUserStatement = "INSERT INTO UserDataTable (username, password, email) VALUES (?, ?, ?)";
-                    executeUpdate(insertUserStatement, user.username(), user.password(), user.email());
+                    executeUpdate(insertUserStatement, user.username(), hashedPassword, user.email());
                     return user;
                 }
                 else{
@@ -38,7 +42,10 @@ public class MySqlUserdata implements UserDAO {
                 ps.setString(1, loginInfo.username());
                 ResultSet rs = ps.executeQuery();
                 if(rs.next()){
-                    return true;
+                    String storedHashPassword = rs.getString("password");
+                    if (BCrypt.checkpw(loginInfo.password(), storedHashPassword)){
+                        return true;
+                    }
                 }
                 return false;
             }

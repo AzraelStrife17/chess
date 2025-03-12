@@ -26,7 +26,7 @@ public class UserService {
         return authDataAccess.createAuth(username);
     }
 
-    public AuthData loginUser(LoginRecord loginInfo){
+    public AuthData loginUser(LoginRecord loginInfo) throws DataAccessException {
          boolean correctLogin = userDataAccess.getUser(loginInfo);
          if (correctLogin){
              return authDataAccess.createAuth(loginInfo.username());
@@ -36,7 +36,7 @@ public class UserService {
          }
     }
 
-    public String logoutUser(String authToken){
+    public String logoutUser(String authToken) throws DataAccessException {
         AuthData authExist = authDataAccess.getAuth(authToken);
         if(authExist != null){
             return authDataAccess.deleteAuthToken(authToken);
