@@ -39,8 +39,8 @@ public class Server {
         try {
             DatabaseManager.createDatabase();
             System.out.println("Database initialized successfully!");
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+        catch (Exception e) {
             System.err.println("Failed to initialize database.");
         }
 
