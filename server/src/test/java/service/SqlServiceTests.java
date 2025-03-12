@@ -30,4 +30,27 @@ public class SqlServiceTests {
         Integer gameID = gameService.createGame(gameName.gameName(), authData.authToken());
         assertNotNull(gameID);
     }
+
+    @Test
+    void joinBlackTestSuccess() throws DataAccessException {
+        var user = new UserData("Megatron3", "cyber", "megatronus@gmail.com");
+        AuthData authData = userService.registerUser(user);
+
+        Integer gameID = gameService.createGame("GameTestName", authData.authToken());
+
+        var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID);
+        String successfulJoin = gameService.joinGame(joinGameInfo, authData.authToken());
+        assertEquals("success", successfulJoin);
+    }
+
+    @Test
+    void joinWhiteTestSuccess() throws DataAccessException {
+        var user = new UserData("OptimusPrime2", "cyber", "megatronus@gmail.com");
+        AuthData authData = userService.registerUser(user);
+
+
+        var joinGameInfo = new JoinGameRecord(TeamColor.WHITE, 8);
+        String successfulJoin = gameService.joinGame(joinGameInfo, authData.authToken());
+        assertEquals("success", successfulJoin);
+    }
 }

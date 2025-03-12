@@ -40,7 +40,7 @@ public class SqlGamedata implements GameDAO{
                     if (joinGameInfo.playerColor() == ChessGame.TeamColor.BLACK) {
                         if (storedBlack == null) {
                             var addBlackPlayerStatement = "UPDATE GameTable SET blackUsername = ? WHERE gameID = ?";
-                            executeUpdate(addBlackPlayerStatement, authData.username());
+                            executeUpdate(addBlackPlayerStatement, authData.username(), joinGameInfo.gameID());
                             return "success";
 
                         }
@@ -48,7 +48,7 @@ public class SqlGamedata implements GameDAO{
                     } else {
                         if (storedWhite == null) {
                             var addWhitePlayerStatement = "UPDATE GameTable SET whiteUsername = ? WHERE gameID = ?";
-                            executeUpdate(addWhitePlayerStatement, authData.username());
+                            executeUpdate(addWhitePlayerStatement, authData.username(), joinGameInfo.gameID());
                             return "success";
 
                         }
@@ -83,6 +83,7 @@ public class SqlGamedata implements GameDAO{
                         String json = new Gson().toJson(p);
                         ps.setString(i + 1, json);
                     }
+                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
                     else ps.setString(i+1, null);
                 }
                 int rowsAffected = ps.executeUpdate();
