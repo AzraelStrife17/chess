@@ -195,6 +195,45 @@ public class SqlServiceTests {
         clearService.clearDatabase();
     }
 
+    @Test
+    void clearTestSuccess() throws DataAccessException {
+        clearService.clearDatabase();
+        var user = new UserData("James", "007", "BOND@gmail.com");
+        AuthData registerAuthData = userService.registerUser(user);
 
+        gameService.createGame("GameTestName", registerAuthData.authToken());
 
-}
+        clearService.clearDatabase();
+
+        Collection<GameData> testList = gameData.listGames();
+        assertEquals(0, testList.size());
+
+        var gameName = new GameNameRecord("FirstName");
+        Integer gameID = gameService.createGame(gameName.gameName(), registerAuthData.authToken());
+        assertNull(gameID);
+
+        var userLogin = new LoginRecord("James", "007");
+        AuthData loginAuthData = userService.loginUser(userLogin);
+        assertNull(loginAuthData);
+        clearService.clearDatabase();
+
+    }
+
+    @Test
+    void clearAllWhenEmpty() throws DataAccessException {
+
+        clearService.clearDatabase();
+
+        Collection<GameData> testList = gameData.listGames();
+        assertEquals(0, testList.size());
+
+        var gameName = new GameNameRecord("FirstName");
+        Integer gameID = gameService.createGame(gameName.gameName(), "emptyAuthToken");
+        assertNull(gameID);
+
+        var userLogin = new LoginRecord("James", "007");
+        AuthData loginAuthData = userService.loginUser(userLogin);
+        assertNull(loginAuthData);
+        clearService.clearDatabase();
+    }
+    }
