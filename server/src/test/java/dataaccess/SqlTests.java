@@ -1,8 +1,10 @@
-package service;
-import dataaccess.*;
+package dataaccess;
 import chess.ChessGame.TeamColor;
 import model.*;
 import org.junit.jupiter.api.Test;
+import service.ClearService;
+import service.GameService;
+import service.UserService;
 
 
 import java.sql.SQLException;
@@ -12,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-public class SqlServiceTests {
+public class SqlTests {
     UserDAO userData = new MySqlUserdata();
     AuthDAO authData = new SqlAuthdata();
     GameDAO gameData = new SqlGamedata();
@@ -21,7 +23,7 @@ public class SqlServiceTests {
     private final GameService gameService = new GameService(authData, gameData);
     private final ClearService clearService = new ClearService(userData, authData, gameData);
 
-    public SqlServiceTests() throws DataAccessException {
+    public SqlTests() throws DataAccessException {
     }
 
     @Test
