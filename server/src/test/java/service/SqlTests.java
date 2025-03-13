@@ -1,10 +1,8 @@
-package dataaccess;
+package service;
 import chess.ChessGame.TeamColor;
+import dataaccess.*;
 import model.*;
 import org.junit.jupiter.api.Test;
-import service.ClearService;
-import service.GameService;
-import service.UserService;
 
 
 import java.sql.SQLException;
