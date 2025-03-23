@@ -11,8 +11,8 @@ import java.net.*;
 public class ServerFacade {
     private final String serverUrl;
 
-    public ServerFacade(String url) {
-        serverUrl = url;
+    public ServerFacade(int port) {
+        serverUrl = "http://localhost:" + port;
     }
 
     public AuthData RegisterResult(UserData request){
