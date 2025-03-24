@@ -105,8 +105,8 @@ public class ServiceTests {
     void createGameSuccessful() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
-        var gameName = new GameNameRecord("TestName");
-        Integer gameID = gameService.createGame(gameName.gameName(), authData.authToken());
+        var createdGame = new CreateGameData("TestName", authData.authToken());
+        Integer gameID = gameService.createGame(createdGame);
         assertNotNull(gameID);
     }
 
@@ -115,11 +115,11 @@ public class ServiceTests {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
 
-        var gameName1 = new GameNameRecord("FirstName");
-        gameService.createGame(gameName1.gameName(), authData.authToken());
+        var createdGame = new CreateGameData("TestName", authData.authToken());
+        gameService.createGame(createdGame);
 
-        var gameName2 = new GameNameRecord("SecondGame");
-        Integer gameID = gameService.createGame(gameName2.gameName(), authData.authToken());
+        var createdGame2 = new CreateGameData("TestName2", authData.authToken());
+        Integer gameID = gameService.createGame(createdGame2);
         assertNotNull(gameID);
     }
 
@@ -127,8 +127,8 @@ public class ServiceTests {
     void createUnauthorizedTest() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         userService.registerUser(user);
-        var gameName1 = new GameNameRecord("FirstName");
-        Integer gameID = gameService.createGame(gameName1.gameName(), "a");
+        var createdGame = new CreateGameData("TestName", "a");
+        Integer gameID = gameService.createGame(createdGame);
         assertNull(gameID);
     }
 
@@ -136,8 +136,8 @@ public class ServiceTests {
     void joinBlackTestSuccess() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
-
-        Integer gameID = gameService.createGame("GameTestName", authData.authToken());
+        var createdGame = new CreateGameData("TestName", authData.authToken());
+        Integer gameID = gameService.createGame(createdGame);
 
         var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID);
         String successfulJoin = gameService.joinGame(joinGameInfo, authData.authToken());
@@ -148,8 +148,8 @@ public class ServiceTests {
     void joinWhiteTestSuccess() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
-
-        Integer gameID = gameService.createGame("GameTestName", authData.authToken());
+        var createdGame = new CreateGameData("TestName", authData.authToken());
+        Integer gameID = gameService.createGame(createdGame);
 
         var joinGameInfo = new JoinGameRecord(TeamColor.WHITE, gameID);
         String successfulJoin = gameService.joinGame(joinGameInfo, authData.authToken());
@@ -161,7 +161,8 @@ public class ServiceTests {
         var user1 = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData1 = userService.registerUser(user1);
 
-        Integer gameID = gameService.createGame("GameTestName", authData1.authToken());
+        var createdGame = new CreateGameData("TestName", authData1.authToken());
+        Integer gameID = gameService.createGame(createdGame);
 
         var joinGameInfoBlack = new JoinGameRecord(TeamColor.BLACK, gameID);
         String successfulJoin1 = gameService.joinGame(joinGameInfoBlack, authData1.authToken());
@@ -182,7 +183,8 @@ public class ServiceTests {
         var user1 = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData1 = userService.registerUser(user1);
 
-        Integer gameID = gameService.createGame("GameTestName", authData1.authToken());
+        var createdGame = new CreateGameData("TestName", authData1.authToken());
+        Integer gameID = gameService.createGame(createdGame);
 
         var joinGameInfoBlack = new JoinGameRecord(TeamColor.BLACK, gameID);
         String successfulJoin1 = gameService.joinGame(joinGameInfoBlack, authData1.authToken());
@@ -203,7 +205,8 @@ public class ServiceTests {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
 
-        gameService.createGame("GameTestName", authData.authToken());
+        var createdGame = new CreateGameData("TestName", authData.authToken());
+        gameService.createGame(createdGame);
 
         Collection<GameData> gameList = gameService.listGames(authData.authToken());
 
@@ -227,16 +230,17 @@ public class ServiceTests {
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData registerAuthData = userService.registerUser(user);
 
-        gameService.createGame("GameTestName", registerAuthData.authToken());
+        var createdGame = new CreateGameData("TestName", registerAuthData.authToken());
+        Integer gameID = gameService.createGame(createdGame);
 
         clearService.clearDatabase();
 
         Collection<GameData> testList = gameData.listGames();
         assertEquals(0, testList.size());
 
-        var gameName = new GameNameRecord("FirstName");
-        Integer gameID = gameService.createGame(gameName.gameName(), registerAuthData.authToken());
-        assertNull(gameID);
+        var createdGame2 = new CreateGameData("TestName", registerAuthData.authToken());
+        Integer gameID2 = gameService.createGame(createdGame2);
+        assertNull(gameID2);
 
         var userLogin = new LoginRecord("James", "007");
         AuthData loginAuthData = userService.loginUser(userLogin);
@@ -253,8 +257,8 @@ public class ServiceTests {
         Collection<GameData> testList = gameData.listGames();
         assertEquals(0, testList.size());
 
-        var gameName = new GameNameRecord("FirstName");
-        Integer gameID = gameService.createGame(gameName.gameName(), "emptyAuthToken");
+        var createdGame = new CreateGameData("TestName", "emptyAuthToken");
+        Integer gameID = gameService.createGame(createdGame);
         assertNull(gameID);
 
         var userLogin = new LoginRecord("James", "007");

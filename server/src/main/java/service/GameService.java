@@ -2,6 +2,7 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
+import model.CreateGameData;
 import model.JoinGameRecord;
 import model.GameData;
 import model.AuthData;
@@ -18,10 +19,11 @@ public class GameService {
         this.gameDataAccess = gameDataAccess;
     }
 
-    public Integer createGame(String gameName, String authToken) throws DataAccessException {
-        AuthData authExist = authDataAccess.getAuth(authToken);
+    public Integer createGame(CreateGameData createData) throws DataAccessException {
+
+        AuthData authExist = authDataAccess.getAuth(createData.authToken());
         if(authExist != null){
-            return gameDataAccess.createGame(gameName);
+            return gameDataAccess.createGame(createData.gameName());
         }
         return null;
     }

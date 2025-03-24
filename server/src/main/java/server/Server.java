@@ -106,13 +106,12 @@ public class Server {
     }
 
     private Object createGame(Request req, Response res) throws DataAccessException {
-        var gameName = new Gson().fromJson(req.body(), GameNameRecord.class);
-        if (gameName == null || gameName.gameName().isBlank()){
+        var createdGame = new Gson().fromJson(req.body(), CreateGameData.class);
+        if (createdGame == null || createdGame.gameName().isBlank()){
             res.status(400);
             return new Gson().toJson(Map.of("message", "Error: bad request"));
         }
-        String authToken = req.headers("authorization");
-        Integer gameId = gameService.createGame(gameName.gameName(), authToken);
+        Integer gameId = gameService.createGame(createdGame);
         if(gameId == null){
             res.status(401);
             return new Gson().toJson(Map.of("message", "Error: Unauthorized"));

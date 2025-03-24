@@ -108,8 +108,9 @@ public class SqlTests {
         clearService.clearDatabase();
         var user = new UserData("BumbleBee", "BEEEZ", "Camaro@gmail.com");
         AuthData authData = userService.registerUser(user);
-        var gameName = new GameNameRecord("TestName");
-        Integer gameID = gameService.createGame(gameName.gameName(), authData.authToken());
+        var gameCreated = new CreateGameData("TestName", authData.authToken());
+
+        Integer gameID = gameService.createGame(gameCreated);
         clearService.clearDatabase();
         assertNotNull(gameID);
     }
@@ -119,8 +120,8 @@ public class SqlTests {
         clearService.clearDatabase();
         var user = new UserData("James", "007", "BOND@gmail.com");
         userService.registerUser(user);
-        var gameName1 = new GameNameRecord("FirstName");
-        Integer gameID = gameService.createGame(gameName1.gameName(), "a");
+        var game1 = new CreateGameData("FirstName", "a");
+        Integer gameID = gameService.createGame(game1);
         clearService.clearDatabase();
         assertNull(gameID);
     }
@@ -130,8 +131,8 @@ public class SqlTests {
         clearService.clearDatabase();
         var user = new UserData("Megatron", "cyber", "megatronus@gmail.com");
         AuthData authData = userService.registerUser(user);
-
-        Integer gameID = gameService.createGame("GameTestName", authData.authToken());
+        var gameCreated = new CreateGameData("GameTestName", authData.authToken());
+        Integer gameID = gameService.createGame(gameCreated);
 
         var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID);
         String successfulJoin = gameService.joinGame(joinGameInfo, authData.authToken());
@@ -152,8 +153,8 @@ public class SqlTests {
         clearService.clearDatabase();
         var user1 = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData1 = userService.registerUser(user1);
-
-        Integer gameID = gameService.createGame("GameTestName", authData1.authToken());
+        var createdGame = new CreateGameData("GameTestName", authData1.authToken());
+        Integer gameID = gameService.createGame(createdGame);
 
         var joinGameInfoBlack = new JoinGameRecord(TeamColor.BLACK, gameID);
         String successfulJoin1 = gameService.joinGame(joinGameInfoBlack, authData1.authToken());
@@ -175,8 +176,8 @@ public class SqlTests {
         clearService.clearDatabase();
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData authData = userService.registerUser(user);
-
-        gameService.createGame("GameTestName", authData.authToken());
+        var createdGame = new CreateGameData("GameTestName", authData.authToken());
+        gameService.createGame(createdGame);
 
         Collection<GameData> gameList = gameService.listGames(authData.authToken());
         clearService.clearDatabase();
@@ -203,16 +204,16 @@ public class SqlTests {
         clearService.clearDatabase();
         var user = new UserData("James", "007", "BOND@gmail.com");
         AuthData registerAuthData = userService.registerUser(user);
-
-        gameService.createGame("GameTestName", registerAuthData.authToken());
+        var createdGame = new CreateGameData("GameTestName", registerAuthData.authToken());
+        gameService.createGame(createdGame);
 
         clearService.clearDatabase();
 
         Collection<GameData> testList = gameData.listGames();
         assertEquals(0, testList.size());
 
-        var gameName = new GameNameRecord("FirstName");
-        Integer gameID = gameService.createGame(gameName.gameName(), registerAuthData.authToken());
+        var gameCreated = new CreateGameData("FirstName", registerAuthData.authToken());
+        Integer gameID = gameService.createGame(gameCreated);
         assertNull(gameID);
 
         var userLogin = new LoginRecord("James", "007");
@@ -230,8 +231,8 @@ public class SqlTests {
         Collection<GameData> testList = gameData.listGames();
         assertEquals(0, testList.size());
 
-        var gameName = new GameNameRecord("FirstName");
-        Integer gameID = gameService.createGame(gameName.gameName(), "emptyAuthToken");
+        var createdGame = new CreateGameData("FirstName","emptyAuthToken");
+        Integer gameID = gameService.createGame(createdGame);
         assertNull(gameID);
 
         var userLogin = new LoginRecord("James", "007");

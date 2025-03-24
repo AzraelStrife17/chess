@@ -1,9 +1,6 @@
 package server;
 import com.google.gson.Gson;
-import model.AuthData;
-import model.AuthToken;
-import model.UserData;
-import model.LoginRecord;
+import model.*;
 
 import java.io.*;
 import java.net.*;
@@ -29,6 +26,12 @@ public class ServerFacade {
     public String LogoutResult(AuthToken request){
         var path = "/session";
         return this.makeRequest("DELETE", path, request, null);
+    }
+
+    public CreateGameResponse CreateGameResult(String GameName, String authToken){
+        var request = new CreateGameData(GameName, authToken);
+        var path = "/game";
+        return this.makeRequest("POST", path, request, CreateGameResponse.class);
     }
 
     public void clearAll(){

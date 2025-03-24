@@ -7,8 +7,7 @@ import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
@@ -58,6 +57,14 @@ public class ServerFacadeTests {
         AuthToken authToken = new AuthToken(authData.authToken());
         var logoutResult = facade.LogoutResult(authToken);
         assertEquals(null, logoutResult);
+    }
+
+    @Test
+    void createGame() throws Exception{
+        UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
+        var authData = facade.RegisterResult(user);
+        var createGameResult = facade.CreateGameResult("Altair", authData.authToken());
+        assertNotNull(createGameResult);
     }
 
 
