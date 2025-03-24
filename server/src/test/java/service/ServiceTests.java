@@ -139,8 +139,8 @@ public class ServiceTests {
         var createdGame = new CreateGameData("TestName", authData.authToken());
         Integer gameID = gameService.createGame(createdGame);
 
-        var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID);
-        String successfulJoin = gameService.joinGame(joinGameInfo, authData.authToken());
+        var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID, authData.authToken());
+        String successfulJoin = gameService.joinGame(joinGameInfo);
         assertEquals("success", successfulJoin);
     }
 
@@ -151,8 +151,8 @@ public class ServiceTests {
         var createdGame = new CreateGameData("TestName", authData.authToken());
         Integer gameID = gameService.createGame(createdGame);
 
-        var joinGameInfo = new JoinGameRecord(TeamColor.WHITE, gameID);
-        String successfulJoin = gameService.joinGame(joinGameInfo, authData.authToken());
+        var joinGameInfo = new JoinGameRecord(TeamColor.WHITE, gameID, authData.authToken());
+        String successfulJoin = gameService.joinGame(joinGameInfo);
         assertEquals("success", successfulJoin);
     }
 
@@ -164,15 +164,15 @@ public class ServiceTests {
         var createdGame = new CreateGameData("TestName", authData1.authToken());
         Integer gameID = gameService.createGame(createdGame);
 
-        var joinGameInfoBlack = new JoinGameRecord(TeamColor.BLACK, gameID);
-        String successfulJoin1 = gameService.joinGame(joinGameInfoBlack, authData1.authToken());
+        var joinGameInfoBlack = new JoinGameRecord(TeamColor.BLACK, gameID, authData1.authToken());
+        String successfulJoin1 = gameService.joinGame(joinGameInfoBlack);
 
         var user2 = new UserData("Bond", "007", "JAMES@gmail.com");
         AuthData authData2 = userService.registerUser(user2);
 
 
-        var joinGameInfo2 = new JoinGameRecord(TeamColor.WHITE, gameID);
-        String successfulJoin2 = gameService.joinGame(joinGameInfo2, authData2.authToken());
+        var joinGameInfo2 = new JoinGameRecord(TeamColor.WHITE, gameID, authData2.authToken());
+        String successfulJoin2 = gameService.joinGame(joinGameInfo2);
 
         assertEquals("success", successfulJoin1);
         assertEquals("success", successfulJoin2);
@@ -186,15 +186,15 @@ public class ServiceTests {
         var createdGame = new CreateGameData("TestName", authData1.authToken());
         Integer gameID = gameService.createGame(createdGame);
 
-        var joinGameInfoBlack = new JoinGameRecord(TeamColor.BLACK, gameID);
-        String successfulJoin1 = gameService.joinGame(joinGameInfoBlack, authData1.authToken());
+        var joinGameInfoBlack = new JoinGameRecord(TeamColor.BLACK, gameID, authData1.authToken());
+        String successfulJoin1 = gameService.joinGame(joinGameInfoBlack);
 
         var user2 = new UserData("Bond", "007", "JAMES@gmail.com");
         AuthData authData2 = userService.registerUser(user2);
 
 
-        var joinGameInfo2 = new JoinGameRecord(TeamColor.BLACK, gameID);
-        String failJoin = gameService.joinGame(joinGameInfo2, authData2.authToken());
+        var joinGameInfo2 = new JoinGameRecord(TeamColor.BLACK, gameID, authData2.authToken());
+        String failJoin = gameService.joinGame(joinGameInfo2);
 
         assertEquals("success", successfulJoin1);
         assertEquals("team color taken", failJoin);

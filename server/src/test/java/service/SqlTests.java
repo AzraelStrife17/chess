@@ -134,16 +134,16 @@ public class SqlTests {
         var gameCreated = new CreateGameData("GameTestName", authData.authToken());
         Integer gameID = gameService.createGame(gameCreated);
 
-        var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID);
-        String successfulJoin = gameService.joinGame(joinGameInfo, authData.authToken());
+        var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID, authData.authToken());
+        String successfulJoin = gameService.joinGame(joinGameInfo);
         assertEquals("success", successfulJoin);
 
         var user2 = new UserData("OptimusPrime", "cyber", "megatronus@gmail.com");
         AuthData authData2 = userService.registerUser(user2);
 
 
-        var joinGameInfo2 = new JoinGameRecord(TeamColor.WHITE,gameID);
-        String successfulJoin2 = gameService.joinGame(joinGameInfo2, authData2.authToken());
+        var joinGameInfo2 = new JoinGameRecord(TeamColor.WHITE,gameID,  authData2.authToken());
+        String successfulJoin2 = gameService.joinGame(joinGameInfo2);
         assertEquals("success", successfulJoin2);
         clearService.clearDatabase();
     }
@@ -156,15 +156,15 @@ public class SqlTests {
         var createdGame = new CreateGameData("GameTestName", authData1.authToken());
         Integer gameID = gameService.createGame(createdGame);
 
-        var joinGameInfoBlack = new JoinGameRecord(TeamColor.BLACK, gameID);
-        String successfulJoin1 = gameService.joinGame(joinGameInfoBlack, authData1.authToken());
+        var joinGameInfoBlack = new JoinGameRecord(TeamColor.BLACK, gameID, authData1.authToken());
+        String successfulJoin1 = gameService.joinGame(joinGameInfoBlack);
 
         var user2 = new UserData("Bond", "007", "JAMES@gmail.com");
         AuthData authData2 = userService.registerUser(user2);
 
 
-        var joinGameInfo2 = new JoinGameRecord(TeamColor.BLACK, gameID);
-        String failJoin = gameService.joinGame(joinGameInfo2, authData2.authToken());
+        var joinGameInfo2 = new JoinGameRecord(TeamColor.BLACK, gameID, authData2.authToken());
+        String failJoin = gameService.joinGame(joinGameInfo2);
         clearService.clearDatabase();
 
         assertEquals("success", successfulJoin1);

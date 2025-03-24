@@ -34,6 +34,11 @@ public class ServerFacade {
         return this.makeRequest("POST", path, request, CreateGameResponse.class);
     }
 
+    public StringResponse JoinGameResult(JoinGameRecord request){
+        var path = "/game";
+        return this.makeRequest("PUT", path, request, StringResponse.class);
+    }
+
     public void clearAll(){
         var path = "/db";
         makeRequest("DELETE", path, null, null);

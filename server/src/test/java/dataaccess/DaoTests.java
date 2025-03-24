@@ -149,7 +149,7 @@ public class DaoTests {
     void joinGameTest() throws DataAccessException {
         Integer gameID = gameData.createGame("TestGame");
         AuthData createdAuth = authData.createAuth("OptimusPrime");
-        var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID);
+        var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID, null);
 
         String joinResult = gameData.joinGame(joinGameInfo, createdAuth);
 
@@ -160,7 +160,7 @@ public class DaoTests {
     void joinGameBlackTakenTest() throws DataAccessException {
         Integer gameID = gameData.createGame("TestGame");
         AuthData createdAuth = authData.createAuth("OptimusPrime");
-        var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID);
+        var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID, null);
 
         String joinResult = gameData.joinGame(joinGameInfo, createdAuth);
 

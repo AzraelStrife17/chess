@@ -1,6 +1,8 @@
 package client;
 
+import chess.ChessGame;
 import model.AuthToken;
+import model.JoinGameRecord;
 import model.LoginRecord;
 import model.UserData;
 import org.junit.jupiter.api.*;
@@ -65,6 +67,18 @@ public class ServerFacadeTests {
         var authData = facade.RegisterResult(user);
         var createGameResult = facade.CreateGameResult("Altair", authData.authToken());
         assertNotNull(createGameResult);
+    }
+
+    @Test
+    void joinGame() throws Exception{
+        UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
+        var authData = facade.RegisterResult(user);
+        var createResult = facade.CreateGameResult("Altair", authData.authToken());
+
+        JoinGameRecord joinInfo = new JoinGameRecord(ChessGame.TeamColor.WHITE, createResult.gameID(), authData.authToken());
+        var joinGameResult = facade.JoinGameResult(joinInfo);
+
+        assertNull(joinGameResult.authToken());
     }
 
 

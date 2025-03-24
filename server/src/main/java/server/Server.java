@@ -127,8 +127,7 @@ public class Server {
             res.status(400);
             return new Gson().toJson(Map.of("message", "Error: bad requests"));
         }
-        String authToken = req.headers("authorization");
-        String joinGameSuccess = gameService.joinGame(joinGameInfo, authToken);
+        String joinGameSuccess = gameService.joinGame(joinGameInfo);
         if(Objects.equals(joinGameSuccess, "success")){
             res.status(200);
             return "{}";
