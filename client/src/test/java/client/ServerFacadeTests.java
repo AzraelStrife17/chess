@@ -81,5 +81,17 @@ public class ServerFacadeTests {
         assertNull(joinGameResult.authToken());
     }
 
+    @Test
+    void listGames() throws Exception{
+        UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
+        var authData = facade.RegisterResult(user);
+        facade.CreateGameResult("Altair", authData.authToken());
+        AuthToken authToken = new AuthToken(authData.authToken());
+
+        var gameList = facade.ListGames(authToken);
+        assertNotNull(gameList);
+
+    }
+
 
 }

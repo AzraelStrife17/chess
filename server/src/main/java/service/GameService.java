@@ -2,10 +2,7 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import model.CreateGameData;
-import model.JoinGameRecord;
-import model.GameData;
-import model.AuthData;
+import model.*;
 
 import java.util.Collection;
 import java.util.List;

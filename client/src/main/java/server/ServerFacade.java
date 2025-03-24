@@ -4,6 +4,8 @@ import model.*;
 
 import java.io.*;
 import java.net.*;
+import java.util.Collection;
+import java.util.Objects;
 
 
 public class ServerFacade {
@@ -39,6 +41,13 @@ public class ServerFacade {
         return this.makeRequest("PUT", path, request, StringResponse.class);
     }
 
+    public Collection<GameData> ListGames(AuthToken request){
+        var path = "/game";
+        record gameListResponse(Collection<GameData> games){};
+        var response = this.makeRequest("GET", path, request, gameListResponse.class);
+        return response.games();
+    }
+
     public void clearAll(){
         var path = "/db";
         makeRequest("DELETE", path, null, null);
@@ -50,8 +59,12 @@ public class ServerFacade {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
-
-            writeBody(request, http);
+            if (Objects.equals(method, "GET") && request instanceof AuthToken authToken) {
+                http.setRequestProperty("Authorization", authToken.authToken());
+            }
+            else{
+                writeBody(request, http);
+            }
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
