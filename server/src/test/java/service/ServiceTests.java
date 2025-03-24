@@ -80,8 +80,8 @@ public class ServiceTests {
 
         var userLogin = new LoginRecord("James", "007");
         AuthData authData = userService.loginUser(userLogin);
-
-        String authToken = userService.logoutUser(authData.authToken());
+        AuthToken extractedToken = new AuthToken(authData.authToken());
+        String authToken = userService.logoutUser(extractedToken);
 
         assertEquals("", authToken);
 
@@ -94,8 +94,8 @@ public class ServiceTests {
 
         var userLogin = new LoginRecord("James", "007");
         userService.loginUser(userLogin);
-
-        String authToken = userService.logoutUser("cf6f6db8-38cb-446a-9589-8049b0154009");
+        AuthToken extractedToken = new AuthToken("unauthorized");
+        String authToken = userService.logoutUser(extractedToken);
 
         assertNotEquals("", authToken);
 

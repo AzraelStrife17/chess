@@ -1,6 +1,7 @@
 package server;
 import com.google.gson.Gson;
 import model.AuthData;
+import model.AuthToken;
 import model.UserData;
 import model.LoginRecord;
 
@@ -23,6 +24,11 @@ public class ServerFacade {
     public AuthData LoginResult(LoginRecord request){
         var path = "/session";
         return this.makeRequest("POST", path, request, AuthData.class);
+    }
+
+    public String LogoutResult(AuthToken request){
+        var path = "/session";
+        return this.makeRequest("DELETE", path, request, null);
     }
 
     public void clearAll(){

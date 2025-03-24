@@ -1,11 +1,13 @@
 package client;
 
+import model.AuthToken;
 import model.LoginRecord;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import server.ServerFacade;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -48,5 +50,15 @@ public class ServerFacadeTests {
         var authData = facade.LoginResult(userLogin);
         assertTrue(authData.authToken().length() > 10);
     }
+
+    @Test
+    void logout() throws Exception{
+        UserData user = new UserData("player2", "password", "p2@email.com");
+        var authData = facade.RegisterResult(user);
+        AuthToken authToken = new AuthToken(authData.authToken());
+        var logoutResult = facade.LogoutResult(authToken);
+        assertEquals(null, logoutResult);
+    }
+
 
 }

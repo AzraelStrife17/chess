@@ -1,5 +1,6 @@
 package service;
 import dataaccess.DataAccessException;
+import model.AuthToken;
 import model.UserData;
 import model.AuthData;
 import model.LoginRecord;
@@ -38,13 +39,14 @@ public class UserService {
          }
     }
 
-    public String logoutUser(String authToken) throws DataAccessException, SQLException {
-        AuthData authExist = authDataAccess.getAuth(authToken);
+    public String logoutUser(AuthToken authToken) throws DataAccessException, SQLException {
+        String extractedToken = authToken.authToken();
+        AuthData authExist = authDataAccess.getAuth(extractedToken);
         if(authExist != null){
-            return authDataAccess.deleteAuthToken(authToken);
+            return authDataAccess.deleteAuthToken(extractedToken);
         }
         else{
-                return authToken;
+                return extractedToken;
         }
     }
 }

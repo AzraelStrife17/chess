@@ -95,7 +95,7 @@ public class Server {
     }
 
     private Object logoutUser(Request req, Response res) throws DataAccessException, SQLException {
-        String authToken = req.headers("authorization");
+        var authToken = new Gson().fromJson(req.body(), AuthToken.class);
         String deletedAuthToken = userService.logoutUser(authToken);
         if (!Objects.equals(deletedAuthToken, "")){
             res.status(401);

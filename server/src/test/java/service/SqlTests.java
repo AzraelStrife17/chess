@@ -79,10 +79,11 @@ public class SqlTests {
 
         var userLogin = new LoginRecord("James", "007");
         AuthData authData = userService.loginUser(userLogin);
+        AuthToken authToken = new AuthToken(authData.authToken());
 
-        String authToken = userService.logoutUser(authData.authToken());
+        String finalAuthToken = userService.logoutUser(authToken);
 
-        assertEquals("", authToken);
+        assertEquals("", finalAuthToken);
         clearService.clearDatabase();
     }
 
@@ -94,10 +95,11 @@ public class SqlTests {
 
         var userLogin = new LoginRecord("James", "007");
         userService.loginUser(userLogin);
+        AuthToken authToken = new AuthToken("unauthorized");
 
-        String authToken = userService.logoutUser("cf6f6db8-38cb-446a-9589-8049b0154009");
+        String finalAuthToken = userService.logoutUser(authToken);
 
-        assertNotEquals("", authToken);
+        assertNotEquals("", finalAuthToken);
         clearService.clearDatabase();
     }
 
