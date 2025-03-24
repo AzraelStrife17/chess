@@ -1,5 +1,6 @@
 package client;
 
+import model.LoginRecord;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -26,11 +27,25 @@ public class ServerFacadeTests {
         server.stop();
     }
 
+    @BeforeEach
+    void clearAll() throws Exception{
+        facade.clearAll();
+    }
+
 
     @Test
     void register() throws Exception {
         UserData user = new UserData("player1", "password", "p1@email.com");
         var authData = facade.RegisterResult(user);
+        assertTrue(authData.authToken().length() > 10);
+    }
+
+    @Test
+    void login() throws Exception{
+        UserData user = new UserData("player2", "password", "p2@email.com");
+        facade.RegisterResult(user);
+        LoginRecord userLogin = new LoginRecord("player2", "password");
+        var authData = facade.LoginResult(userLogin);
         assertTrue(authData.authToken().length() > 10);
     }
 

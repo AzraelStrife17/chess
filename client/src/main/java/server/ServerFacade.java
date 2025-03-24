@@ -20,6 +20,16 @@ public class ServerFacade {
         return this.makeRequest("POST", path, request, AuthData.class);
     }
 
+    public AuthData LoginResult(LoginRecord request){
+        var path = "/session";
+        return this.makeRequest("POST", path, request, AuthData.class);
+    }
+
+    public void clearAll(){
+        var path = "/db";
+        makeRequest("DELETE", path, null, null);
+    }
+
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass){
         try{
             URL url = (new URI(serverUrl + path)).toURL();

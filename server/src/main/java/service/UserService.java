@@ -44,7 +44,7 @@ public class UserService {
             return authDataAccess.deleteAuthToken(authToken);
         }
         else{
-            return authToken;
+                return authToken;
         }
     }
 }
