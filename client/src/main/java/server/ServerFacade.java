@@ -11,8 +11,8 @@ import java.util.Objects;
 public class ServerFacade {
     private final String serverUrl;
 
-    public ServerFacade(int port) {
-        serverUrl = "http://localhost:" + port;
+    public ServerFacade(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 
     public AuthData RegisterResult(UserData request){
@@ -25,9 +25,9 @@ public class ServerFacade {
         return this.makeRequest("POST", path, request, AuthData.class);
     }
 
-    public String LogoutResult(AuthToken request){
+    public StringResponse LogoutResult(AuthToken request){
         var path = "/session";
-        return this.makeRequest("DELETE", path, request, null);
+        return this.makeRequest("DELETE", path, request, StringResponse.class);
     }
 
     public CreateGameResponse CreateGameResult(String GameName, String authToken){

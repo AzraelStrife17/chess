@@ -22,7 +22,8 @@ public class ServerFacadeTests {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        facade = new ServerFacade(port);
+        var url = "http://localhost:" + port;
+        facade = new ServerFacade(url);
     }
 
     @AfterAll
@@ -32,6 +33,11 @@ public class ServerFacadeTests {
 
     @BeforeEach
     void clearAll() throws Exception{
+        facade.clearAll();
+    }
+
+    @AfterEach
+    void clear() throws Exception{
         facade.clearAll();
     }
 
@@ -58,7 +64,7 @@ public class ServerFacadeTests {
         var authData = facade.RegisterResult(user);
         AuthToken authToken = new AuthToken(authData.authToken());
         var logoutResult = facade.LogoutResult(authToken);
-        assertEquals(null, logoutResult);
+        assertNull(logoutResult.authToken());
     }
 
     @Test
@@ -92,6 +98,8 @@ public class ServerFacadeTests {
         assertNotNull(gameList);
 
     }
+
+
 
 
 }
