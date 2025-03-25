@@ -1,13 +1,12 @@
 package client;
 
 import chess.ChessGame;
-import com.google.gson.Gson;
 import model.*;
 import server.ServerFacade;
 
 import java.util.Arrays;
 
-import static client.DrawBoard.drawChessBoard;
+import static client.DrawBoard.*;
 
 public class Client {
     private String userName = null;
@@ -33,6 +32,7 @@ public class Client {
                 case "create" -> create(params);
                 case "listgames" -> listGames();
                 case "playgame" -> playGame(params);
+                case "quit" -> "quit";
 
                 default -> help();
             };
@@ -116,7 +116,7 @@ public class Client {
                 int id = Integer.parseInt(params[0]);
                 JoinGameRecord joinInfo = new JoinGameRecord(team, id, currentAuth.authToken());
                 server.JoinGameResult(joinInfo);
-                String board = drawChessBoard();
+                String board = drawChessBoard(params[1]);
                 System.out.println(board);
                 state = State.GAMESTATE;
                 return String.format("playing as %s.", params[1]);
