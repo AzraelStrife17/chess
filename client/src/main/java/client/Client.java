@@ -1,13 +1,13 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AuthData;
-import model.AuthToken;
-import model.LoginRecord;
-import model.UserData;
+import model.*;
 import server.ServerFacade;
 
 import java.util.Arrays;
+
+import static client.DrawBoard.drawChessBoard;
 
 public class Client {
     private String userName = null;
@@ -31,7 +31,8 @@ public class Client {
                 case "login" -> login(params);
                 case "logout" -> logout();
                 case "create" -> create(params);
-                case "listgames" ->listGames();
+                case "listgames" -> listGames();
+                case "playgame" -> playGame(params);
 
                 default -> help();
             };
@@ -96,14 +97,35 @@ public class Client {
             AuthToken authToken = new AuthToken(currentAuth.authToken());
             var games = server.ListGames(authToken);
             var result = new StringBuilder();
-            var gson = new Gson();
             for (var game : games) {
-                result.append(gson.toJson(game)).append('\n');
+                result.append("Game ID: ").append(game.gameID()).
+                append("    White: ").append(game.whiteUsername()).
+                append("    Black: ").append(game.blackUsername()).
+                append("    Game name: ").append(game.gameName()).
+                append("\n");
             }
             return result.toString();
         }
         return "Login to use";
     }
+
+    public String playGame(String... params){
+        if (state == State.POSTLOGIN){
+            if (params.length == 2) {
+                ChessGame.TeamColor team = ChessGame.TeamColor.valueOf(params[1].toUpperCase());
+                int id = Integer.parseInt(params[0]);
+                JoinGameRecord joinInfo = new JoinGameRecord(team, id, currentAuth.authToken());
+                server.JoinGameResult(joinInfo);
+                String board = drawChessBoard();
+                System.out.println(board);
+                state = State.GAMESTATE;
+                return String.format("playing as %s.", params[1]);
+            }
+            return "Wrong format";
+        }
+        return "Login to use";
+    }
+
 
 
     public String help() {
@@ -117,6 +139,8 @@ public class Client {
 
         return """
                 create <gamename>
+                listgames
+                playgame
                 logout
                 
                 """;
