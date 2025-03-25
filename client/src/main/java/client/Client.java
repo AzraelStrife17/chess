@@ -1,5 +1,6 @@
 package client;
 
+import com.google.gson.Gson;
 import model.AuthData;
 import model.AuthToken;
 import model.LoginRecord;
@@ -30,6 +31,7 @@ public class Client {
                 case "login" -> login(params);
                 case "logout" -> logout();
                 case "create" -> create(params);
+                case "listgames" ->listGames();
 
                 default -> help();
             };
@@ -85,6 +87,20 @@ public class Client {
                 return "game created";
             }
             return "Error wrong format";
+        }
+        return "Login to use";
+    }
+
+    public String listGames(){
+        if (state == State.POSTLOGIN){
+            AuthToken authToken = new AuthToken(currentAuth.authToken());
+            var games = server.ListGames(authToken);
+            var result = new StringBuilder();
+            var gson = new Gson();
+            for (var game : games) {
+                result.append(gson.toJson(game)).append('\n');
+            }
+            return result.toString();
         }
         return "Login to use";
     }
