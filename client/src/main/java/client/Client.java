@@ -29,7 +29,7 @@ public class Client {
                 case "register" -> register(params);
                 case "login" -> login(params);
                 case "logout" -> logout();
-                case "create" -> create();
+                case "create" -> create(params);
 
                 default -> help();
             };
@@ -78,12 +78,15 @@ public class Client {
         return "Login to use";
     }
 
-    public String create(String... params){
-        if (state == State.POSTLOGIN){
-            server.CreateGameResult(params[0], params[1]);
-            return "game created";
+    public String create(String... params) {
+        if (state == State.POSTLOGIN) {
+            if (params.length == 1) {
+                server.CreateGameResult(params[0], currentAuth.authToken());
+                return "game created";
+            }
+            return "Error wrong format";
         }
-        return "Login to use this function";
+        return "Login to use";
     }
 
 
@@ -97,7 +100,7 @@ public class Client {
         }
 
         return """
-                create
+                create <gamename>
                 logout
                 
                 """;
