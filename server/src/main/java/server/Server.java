@@ -96,7 +96,19 @@ public class Server {
 
     private Object logoutUser(Request req, Response res) throws DataAccessException, SQLException {
         var authToken = new Gson().fromJson(req.body(), AuthToken.class);
-        String deletedAuthToken = userService.logoutUser(authToken);
+
+        String deletedAuthToken;
+        if (authToken == null){
+            res.type("application/json");
+            String authTokenString = req.headers("authorization");
+            AuthToken authToken2 = new AuthToken(authTokenString);
+            deletedAuthToken = userService.logoutUser(authToken2);
+        }
+        else{
+            deletedAuthToken = userService.logoutUser(authToken);
+        }
+
+
         if (!Objects.equals(deletedAuthToken, "")){
             res.status(401);
             return new Gson().toJson(Map.of("message", "Error: unauthorized"));
@@ -106,8 +118,19 @@ public class Server {
     }
 
     private Object createGame(Request req, Response res) throws DataAccessException {
+
+
         var createdGame = new Gson().fromJson(req.body(), CreateGameData.class);
-        if (createdGame == null || createdGame.gameName().isBlank()){
+
+        if (createdGame.authToken() == null){
+            res.type("application/json");
+            String authTokenString = req.headers("authorization");
+            AuthToken authToken = new AuthToken(authTokenString);
+            createdGame = new CreateGameData(createdGame.gameName(), authToken.authToken());
+        }
+
+
+        if (createdGame.gameName().isBlank() || createdGame.authToken().isBlank()){
             res.status(400);
             return new Gson().toJson(Map.of("message", "Error: bad request"));
         }
@@ -123,6 +146,12 @@ public class Server {
 
     private Object joinGame(Request req, Response res) throws DataAccessException {
         var joinGameInfo = new Gson().fromJson(req.body(), JoinGameRecord.class);
+        if (joinGameInfo.authToken() == null){
+            res.type("application/json");
+            String authTokenString = req.headers("authorization");
+            AuthToken authToken = new AuthToken(authTokenString);
+            joinGameInfo = new JoinGameRecord(joinGameInfo.playerColor(), joinGameInfo.gameID(), authToken.authToken());
+        }
         if(joinGameInfo.playerColor() == null || joinGameInfo.gameID() == null){
             res.status(400);
             return new Gson().toJson(Map.of("message", "Error: bad requests"));
@@ -143,7 +172,8 @@ public class Server {
 
     private Object listGames(Request req, Response res) throws DataAccessException {
         res.type("application/json");
-        String authToken = req.headers("authorization");
+        String authTokenString = req.headers("authorization");
+        AuthToken authToken = new AuthToken(authTokenString);
         var list = gameService.listGames(authToken).toArray();
         if(list.length > 0 && ((GameData) list[0]).gameID() == 0){
             res.status(401);

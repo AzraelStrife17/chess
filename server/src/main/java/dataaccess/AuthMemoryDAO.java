@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
+import model.AuthToken;
 
 import java.util.HashMap;
 
@@ -16,19 +17,19 @@ public class AuthMemoryDAO implements AuthDAO{
         return newAuth;
     }
 
-    public AuthData getAuth(String authToken){
-        AuthData userAuth = authData.get(authToken);
+    public AuthData getAuth(AuthToken authToken){
+        AuthData userAuth = authData.get(authToken.authToken());
         return userAuth;
     }
 
-    public String deleteAuthToken(String authToken){
-        authData.remove(authToken);
+    public String deleteAuthToken(AuthToken authToken){
+        authData.remove(authToken.authToken());
         AuthData verifyDeletion = getAuth(authToken);
         if (verifyDeletion == null){
             return "";
         }
         else{
-            return authToken;
+            return authToken.authToken();
         }
 
     }

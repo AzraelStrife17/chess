@@ -133,6 +133,7 @@ public class Client {
             return """
                     register <username> <password> <email>
                     login <username> <password>
+                    help
                     quit
                     """;
         }
@@ -140,7 +141,8 @@ public class Client {
         return """
                 create <gamename>
                 listgames
-                playgame
+                playgame <gameID> <teamColor>
+                help
                 logout
                 
                 """;

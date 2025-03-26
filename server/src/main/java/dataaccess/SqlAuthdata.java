@@ -1,5 +1,7 @@
 package dataaccess;
 import model.AuthData;
+import model.AuthToken;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
@@ -24,15 +26,15 @@ public class SqlAuthdata implements AuthDAO {
     }
 
 
-    public AuthData getAuth(String authToken) throws DataAccessException {
+    public AuthData getAuth(AuthToken authToken) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()){
             var statement = "SELECT * FROM AuthTable WHERE authToken = ?";
             try (var ps = conn.prepareStatement(statement)){
-                ps.setString(1, authToken);
+                ps.setString(1, authToken.authToken());
                 ResultSet rs = ps.executeQuery();
                 if(rs.next()){
                     String username = rs.getString("username");
-                    return new AuthData(authToken, username);
+                    return new AuthData(authToken.authToken(), username);
                 }
                 return null;
             }
@@ -41,15 +43,15 @@ public class SqlAuthdata implements AuthDAO {
         }
     }
 
-    public String deleteAuthToken(String authToken) throws DataAccessException, SQLException {
+    public String deleteAuthToken(AuthToken authToken) throws DataAccessException, SQLException {
         var statement = "DELETE FROM AuthTable WHERE authToken=?";
-        DatabaseUtil.executeUpdate(statement, authToken);
+        DatabaseUtil.executeUpdate(statement, authToken.authToken());
         AuthData verifyDeletion = getAuth(authToken);
         if(verifyDeletion == null){
             return "";
         }
         else{
-            return authToken;
+            return authToken.authToken();
         }
     }
 

@@ -17,8 +17,8 @@ public class GameService {
     }
 
     public Integer createGame(CreateGameData createData) throws DataAccessException {
-
-        AuthData authExist = authDataAccess.getAuth(createData.authToken());
+        AuthToken authToken = new AuthToken(createData.authToken());
+        AuthData authExist = authDataAccess.getAuth(authToken);
         if(authExist != null){
             return gameDataAccess.createGame(createData.gameName());
         }
@@ -26,7 +26,8 @@ public class GameService {
     }
 
     public String joinGame(JoinGameRecord joinGameInfo) throws DataAccessException {
-        AuthData authExist = authDataAccess.getAuth(joinGameInfo.authToken());
+        AuthToken authToken = new AuthToken(joinGameInfo.authToken());
+        AuthData authExist = authDataAccess.getAuth(authToken);
         if(authExist != null){
             return gameDataAccess.joinGame(joinGameInfo, authExist);
 
@@ -34,7 +35,7 @@ public class GameService {
         return "no authToken";
     }
 
-    public Collection<GameData> listGames(String authToken) throws DataAccessException {
+    public Collection<GameData> listGames(AuthToken authToken) throws DataAccessException {
         AuthData authExist = authDataAccess.getAuth(authToken);
         if(authExist != null) {
             return gameDataAccess.listGames();

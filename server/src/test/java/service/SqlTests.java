@@ -178,8 +178,9 @@ public class SqlTests {
         AuthData authData = userService.registerUser(user);
         var createdGame = new CreateGameData("GameTestName", authData.authToken());
         gameService.createGame(createdGame);
+        AuthToken authToken = new AuthToken(authData.authToken());
 
-        Collection<GameData> gameList = gameService.listGames(authData.authToken());
+        Collection<GameData> gameList = gameService.listGames(authToken);
         clearService.clearDatabase();
 
         assertEquals(1, gameList.size());
@@ -192,7 +193,9 @@ public class SqlTests {
         var user = new UserData("James", "007", "BOND@gmail.com");
         userService.registerUser(user);
 
-        Collection<GameData> gameList = gameService.listGames("unauthorized");
+        AuthToken authToken = new AuthToken("unauthorized");
+
+        Collection<GameData> gameList = gameService.listGames(authToken);
         Collection<GameData> expectedList = List.of(new GameData(0, null, null, null, null));
 
         assertEquals(expectedList, gameList);

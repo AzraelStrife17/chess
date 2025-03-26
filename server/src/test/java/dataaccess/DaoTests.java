@@ -94,7 +94,8 @@ public class DaoTests {
     @Test
     void getAuthTest() throws DataAccessException {
         AuthData createdAuth = authData.createAuth("Bumblebee");
-        AuthData foundAuth = authData.getAuth(createdAuth.authToken());
+        AuthToken authToken = new AuthToken(createdAuth.authToken());
+        AuthData foundAuth = authData.getAuth(authToken);
 
         assertEquals(createdAuth, foundAuth);
     }
@@ -102,7 +103,8 @@ public class DaoTests {
     @Test
     void getAuthWrongAuthToken() throws DataAccessException {
         AuthData createdAuth = authData.createAuth("Jetfire");
-        AuthData foundAuth = authData.getAuth("not-existingToken");
+        AuthToken authToken = new AuthToken("not-existingToken");
+        AuthData foundAuth = authData.getAuth(authToken);
 
         assertNotEquals(createdAuth, foundAuth);
     }
@@ -110,7 +112,8 @@ public class DaoTests {
     @Test
     void deleteAuthTokenTest() throws SQLException, DataAccessException {
         AuthData createdAuth = authData.createAuth("Arcee");
-        String authDeletionResult = authData.deleteAuthToken(createdAuth.authToken());
+        AuthToken authToken = new AuthToken(createdAuth.authToken());
+        String authDeletionResult = authData.deleteAuthToken(authToken);
 
         assertEquals("", authDeletionResult);
     }
@@ -118,7 +121,8 @@ public class DaoTests {
     @Test
     void deleteAuthFail() throws SQLException, DataAccessException {
         AuthData createdAuth = authData.createAuth("Soundwave");
-        String authDeletionResult = authData.deleteAuthToken("unauthorizedAuth");
+        AuthToken authToken = new AuthToken("unauthorizedAuth");
+        String authDeletionResult = authData.deleteAuthToken(authToken);
 
         assertNotEquals(createdAuth.authToken(), authDeletionResult);
     }
@@ -129,7 +133,8 @@ public class DaoTests {
 
         authData.clearAuths();
 
-        AuthData foundAuth = authData.getAuth(createdAuth.authToken());
+        AuthToken authToken = new AuthToken(createdAuth.authToken());
+        AuthData foundAuth = authData.getAuth(authToken);
 
         assertNull(foundAuth);
     }

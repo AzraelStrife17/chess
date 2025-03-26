@@ -40,13 +40,12 @@ public class UserService {
     }
 
     public String logoutUser(AuthToken authToken) throws DataAccessException, SQLException {
-        String extractedToken = authToken.authToken();
-        AuthData authExist = authDataAccess.getAuth(extractedToken);
+        AuthData authExist = authDataAccess.getAuth(authToken);
         if(authExist != null){
-            return authDataAccess.deleteAuthToken(extractedToken);
+            return authDataAccess.deleteAuthToken(authToken);
         }
         else{
-                return extractedToken;
+                return authToken.authToken();
         }
     }
 }

@@ -207,8 +207,9 @@ public class ServiceTests {
 
         var createdGame = new CreateGameData("TestName", authData.authToken());
         gameService.createGame(createdGame);
+        AuthToken authToken = new AuthToken(authData.authToken());
 
-        Collection<GameData> gameList = gameService.listGames(authData.authToken());
+        Collection<GameData> gameList = gameService.listGames(authToken);
 
         assertEquals(1, gameList.size());
 
@@ -218,8 +219,9 @@ public class ServiceTests {
     void getListUnauthorizedAuth() throws DataAccessException {
         var user = new UserData("James", "007", "BOND@gmail.com");
         userService.registerUser(user);
+        AuthToken authToken = new AuthToken("unauthorized");
 
-        Collection<GameData> gameList = gameService.listGames("unauthorized");
+        Collection<GameData> gameList = gameService.listGames(authToken);
         Collection<GameData> expectedList = List.of(new GameData(0, null, null, null, null));
 
         assertEquals(expectedList, gameList);
