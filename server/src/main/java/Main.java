@@ -5,10 +5,11 @@ import server.Server;
 
 public class Main {
     public static void main(String[] args) {
+        var port = 8080;
 
 
         var server = new Server();
-        server.run(0);
+        server.run(port);
 
 
         var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
