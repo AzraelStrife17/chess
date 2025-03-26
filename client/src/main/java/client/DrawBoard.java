@@ -6,21 +6,21 @@ import java.nio.charset.StandardCharsets;
 import static ui.EscapeSequences.*;
 
 public class DrawBoard {
-    private static final int BoardSize = 8;
+    private static final int BOARDSIZE = 8;
 
-    private static final String White_King = " ♔ ";
-    private static final String White_Queen = " ♕ ";
-    private static final String White_Rook = " ♖ ";
-    private static final String White_Bishop = " ♗ ";
-    private static final String White_Knight = " ♘ ";
-    private static final String White_Pawn = " ♙ ";
+    private static final String WHITEKING = " ♔ ";
+    private static final String WHITEQUEEN = " ♕ ";
+    private static final String WHITEROOK = " ♖ ";
+    private static final String WHITEBISHOP = " ♗ ";
+    private static final String WHITEKNIGHT = " ♘ ";
+    private static final String WHITEPAWN = " ♙ ";
 
-    private static final String Black_King = " ♚ ";
-    private static final String Black_Queen = " ♛ ";
-    private static final String Black_Rook = " ♜ ";
-    private static final String Black_Bishop = " ♝ ";
-    private static final String Black_Knight = " ♞ ";
-    private static final String Black_Pawn = " ♟ ";
+    private static final String BLACKKING = " ♚ ";
+    private static final String BLACKQUEEN = " ♛ ";
+    private static final String BLACKROOK = " ♜ ";
+    private static final String BLACKBISHOP = " ♝ ";
+    private static final String BLACKKNIGHT = " ♞ ";
+    private static final String BLACKPAWN = " ♟ ";
 
 
 
@@ -52,7 +52,7 @@ public class DrawBoard {
         }
         else{
             System.out.print(" ");
-            for (int boardCol = 0; boardCol < BoardSize; ++boardCol) {
+            for (int boardCol = 0; boardCol < BOARDSIZE; ++boardCol) {
                 drawHeader(topHeaders[boardCol]);
             }
         }
@@ -91,9 +91,9 @@ public class DrawBoard {
 
     private static void drawRowOfSquaresBlack() {
         String[] sideHeaders = {"1", "2", "3", "4", "5", "6", "7", "8"};
-        for (int boardRow = 0; boardRow < BoardSize; ++boardRow) {
+        for (int boardRow = 0; boardRow < BOARDSIZE; ++boardRow) {
             drawHeader(sideHeaders[boardRow]);
-            for (int boardCol = 0; boardCol < BoardSize; ++boardCol) {
+            for (int boardCol = 0; boardCol < BOARDSIZE; ++boardCol) {
                 setBoard(boardRow, boardCol);
 
             }
@@ -118,45 +118,45 @@ public class DrawBoard {
         }
 
         if (boardRow == 0 && (boardCol == 0 || boardCol == 7)) {
-            System.out.print("\033[37m" + White_Rook + "\033[37m");
+            System.out.print("\033[37m" + WHITEROOK + "\033[37m");
         }
         else if (boardRow == 7 && (boardCol == 0 || boardCol == 7)) {
-            System.out.print("\033[30m" + Black_Rook + "\033[30m");
+            System.out.print("\033[30m" + BLACKROOK + "\033[30m");
         }
         else if (boardRow == 0 && (boardCol == 1 || boardCol == 6)) {
-            System.out.print("\033[37m" + White_Knight + "\033[37m");
+            System.out.print("\033[37m" + WHITEKNIGHT + "\033[37m");
         }
         else if (boardRow == 7 && (boardCol == 1 || boardCol == 6)) {
-            System.out.print("\033[30m" + Black_Knight + "\033[30m");
+            System.out.print("\033[30m" + BLACKKNIGHT + "\033[30m");
         }
 
         else if (boardRow == 0 && (boardCol == 2 || boardCol == 5)) {
-            System.out.print("\033[37m" + White_Bishop + "\033[37m");
+            System.out.print("\033[37m" + WHITEBISHOP + "\033[37m");
         }
         else if (boardRow == 7 && (boardCol == 2 || boardCol == 5)) {
-            System.out.print("\033[30m" + Black_Bishop + "\033[30m");
+            System.out.print("\033[30m" + BLACKBISHOP + "\033[30m");
         }
 
         else if (boardRow == 0 && boardCol == 3) {
-            System.out.print("\033[37m" + White_Queen + "\033[37m");
+            System.out.print("\033[37m" + WHITEQUEEN + "\033[37m");
         }
         else if (boardRow == 7 && boardCol == 3) {
-            System.out.print("\033[30m" + Black_Queen + "\033[30m");
+            System.out.print("\033[30m" + BLACKQUEEN + "\033[30m");
         }
 
         else if (boardRow == 0) {
-            System.out.print("\033[37m" + White_King + "\033[37m");
+            System.out.print("\033[37m" + WHITEKING + "\033[37m");
         }
         else if (boardRow == 7) {
-            System.out.print("\033[30m" + Black_King + "\033[30m");
+            System.out.print("\033[30m" + BLACKKING + "\033[30m");
         }
 
         else if (boardRow == 1){
-            System.out.print("\033[37m" + White_Pawn + "\033[37m");
+            System.out.print("\033[37m" + WHITEPAWN + "\033[37m");
         }
 
         else if (boardRow == 6){
-            System.out.print("\033[30m" + Black_Pawn + "\033[30m");
+            System.out.print("\033[30m" + BLACKPAWN + "\033[30m");
         }
 
 

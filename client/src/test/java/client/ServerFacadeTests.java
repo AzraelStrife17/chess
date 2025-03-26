@@ -46,25 +46,25 @@ public class ServerFacadeTests {
     @Test
     void register() throws Exception {
         UserData user = new UserData("player1", "password", "p1@email.com");
-        var authData = facade.RegisterResult(user);
+        var authData = facade.registerResult(user);
         assertTrue(authData.authToken().length() > 10);
     }
 
     @Test
     void registerDuplicate() throws Exception {
         UserData user = new UserData("player1", "password", "p1@email.com");
-        facade.RegisterResult(user);
+        facade.registerResult(user);
         assertThrows(ResponseException.class, () -> {
-            facade.RegisterResult(user);
+            facade.registerResult(user);
         });
     }
 
     @Test
     void login() throws Exception{
         UserData user = new UserData("player2", "password", "p2@email.com");
-        facade.RegisterResult(user);
+        facade.registerResult(user);
         LoginRecord userLogin = new LoginRecord("player2", "password");
-        var authData = facade.LoginResult(userLogin);
+        var authData = facade.loginResult(userLogin);
         assertTrue(authData.authToken().length() > 10);
     }
 
@@ -72,57 +72,57 @@ public class ServerFacadeTests {
     @Test
     void loginFail() throws Exception {
         UserData user = new UserData("player1", "password", "p1@email.com");
-        facade.RegisterResult(user);
+        facade.registerResult(user);
         LoginRecord loginInfo = new LoginRecord(user.username(), "wrongPassword");
         assertThrows(ResponseException.class, () -> {
-            facade.LoginResult(loginInfo);
+            facade.loginResult(loginInfo);
         });
     }
 
     @Test
     void logout() throws Exception{
         UserData user = new UserData("player2", "password", "p2@email.com");
-        var authData = facade.RegisterResult(user);
+        var authData = facade.registerResult(user);
         AuthToken authToken = new AuthToken(authData.authToken());
-        var logoutResult = facade.LogoutResult(authToken);
+        var logoutResult = facade.logoutResult(authToken);
         assertNull(logoutResult.authToken());
     }
 
     @Test
     void logoutFail() throws Exception {
         UserData user = new UserData("player1", "password", "p1@email.com");
-        facade.RegisterResult(user);
+        facade.registerResult(user);
         AuthToken authToken = new AuthToken("non-existing-token");
         assertThrows(ResponseException.class, () -> {
-            facade.LogoutResult(authToken);
+            facade.logoutResult(authToken);
         });
     }
 
     @Test
     void createGame() throws Exception{
         UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
-        var authData = facade.RegisterResult(user);
-        var createGameResult = facade.CreateGameResult("Altair", authData.authToken());
+        var authData = facade.registerResult(user);
+        var createGameResult = facade.createGameResult("Altair", authData.authToken());
         assertNotNull(createGameResult);
     }
 
     @Test
     void createGameFail() throws Exception{
         UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
-        var authData = facade.RegisterResult(user);
+        var authData = facade.registerResult(user);
         assertThrows(ResponseException.class, () -> {
-            facade.CreateGameResult("", authData.authToken());
+            facade.createGameResult("", authData.authToken());
         });
     }
 
     @Test
     void joinGame() throws Exception{
         UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
-        var authData = facade.RegisterResult(user);
-        var createResult = facade.CreateGameResult("Altair", authData.authToken());
+        var authData = facade.registerResult(user);
+        var createResult = facade.createGameResult("Altair", authData.authToken());
 
         JoinGameRecord joinInfo = new JoinGameRecord(ChessGame.TeamColor.WHITE, createResult.gameID(), authData.authToken());
-        var joinGameResult = facade.JoinGameResult(joinInfo);
+        var joinGameResult = facade.joinGameResult(joinInfo);
 
         assertNull(joinGameResult.authToken());
 
@@ -131,15 +131,15 @@ public class ServerFacadeTests {
     @Test
     void joinGameFailAlreadyTaken() throws Exception{
         UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
-        var authData = facade.RegisterResult(user);
-        var createResult = facade.CreateGameResult("Altair", authData.authToken());
+        var authData = facade.registerResult(user);
+        var createResult = facade.createGameResult("Altair", authData.authToken());
 
         JoinGameRecord joinInfo = new JoinGameRecord(ChessGame.TeamColor.WHITE, createResult.gameID(), authData.authToken());
 
-        facade.JoinGameResult(joinInfo);
+        facade.joinGameResult(joinInfo);
 
         assertThrows(ResponseException.class, () -> {
-            facade.JoinGameResult(joinInfo);
+            facade.joinGameResult(joinInfo);
         });
 
     }
@@ -147,11 +147,11 @@ public class ServerFacadeTests {
     @Test
     void listGames() throws Exception{
         UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
-        var authData = facade.RegisterResult(user);
-        facade.CreateGameResult("Altair", authData.authToken());
+        var authData = facade.registerResult(user);
+        facade.createGameResult("Altair", authData.authToken());
         AuthToken authToken = new AuthToken(authData.authToken());
 
-        var gameList = facade.ListGames(authToken);
+        var gameList = facade.listGames(authToken);
         assertNotNull(gameList);
 
     }
@@ -159,12 +159,12 @@ public class ServerFacadeTests {
     @Test
     void listGamesFail() throws Exception{
         UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
-        var authData = facade.RegisterResult(user);
-        facade.CreateGameResult("Altair", authData.authToken());
+        var authData = facade.registerResult(user);
+        facade.createGameResult("Altair", authData.authToken());
         AuthToken authToken = new AuthToken("dummyToken");
 
         assertThrows(ResponseException.class, () -> {
-            facade.ListGames(authToken);
+            facade.listGames(authToken);
         });
 
     }

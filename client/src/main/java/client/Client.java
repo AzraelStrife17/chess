@@ -46,7 +46,7 @@ public class Client {
         if (params.length == 3){
             UserData userData = new UserData(params[0], params[1], params[2]);
             try {
-                currentAuth = server.RegisterResult(userData);
+                currentAuth = server.registerResult(userData);
                 if (currentAuth != null) {
                     state = State.POSTLOGIN;
                     userName = params[0];
@@ -65,7 +65,7 @@ public class Client {
         if (params.length == 2){
             LoginRecord loginRecord = new LoginRecord(params[0], params[1]);
             try {
-                currentAuth = server.LoginResult(loginRecord);
+                currentAuth = server.loginResult(loginRecord);
                 if (currentAuth != null) {
                     state = State.POSTLOGIN;
                     userName = params[0];
@@ -83,7 +83,7 @@ public class Client {
         if (state == State.POSTLOGIN){
             try {
                 AuthToken authToken = new AuthToken(currentAuth.authToken());
-                server.LogoutResult(authToken);
+                server.logoutResult(authToken);
                 state = State.PRELOGIN;
                 return "Logged out";
             }
@@ -98,7 +98,7 @@ public class Client {
         if (state == State.POSTLOGIN) {
             try {
                 if (params.length == 1) {
-                    server.CreateGameResult(params[0], currentAuth.authToken());
+                    server.createGameResult(params[0], currentAuth.authToken());
                     return "game created";
                 }
             } catch(ResponseException ex){
@@ -112,7 +112,7 @@ public class Client {
         if (state == State.POSTLOGIN) {
             try {
                 AuthToken authToken = new AuthToken(currentAuth.authToken());
-                var games = server.ListGames(authToken);
+                var games = server.listGames(authToken);
                 var result = new StringBuilder();
                 for (var game : games) {
                     result.append("Game ID: ").append(game.gameID()).
@@ -137,7 +137,7 @@ public class Client {
                     ChessGame.TeamColor team = ChessGame.TeamColor.valueOf(params[1].toUpperCase());
                     int id = Integer.parseInt(params[0]);
                     JoinGameRecord joinInfo = new JoinGameRecord(team, id, currentAuth.authToken());
-                    server.JoinGameResult(joinInfo);
+                    server.joinGameResult(joinInfo);
                     String board = drawChessBoard(params[1]);
                     System.out.println(board);
                     state = State.GAMESTATE;

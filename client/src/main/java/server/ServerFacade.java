@@ -16,36 +16,36 @@ public class ServerFacade {
         this.serverUrl = serverUrl;
     }
 
-    public AuthData RegisterResult(UserData request) throws ResponseException {
+    public AuthData registerResult(UserData request) throws ResponseException {
         var path = "/user";
         return this.makeRequest("POST", path, request, AuthData.class);
     }
 
-    public AuthData LoginResult(LoginRecord request) throws ResponseException {
+    public AuthData loginResult(LoginRecord request) throws ResponseException {
         var path = "/session";
         return this.makeRequest("POST", path, request, AuthData.class);
     }
 
-    public StringResponse LogoutResult(AuthToken request) throws ResponseException {
+    public StringResponse logoutResult(AuthToken request) throws ResponseException {
         var path = "/session";
         return this.makeRequest("DELETE", path, request, StringResponse.class);
     }
 
-    public CreateGameResponse CreateGameResult(String GameName, String authToken) throws ResponseException {
+    public CreateGameResponse createGameResult(String GameName, String authToken) throws ResponseException {
         var request = new CreateGameData(GameName, authToken);
         var path = "/game";
         return this.makeRequest("POST", path, request, CreateGameResponse.class);
     }
 
-    public StringResponse JoinGameResult(JoinGameRecord request) throws ResponseException {
+    public StringResponse joinGameResult(JoinGameRecord request) throws ResponseException {
         var path = "/game";
         return this.makeRequest("PUT", path, request, StringResponse.class);
     }
 
-    public Collection<GameData> ListGames(AuthToken request) throws ResponseException {
+    public Collection<GameData> listGames(AuthToken request) throws ResponseException {
         var path = "/game";
-        record gameListResponse(Collection<GameData> games){};
-        var response = this.makeRequest("GET", path, request, gameListResponse.class);
+        record GameListResponse(Collection<GameData> games){};
+        var response = this.makeRequest("GET", path, request, GameListResponse.class);
         return response.games();
     }
 
