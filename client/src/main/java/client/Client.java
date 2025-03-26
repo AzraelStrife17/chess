@@ -1,6 +1,7 @@
 package client;
 
 import chess.ChessGame;
+import exception.ResponseException;
 import model.*;
 import server.ServerFacade;
 
@@ -71,7 +72,7 @@ public class Client {
         return "Error wrong format";
     }
 
-    public String logout(){
+    public String logout() throws ResponseException {
         if (state == State.POSTLOGIN){
             AuthToken authToken = new AuthToken(currentAuth.authToken());
             server.LogoutResult(authToken);
@@ -81,7 +82,7 @@ public class Client {
         return "Login to use";
     }
 
-    public String create(String... params) {
+    public String create(String... params) throws ResponseException {
         if (state == State.POSTLOGIN) {
             if (params.length == 1) {
                 server.CreateGameResult(params[0], currentAuth.authToken());
@@ -92,7 +93,7 @@ public class Client {
         return "Login to use";
     }
 
-    public String listGames(){
+    public String listGames() throws ResponseException {
         if (state == State.POSTLOGIN){
             AuthToken authToken = new AuthToken(currentAuth.authToken());
             var games = server.ListGames(authToken);
@@ -109,7 +110,7 @@ public class Client {
         return "Login to use";
     }
 
-    public String playGame(String... params){
+    public String playGame(String... params) throws ResponseException {
         if (state == State.POSTLOGIN){
             if (params.length == 2) {
                 ChessGame.TeamColor team = ChessGame.TeamColor.valueOf(params[1].toUpperCase());

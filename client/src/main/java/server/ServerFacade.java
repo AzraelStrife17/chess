@@ -1,5 +1,6 @@
 package server;
 import com.google.gson.Gson;
+import exception.ResponseException;
 import model.*;
 
 import java.io.*;
@@ -15,46 +16,46 @@ public class ServerFacade {
         this.serverUrl = serverUrl;
     }
 
-    public AuthData RegisterResult(UserData request){
+    public AuthData RegisterResult(UserData request) throws ResponseException {
         var path = "/user";
         return this.makeRequest("POST", path, request, AuthData.class);
     }
 
-    public AuthData LoginResult(LoginRecord request){
+    public AuthData LoginResult(LoginRecord request) throws ResponseException {
         var path = "/session";
         return this.makeRequest("POST", path, request, AuthData.class);
     }
 
-    public StringResponse LogoutResult(AuthToken request){
+    public StringResponse LogoutResult(AuthToken request) throws ResponseException {
         var path = "/session";
         return this.makeRequest("DELETE", path, request, StringResponse.class);
     }
 
-    public CreateGameResponse CreateGameResult(String GameName, String authToken){
+    public CreateGameResponse CreateGameResult(String GameName, String authToken) throws ResponseException {
         var request = new CreateGameData(GameName, authToken);
         var path = "/game";
         return this.makeRequest("POST", path, request, CreateGameResponse.class);
     }
 
-    public StringResponse JoinGameResult(JoinGameRecord request){
+    public StringResponse JoinGameResult(JoinGameRecord request) throws ResponseException {
         var path = "/game";
         return this.makeRequest("PUT", path, request, StringResponse.class);
     }
 
-    public Collection<GameData> ListGames(AuthToken request){
+    public Collection<GameData> ListGames(AuthToken request) throws ResponseException {
         var path = "/game";
         record gameListResponse(Collection<GameData> games){};
         var response = this.makeRequest("GET", path, request, gameListResponse.class);
         return response.games();
     }
 
-    public void clearAll(){
+    public void clearAll() throws ResponseException {
         var path = "/db";
         makeRequest("DELETE", path, null, null);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass){
-        try{
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+        try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
@@ -63,24 +64,18 @@ public class ServerFacade {
                 http.setRequestProperty("Authorization", authToken.authToken());
             }
             else{
-                writeBody(request, http);
-            }
+            writeBody(request, http);
+                }
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
-
-        }
-        catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-        catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (ProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (ResponseException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new ResponseException(ex.getMessage());
         }
     }
+
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
@@ -92,15 +87,16 @@ public class ServerFacade {
         }
     }
 
-    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException{
+    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
-
+                    throw ResponseException.fromJson(respErr);
                 }
             }
 
+            throw new ResponseException("other failure: " + status);
         }
     }
 
@@ -116,6 +112,7 @@ public class ServerFacade {
         }
         return response;
     }
+
 
     private boolean isSuccessful(int status) {
         return status / 100 == 2;

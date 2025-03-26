@@ -1,6 +1,7 @@
 package client;
 
 import chess.ChessGame;
+import exception.ResponseException;
 import model.AuthToken;
 import model.JoinGameRecord;
 import model.LoginRecord;
@@ -47,6 +48,15 @@ public class ServerFacadeTests {
         UserData user = new UserData("player1", "password", "p1@email.com");
         var authData = facade.RegisterResult(user);
         assertTrue(authData.authToken().length() > 10);
+    }
+
+    @Test
+    void registerDuplicate() throws Exception {
+        UserData user = new UserData("player1", "password", "p1@email.com");
+        facade.RegisterResult(user);
+        assertThrows(ResponseException.class, () -> {
+            facade.RegisterResult(user);
+        });
     }
 
     @Test
