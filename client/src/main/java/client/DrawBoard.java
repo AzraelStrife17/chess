@@ -7,8 +7,6 @@ import static ui.EscapeSequences.*;
 
 public class DrawBoard {
     private static final int BoardSize = 8;
-    private static final int SquareSize = 10;
-    private static final int PaddedChars = 1;
 
     private static final String White_King = " ♔ ";
     private static final String White_Queen = " ♕ ";
@@ -32,7 +30,7 @@ public class DrawBoard {
 
         out.print(ERASE_SCREEN);
 
-        drawChessBoard("black");
+        drawChessBoard("white");
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -67,12 +65,11 @@ public class DrawBoard {
     }
 
     private static void printHeaderText(String player) {
-        System.out.print(SET_BG_COLOR_BLACK);
         System.out.print(SET_TEXT_COLOR_GREEN);
 
+        System.out.print(RESET_BG_COLOR);
         System.out.print(player);
 
-        setBlack();
     }
 
     static String drawChessBoard(String team) {
@@ -105,7 +102,7 @@ public class DrawBoard {
             System.out.print(SET_BG_COLOR_BLACK);
             System.out.print(SET_TEXT_COLOR_WHITE);
 
-
+            System.out.print(RESET_BG_COLOR);
             System.out.println();
         }
 
@@ -181,7 +178,7 @@ public class DrawBoard {
             System.out.print(SET_BG_COLOR_BLACK);
             System.out.print(SET_TEXT_COLOR_WHITE);
 
-
+            System.out.print(RESET_BG_COLOR);
             System.out.println();
         }
     }
