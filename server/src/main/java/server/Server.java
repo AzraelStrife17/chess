@@ -88,7 +88,7 @@ public class Server {
         AuthData authData = userService.loginUser(userLogin);
         if(authData == null){
             res.status(401);
-            return new Gson().toJson(Map.of("message", "Error: unauthorized"));
+            return new Gson().toJson(Map.of("message", "Error: Wrong Username or Password"));
         }
         res.status(200);
         return new Gson().toJson(authData);

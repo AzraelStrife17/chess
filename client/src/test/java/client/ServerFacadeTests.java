@@ -68,6 +68,17 @@ public class ServerFacadeTests {
         assertTrue(authData.authToken().length() > 10);
     }
 
+
+    @Test
+    void loginFail() throws Exception {
+        UserData user = new UserData("player1", "password", "p1@email.com");
+        facade.RegisterResult(user);
+        LoginRecord loginInfo = new LoginRecord(user.username(), "wrongPassword");
+        assertThrows(ResponseException.class, () -> {
+            facade.LoginResult(loginInfo);
+        });
+    }
+
     @Test
     void logout() throws Exception{
         UserData user = new UserData("player2", "password", "p2@email.com");
@@ -75,6 +86,16 @@ public class ServerFacadeTests {
         AuthToken authToken = new AuthToken(authData.authToken());
         var logoutResult = facade.LogoutResult(authToken);
         assertNull(logoutResult.authToken());
+    }
+
+    @Test
+    void logoutFail() throws Exception {
+        UserData user = new UserData("player1", "password", "p1@email.com");
+        facade.RegisterResult(user);
+        AuthToken authToken = new AuthToken("non-existing-token");
+        assertThrows(ResponseException.class, () -> {
+            facade.LogoutResult(authToken);
+        });
     }
 
     @Test
