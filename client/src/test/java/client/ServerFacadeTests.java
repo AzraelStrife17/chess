@@ -107,6 +107,15 @@ public class ServerFacadeTests {
     }
 
     @Test
+    void createGameFail() throws Exception{
+        UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
+        var authData = facade.RegisterResult(user);
+        assertThrows(ResponseException.class, () -> {
+            facade.CreateGameResult("", authData.authToken());
+        });
+    }
+
+    @Test
     void joinGame() throws Exception{
         UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
         var authData = facade.RegisterResult(user);
@@ -116,6 +125,23 @@ public class ServerFacadeTests {
         var joinGameResult = facade.JoinGameResult(joinInfo);
 
         assertNull(joinGameResult.authToken());
+
+    }
+
+    @Test
+    void joinGameFailAlreadyTaken() throws Exception{
+        UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
+        var authData = facade.RegisterResult(user);
+        var createResult = facade.CreateGameResult("Altair", authData.authToken());
+
+        JoinGameRecord joinInfo = new JoinGameRecord(ChessGame.TeamColor.WHITE, createResult.gameID(), authData.authToken());
+
+        facade.JoinGameResult(joinInfo);
+
+        assertThrows(ResponseException.class, () -> {
+            facade.JoinGameResult(joinInfo);
+        });
+
     }
 
     @Test
@@ -127,6 +153,19 @@ public class ServerFacadeTests {
 
         var gameList = facade.ListGames(authToken);
         assertNotNull(gameList);
+
+    }
+
+    @Test
+    void listGamesFail() throws Exception{
+        UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
+        var authData = facade.RegisterResult(user);
+        facade.CreateGameResult("Altair", authData.authToken());
+        AuthToken authToken = new AuthToken("dummyToken");
+
+        assertThrows(ResponseException.class, () -> {
+            facade.ListGames(authToken);
+        });
 
     }
 
