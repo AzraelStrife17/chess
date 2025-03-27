@@ -31,8 +31,8 @@ public class ServerFacade {
         return this.makeRequest("DELETE", path, request, StringResponse.class);
     }
 
-    public CreateGameResponse createGameResult(String GameName, String authToken) throws ResponseException {
-        var request = new CreateGameData(GameName, authToken);
+    public CreateGameResponse createGameResult(String gameName, String authToken) throws ResponseException {
+        var request = new CreateGameData(gameName, authToken);
         var path = "/game";
         return this.makeRequest("POST", path, request, CreateGameResponse.class);
     }
