@@ -114,8 +114,11 @@ public class Client {
                 AuthToken authToken = new AuthToken(currentAuth.authToken());
                 var games = server.listGames(authToken);
                 var result = new StringBuilder();
+                server.clearDisplayIdMap();
                 for (var game : games) {
-                    result.append("Game ID: ").append(game.gameID()).
+                    int gameID = game.gameID();
+                    int displayID = server.createDisplayID(gameID);
+                    result.append("Game ID: ").append(displayID).
                             append("    White: ").append(game.whiteUsername()).
                             append("    Black: ").append(game.blackUsername()).
                             append("    Game name: ").append(game.gameName()).
@@ -134,7 +137,14 @@ public class Client {
         if (state == State.POSTLOGIN){
             try {
                 if (params.length == 2) {
-                    ChessGame.TeamColor team = ChessGame.TeamColor.valueOf(params[1].toUpperCase());
+                    ChessGame.TeamColor team;
+
+                    try {
+                        team = ChessGame.TeamColor.valueOf(params[1].toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        return "Error: Invalid team color or layout, proper format is <gameID> <white/black>.";
+                    }
+
                     int id = Integer.parseInt(params[0]);
                     JoinGameRecord joinInfo = new JoinGameRecord(team, id, currentAuth.authToken());
                     server.joinGameResult(joinInfo);
@@ -147,6 +157,7 @@ public class Client {
             catch(ResponseException ex) {
                 return ex.getMessage();
             }
+            return "Error: BadArgument";
         }
         return "Login to use";
     }

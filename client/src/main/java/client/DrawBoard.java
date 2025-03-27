@@ -137,10 +137,10 @@ public class DrawBoard {
             System.out.print("\033[30m" + BLACKBISHOP + "\033[30m");
         }
 
-        else if (boardRow == 0 && boardCol == 3) {
+        else if (boardRow == 0 && boardCol == 4) {
             System.out.print("\033[37m" + WHITEQUEEN + "\033[37m");
         }
-        else if (boardRow == 7 && boardCol == 3) {
+        else if (boardRow == 7 && boardCol == 4) {
             System.out.print("\033[30m" + BLACKQUEEN + "\033[30m");
         }
 

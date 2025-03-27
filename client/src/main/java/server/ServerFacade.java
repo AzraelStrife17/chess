@@ -5,12 +5,12 @@ import model.*;
 
 import java.io.*;
 import java.net.*;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 
 public class ServerFacade {
     private final String serverUrl;
+    private Map<Integer, Integer> displayIdMap = new HashMap<>();;
 
     public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -39,7 +39,9 @@ public class ServerFacade {
 
     public StringResponse joinGameResult(JoinGameRecord request) throws ResponseException {
         var path = "/game";
-        return this.makeRequest("PUT", path, request, StringResponse.class);
+        int gameID = getGameID(request.gameID());
+        JoinGameRecord updatedRequest = new JoinGameRecord(request.playerColor(), gameID, request.authToken());
+        return this.makeRequest("PUT", path, updatedRequest, StringResponse.class);
     }
 
     public Collection<GameData> listGames(AuthToken request) throws ResponseException {
@@ -116,6 +118,23 @@ public class ServerFacade {
 
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
+    }
+
+    public int createDisplayID(int gameID){
+        int displayID = 1;
+        Random random = new Random();
+        while(displayIdMap.containsKey(displayID)) {
+            displayID = random.nextInt(100);
+        }
+        displayIdMap.put(displayID, gameID);
+        return displayID;
+    }
+
+    private int getGameID(int displayID){
+        return displayIdMap.get(displayID);
+    }
+    public void clearDisplayIdMap(){
+        displayIdMap.clear();
     }
 }
 

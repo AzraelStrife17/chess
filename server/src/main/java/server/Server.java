@@ -13,6 +13,9 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
 
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
+
 public class Server {
     private final UserService userService;
     private final GameService gameService;
@@ -150,9 +153,15 @@ public class Server {
             res.type("application/json");
             String authTokenString = req.headers("authorization");
             AuthToken authToken = new AuthToken(authTokenString);
-            joinGameInfo = new JoinGameRecord(joinGameInfo.playerColor(), joinGameInfo.gameID(), authToken.authToken());
+            try {
+                joinGameInfo = new JoinGameRecord(joinGameInfo.playerColor(), joinGameInfo.gameID(), authToken.authToken());
+            } catch (IllegalArgumentException e) {
+                res.status(400);
+                return new Gson().toJson(Map.of("message", "Error: TeamColor does not exist"));
+            }
         }
-        if(joinGameInfo.playerColor() == null || joinGameInfo.gameID() == null){
+        if(joinGameInfo.playerColor() == null || joinGameInfo.gameID() == null
+        || (joinGameInfo.playerColor() != WHITE && joinGameInfo.playerColor() != BLACK)){
             res.status(400);
             return new Gson().toJson(Map.of("message", "Error: bad requests"));
         }
@@ -167,7 +176,7 @@ public class Server {
         }
 
         res.status(401);
-        return new  Gson().toJson(Map.of("message", "Error: Unauthorized"));
+        return new Gson().toJson(Map.of("message", "Error: team color does not exist"));
     }
 
     private Object listGames(Request req, Response res) throws DataAccessException {

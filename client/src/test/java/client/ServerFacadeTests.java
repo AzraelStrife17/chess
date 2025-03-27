@@ -119,9 +119,11 @@ public class ServerFacadeTests {
     void joinGame() throws Exception{
         UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
         var authData = facade.registerResult(user);
-        var createResult = facade.createGameResult("Altair", authData.authToken());
+        var gameResult = facade.createGameResult("Altair", authData.authToken());
+        int displayID = facade.createDisplayID(gameResult.gameID());
 
-        JoinGameRecord joinInfo = new JoinGameRecord(ChessGame.TeamColor.WHITE, createResult.gameID(), authData.authToken());
+
+        JoinGameRecord joinInfo = new JoinGameRecord(ChessGame.TeamColor.WHITE, displayID, authData.authToken());
         var joinGameResult = facade.joinGameResult(joinInfo);
 
         assertNull(joinGameResult.authToken());
@@ -133,8 +135,9 @@ public class ServerFacadeTests {
         UserData user = new UserData("EzioAuditore", "RequiescatInPace", "BrotherHood@email.com");
         var authData = facade.registerResult(user);
         var createResult = facade.createGameResult("Altair", authData.authToken());
+        int displayID = facade.createDisplayID(createResult.gameID());
 
-        JoinGameRecord joinInfo = new JoinGameRecord(ChessGame.TeamColor.WHITE, createResult.gameID(), authData.authToken());
+        JoinGameRecord joinInfo = new JoinGameRecord(ChessGame.TeamColor.WHITE, displayID, authData.authToken());
 
         facade.joinGameResult(joinInfo);
 
