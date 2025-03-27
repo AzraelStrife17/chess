@@ -153,12 +153,7 @@ public class Server {
             res.type("application/json");
             String authTokenString = req.headers("authorization");
             AuthToken authToken = new AuthToken(authTokenString);
-            try {
-                joinGameInfo = new JoinGameRecord(joinGameInfo.playerColor(), joinGameInfo.gameID(), authToken.authToken());
-            } catch (IllegalArgumentException e) {
-                res.status(400);
-                return new Gson().toJson(Map.of("message", "Error: TeamColor does not exist"));
-            }
+            joinGameInfo = new JoinGameRecord(joinGameInfo.playerColor(), joinGameInfo.gameID(), authToken.authToken());
         }
         if(joinGameInfo.playerColor() == null || joinGameInfo.gameID() == null
         || (joinGameInfo.playerColor() != WHITE && joinGameInfo.playerColor() != BLACK)){

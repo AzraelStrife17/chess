@@ -33,6 +33,7 @@ public class Client {
                 case "create" -> create(params);
                 case "listgames" -> listGames();
                 case "playgame" -> playGame(params);
+                case "observegame" -> observeGame(params);
                 case "quit" -> "quit";
 
                 default -> help();
@@ -138,14 +139,20 @@ public class Client {
             try {
                 if (params.length == 2) {
                     ChessGame.TeamColor team;
+                    int id;
 
                     try {
+                        id = Integer.parseInt(params[0]);
                         team = ChessGame.TeamColor.valueOf(params[1].toUpperCase());
                     } catch (IllegalArgumentException e) {
                         return "Error: Invalid team color or layout, proper format is <gameID> <white/black>.";
                     }
 
-                    int id = Integer.parseInt(params[0]);
+                    int displayID = server.getGameID(id);
+                    if(displayID == 0){
+                        return "Error: ID does not exist";
+                    }
+
                     JoinGameRecord joinInfo = new JoinGameRecord(team, id, currentAuth.authToken());
                     server.joinGameResult(joinInfo);
                     String board = drawChessBoard(params[1]);
@@ -162,7 +169,29 @@ public class Client {
         return "Login to use";
     }
 
+    public String observeGame(String... params) throws ResponseException {
+        if (state == State.POSTLOGIN) {
 
+            int id;
+
+            try {
+                id = Integer.parseInt(params[0]);
+            }catch (IllegalArgumentException e) {
+                return "Error: Invalid team color or layout, proper format is <gameID> <white/black>.";
+            }
+
+            int displayID = server.getGameID(id);
+            if(displayID == 0){
+                return "Error: ID does not exist";
+            }
+
+            String board = drawChessBoard("white");
+            System.out.println(board);
+
+            return String.format("watching game %s", params[0]);
+        }
+        return "Login to use";
+    }
 
     public String help() {
         if (state == State.PRELOGIN) {
@@ -178,6 +207,7 @@ public class Client {
                 create <gamename>
                 listgames
                 playgame <gameID> <teamColor>
+                observegame <gameID>
                 help
                 logout
                 

@@ -121,17 +121,18 @@ public class ServerFacade {
     }
 
     public int createDisplayID(int gameID){
-        int displayID = 1;
-        Random random = new Random();
-        while(displayIdMap.containsKey(displayID)) {
-            displayID = random.nextInt(100);
-        }
+        int displayID = gameID;
         displayIdMap.put(displayID, gameID);
         return displayID;
     }
 
-    private int getGameID(int displayID){
-        return displayIdMap.get(displayID);
+    public int getGameID(int displayID){
+        if(displayIdMap.get(displayID) != null){
+            return displayIdMap.get(displayID);
+        }
+        else{
+            return 0;
+        }
     }
     public void clearDisplayIdMap(){
         displayIdMap.clear();
