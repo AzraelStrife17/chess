@@ -1,16 +1,19 @@
 package client;
 
+import websocket.ServerMessageHandler;
+import websocket.messages.ServerMessage;
+
 import java.util.Scanner;
 
 import static client.EscapeSequences.*;
 
 
-public class Repl {
+public class Repl implements ServerMessageHandler {
     private final Client client;
 
 
     public Repl(String serverUrl) {
-        this.client = new Client(serverUrl);
+        this.client = new Client(serverUrl, this);
     }
 
     public void run() {
@@ -36,5 +39,11 @@ public class Repl {
 
     private void printPrompt() {
         System.out.print("\n" + RESET + ">>> " + GREEN);
+    }
+
+
+    public void notify(ServerMessage.ServerMessageType serverMessageType) {
+        System.out.println(RED + serverMessageType);
+        printPrompt();
     }
 }

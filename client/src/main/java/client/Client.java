@@ -4,6 +4,8 @@ import chess.ChessGame;
 import exception.ResponseException;
 import model.*;
 import server.ServerFacade;
+import websocket.ServerMessageHandler;
+import websocket.WebSocketFacade;
 
 import java.util.Arrays;
 
@@ -15,10 +17,14 @@ public class Client {
     private final String serverUrl;
     private State state = State.PRELOGIN;
     private AuthData currentAuth;
+    private final ServerMessageHandler serverMessageHandler;
+    private WebSocketFacade ws;
 
-    public Client(String serverUrl) {
+
+    public Client(String serverUrl, ServerMessageHandler serverMessageHandler) {
         this.serverUrl = serverUrl;
         this.server = new ServerFacade(serverUrl);
+        this.serverMessageHandler = serverMessageHandler;
     }
 
     public String eval(String input) {
