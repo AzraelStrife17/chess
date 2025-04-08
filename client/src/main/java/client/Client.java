@@ -34,6 +34,7 @@ public class Client {
                 case "listgames" -> listGames();
                 case "playgame" -> playGame(params);
                 case "observegame" -> observeGame(params);
+                case "makemove" -> makeMove(params);
                 case "quit" -> "quit";
 
                 default -> help();
@@ -169,6 +170,15 @@ public class Client {
         return "Login to use";
     }
 
+    public String makeMove(String... params){
+        if (state == state.GAMESTATE){
+            return null;
+        }
+        else return "must join a game to use this method";
+    }
+
+
+
     public String observeGame(String... params) throws ResponseException {
         if (state == State.POSTLOGIN) {
 
@@ -203,15 +213,24 @@ public class Client {
                     """;
         }
 
-        return """
-                create <gamename>
-                listgames
-                playgame <gameID> <teamColor>
-                observegame <gameID>
-                help
-                logout
-                
-                """;
+        if (state == State.POSTLOGIN) {
+            return """
+                    create <gamename>
+                    listgames
+                    playgame <gameID> <teamColor>
+                    observegame <gameID>
+                    help
+                    logout
+                    
+                    """;
+        }
+
+        else{
+            return """
+                    makemove <startingpostion> <endpostion>
+                    """;
+        }
     }
+
 }
 
