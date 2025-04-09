@@ -6,6 +6,7 @@ import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
@@ -20,25 +21,26 @@ public class ConnectionManager {
         connections.remove(username);
     }
 
-    public void broadcast(String excludeUsername, ServerMessage serverMessage) throws IOException {
+    public void broadcast(String excludeUsername, ServerMessage serverMessage, String receivers) throws IOException {
         var removeList = new ArrayList<Connection>();
 
         String jsonMessage = new Gson().toJson(serverMessage);
 
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+                if (Objects.equals(receivers, "rootClient")){
                     if(c.username.equals(excludeUsername)){
                         c.send(jsonMessage);
                     }
 
                 }
-                else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
-                    if(c.username.equals(excludeUsername)){
+                else if (Objects.equals(receivers, "otherClients")) {
+                    if (!c.username.equals(excludeUsername)) {
                         c.send(jsonMessage);
                     }
                 }
-                else if (!c.username.equals(excludeUsername)) {
+
+                else if(Objects.equals(receivers,"allClients")){
                     c.send(jsonMessage);
                 }
             } else {

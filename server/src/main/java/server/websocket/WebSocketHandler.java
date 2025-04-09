@@ -80,12 +80,12 @@ public class WebSocketHandler {
         if (username.isEmpty()){
             var invalidAuthTokenMessage = "Error: invalid authToken";
             ServerMessage errorMessage = new ErrorMessage(invalidAuthTokenMessage);
-            connections.broadcast(username, errorMessage);
+            connections.broadcast(username, errorMessage, "rootClient");
         }
         else if(!gameDataAccess.verifyGameID(gameID)){
             var invalidIDMessage = "Error: invalid game ID";
             ServerMessage errorMessage = new ErrorMessage(invalidIDMessage);
-            connections.broadcast(username, errorMessage);
+            connections.broadcast(username, errorMessage, "rootClient");
 
         }
 
@@ -94,15 +94,16 @@ public class WebSocketHandler {
 
 
             ServerMessage loadGameMessage = new LoadGameMessage(game);
-            connections.broadcast(username, loadGameMessage);
+            connections.broadcast(username, loadGameMessage, "rootClient");
 
             var message = "connected to game";
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(username, notificationMessage);
+            connections.broadcast(username, notificationMessage, "otherClients");
         }
     }
 
     private void makeMove(String username, Integer gameID, ChessMove move) throws IOException, InvalidMoveException {
+
         GameData gameData = gameDataAccess.retrieveGame(gameID);
         ChessGame game = gameData.game();
 
@@ -111,10 +112,10 @@ public class WebSocketHandler {
         var message = String.format("%s moved", username);
 
         ServerMessage loadGameMessage = new LoadGameMessage(message);
-        connections.broadcast(username, loadGameMessage);
+        connections.broadcast(username, loadGameMessage, "allClients");
 
         ServerMessage notificationMessage = new NotificationMessage(message);
-        connections.broadcast(username, notificationMessage);
+        connections.broadcast(username, notificationMessage, "otherClients");
 
     }
 
@@ -127,7 +128,7 @@ public class WebSocketHandler {
             gameDataAccess.removePlayer(playerInfo);
             var message = String.format("%s has left as white team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(username, notificationMessage);
+            connections.broadcast(username, notificationMessage, "otherClients");
         }
 
         else if(Objects.equals(username, gameData.blackUsername())){
@@ -135,13 +136,13 @@ public class WebSocketHandler {
             gameDataAccess.removePlayer(playerInfo);
             var message = String.format("%s has left as black team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(username, notificationMessage);
+            connections.broadcast(username, notificationMessage, "otherClients");
         }
 
         else{
             var message = String.format("%s has left", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(username, notificationMessage);
+            connections.broadcast(username, notificationMessage, "otherClients");
         }
 
 
