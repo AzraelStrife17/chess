@@ -54,6 +54,7 @@ public class WebSocketHandler {
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, gameID);
+                case MAKE_MOVE -> makeMove(session, username, gameID);
             }
         } catch (JsonSyntaxException | DataAccessException e) {
             throw new RuntimeException(e);
@@ -85,6 +86,10 @@ public class WebSocketHandler {
             ServerMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(username, notificationMessage);
         }
+    }
+
+    private void makeMove(Session session, String username, Integer gameID){
+
     }
 
 
