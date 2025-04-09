@@ -10,6 +10,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.OnOpen;
@@ -41,25 +42,28 @@ public class WebSocketHandler {
             AuthData auth = authDataAccess.getAuth(authToken);
             String username = auth.username();
 
-            saveSession(command.getGameID(), session);
+            Integer gameID = command.getGameID();
 
             switch (command.getCommandType()) {
-                case CONNECT -> connect(session, username);
+                case CONNECT -> connect(session, username, gameID);
             }
         } catch (JsonSyntaxException | DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void saveSession(Integer gameID, Session session) {
-    }
 
-    private void connect(Session session, String username) throws IOException {
+    private void connect(Session session, String username, Integer gameID) throws IOException {
         connections.add(username, session);
-        var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-        connections.broadcast(username, loadGame);
+        String game = String.valueOf(gameID);
+
+        ServerMessage loadGameMessage = new LoadGameMessage(game);
+        connections.broadcast(username, loadGameMessage);
+
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
         connections.broadcast(username, notification);
     }
+
+
 }
 
