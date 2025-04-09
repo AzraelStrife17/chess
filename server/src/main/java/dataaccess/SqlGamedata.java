@@ -50,6 +50,23 @@ public class SqlGamedata implements GameDAO{
         }
     }
 
+    public ChessGame retrieveGame(Integer gameID){
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM GameTable WHERE gameID = ?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ResultSet rs = ps.executeQuery();
+                ps.setInt(1, gameID);
+                if(rs.next()){
+                    GameData data = readGameTable(rs);
+                    return data.game();
+                }
+                return null;
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private boolean addPlayerToTeam(JoinGameRecord playerInfo, AuthData authData, String storedWhite, String storedBlack) throws DataAccessException {
         if (playerInfo.playerColor() == ChessGame.TeamColor.BLACK) {
             if (storedBlack == null) {
@@ -85,6 +102,8 @@ public class SqlGamedata implements GameDAO{
             throw new RuntimeException(e);
         }
     }
+
+
 
     public Collection<GameData> listGames() throws DataAccessException {
         var result = new ArrayList<GameData>();

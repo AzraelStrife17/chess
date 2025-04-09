@@ -1,4 +1,5 @@
 package dataaccess;
+import chess.ChessGame;
 import chess.ChessGame.TeamColor;
 import model.AuthData;
 import model.GameData;
@@ -13,5 +14,6 @@ public interface GameDAO {
     Collection<GameData> listGames() throws DataAccessException;
     void clearGames() throws DataAccessException;
     boolean verifyGameID(Integer gameID);
+    ChessGame retrieveGame(Integer gameID);
 
 }

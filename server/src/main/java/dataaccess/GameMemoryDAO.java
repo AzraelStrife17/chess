@@ -76,4 +76,9 @@ public class GameMemoryDAO implements GameDAO {
     public boolean verifyGameID(Integer gameID) {
         return false;
     }
+
+    @Override
+    public ChessGame retrieveGame(Integer gameID) {
+        return null;
+    }
 }
