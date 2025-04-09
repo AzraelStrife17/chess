@@ -11,6 +11,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.UserGameCommand;
 import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.OnOpen;
@@ -60,8 +61,9 @@ public class WebSocketHandler {
         ServerMessage loadGameMessage = new LoadGameMessage(game);
         connections.broadcast(username, loadGameMessage);
 
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(username, notification);
+        var message = "connected to game";
+        ServerMessage notificationMessage = new NotificationMessage(message);
+        connections.broadcast(username, notificationMessage);
     }
 
 

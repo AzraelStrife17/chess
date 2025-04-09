@@ -34,7 +34,7 @@ public class ConnectionManager {
 
                 }
                 else if (!c.username.equals(excludeUsername)) {
-                    c.send(serverMessage.toString());
+                    c.send(jsonMessage);
                 }
             } else {
                 removeList.add(c);
