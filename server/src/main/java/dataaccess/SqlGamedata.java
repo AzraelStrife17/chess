@@ -54,8 +54,8 @@ public class SqlGamedata implements GameDAO{
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM GameTable WHERE gameID = ?";
             try (var ps = conn.prepareStatement(statement)) {
-                ResultSet rs = ps.executeQuery();
                 ps.setInt(1, gameID);
+                ResultSet rs = ps.executeQuery();
                 if(rs.next()){
                     GameData data = readGameTable(rs);
                     return data.game();

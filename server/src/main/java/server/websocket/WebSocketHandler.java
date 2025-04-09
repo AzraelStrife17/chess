@@ -1,5 +1,8 @@
 package server.websocket;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import dataaccess.DataAccessException;
@@ -10,6 +13,7 @@ import model.AuthToken;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -18,7 +22,6 @@ import websocket.messages.ServerMessage;
 
 import javax.websocket.OnOpen;
 import java.io.IOException;
-import java.util.Timer;
 
 
 @WebSocket
@@ -56,7 +59,7 @@ public class WebSocketHandler {
                 case CONNECT -> connect(session, username, gameID);
                 case MAKE_MOVE -> makeMove(session, username, gameID);
             }
-        } catch (JsonSyntaxException | DataAccessException e) {
+        } catch (JsonSyntaxException | DataAccessException | InvalidMoveException e) {
             throw new RuntimeException(e);
         }
     }
@@ -88,7 +91,17 @@ public class WebSocketHandler {
         }
     }
 
-    private void makeMove(Session session, String username, Integer gameID){
+    private void makeMove(Session session, String username, Integer gameID) throws IOException, InvalidMoveException {
+        ChessGame game = gameDataAccess.retrieveGame(gameID);
+
+
+        var message = String.format("%s moved", username);
+
+        ServerMessage loadGameMessage = new LoadGameMessage(message);
+        connections.broadcast(username, loadGameMessage);
+
+        ServerMessage notificationMessage = new NotificationMessage(message);
+        connections.broadcast(username, notificationMessage);
 
     }
 
