@@ -78,7 +78,7 @@ public class GameMemoryDAO implements GameDAO {
     }
 
     @Override
-    public ChessGame retrieveGame(Integer gameID) {
+    public GameData retrieveGame(Integer gameID) {
         return null;
     }
 }

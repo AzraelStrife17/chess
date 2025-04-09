@@ -50,7 +50,7 @@ public class SqlGamedata implements GameDAO{
         }
     }
 
-    public ChessGame retrieveGame(Integer gameID){
+    public GameData retrieveGame(Integer gameID){
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM GameTable WHERE gameID = ?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -58,7 +58,7 @@ public class SqlGamedata implements GameDAO{
                 ResultSet rs = ps.executeQuery();
                 if(rs.next()){
                     GameData data = readGameTable(rs);
-                    return data.game();
+                    return data;
                 }
                 return null;
             }

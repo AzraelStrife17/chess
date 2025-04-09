@@ -10,6 +10,7 @@ import dataaccess.GameDAO;
 import model.AuthData;
 import dataaccess.AuthDAO;
 import model.AuthToken;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -22,6 +23,7 @@ import websocket.messages.ServerMessage;
 
 import javax.websocket.OnOpen;
 import java.io.IOException;
+import java.util.Objects;
 
 
 @WebSocket
@@ -57,7 +59,8 @@ public class WebSocketHandler {
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, gameID);
-                case MAKE_MOVE -> makeMove(session, username, gameID);
+                case MAKE_MOVE -> makeMove(username, gameID);
+                case LEAVE -> leave(session, username, gameID);
             }
         } catch (JsonSyntaxException | DataAccessException | InvalidMoveException e) {
             throw new RuntimeException(e);
@@ -91,8 +94,9 @@ public class WebSocketHandler {
         }
     }
 
-    private void makeMove(Session session, String username, Integer gameID) throws IOException, InvalidMoveException {
-        ChessGame game = gameDataAccess.retrieveGame(gameID);
+    private void makeMove(String username, Integer gameID) throws IOException, InvalidMoveException {
+        GameData gameData = gameDataAccess.retrieveGame(gameID);
+        ChessGame game = gameData.game();
 
 
         var message = String.format("%s moved", username);
@@ -102,6 +106,33 @@ public class WebSocketHandler {
 
         ServerMessage notificationMessage = new NotificationMessage(message);
         connections.broadcast(username, notificationMessage);
+
+    }
+
+    private void leave(Session session, String username, Integer gameID) throws IOException {
+        GameData gameData = gameDataAccess.retrieveGame(gameID);
+
+        if (Objects.equals(username, gameData.whiteUsername())){
+            connections.remove(username);
+            var message = String.format("%s has left as white team", username);
+            ServerMessage notificationMessage = new NotificationMessage(message);
+            connections.broadcast(username, notificationMessage);
+        }
+
+        else if(Objects.equals(username, gameData.blackUsername())){
+            connections.remove(username);
+            var message = String.format("%s has left as black team", username);
+            ServerMessage notificationMessage = new NotificationMessage(message);
+            connections.broadcast(username, notificationMessage);
+        }
+
+        else{
+            connections.remove(username);
+            var message = String.format("%s has left", username);
+            ServerMessage notificationMessage = new NotificationMessage(message);
+            connections.broadcast(username, notificationMessage);
+        }
+
 
     }
 

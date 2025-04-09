@@ -14,6 +14,6 @@ public interface GameDAO {
     Collection<GameData> listGames() throws DataAccessException;
     void clearGames() throws DataAccessException;
     boolean verifyGameID(Integer gameID);
-    ChessGame retrieveGame(Integer gameID);
+    GameData retrieveGame(Integer gameID);
 
 }
