@@ -57,17 +57,14 @@ public class WebSocketHandler {
 
             AuthToken authTokenModel = new AuthToken(command.getAuthToken());
             AuthData auth = authDataAccess.getAuth(authTokenModel);
-            String username = "";
-            if (auth != null){
-                username = auth.username();
-            }
+
 
             Integer gameID = command.getGameID();
 
             switch (command.getCommandType()) {
-                case CONNECT -> connect(session, username, gameID);
-                case MAKE_MOVE -> makeMove(username, gameID, move);
-                case LEAVE -> leave(username, gameID);
+                case CONNECT -> connect(session, auth, gameID);
+                case MAKE_MOVE -> makeMove(session, auth, gameID, move);
+                case LEAVE -> leave(session, auth, gameID);
             }
         } catch (JsonSyntaxException | DataAccessException | InvalidMoveException e) {
             throw new RuntimeException(e);
@@ -75,17 +72,22 @@ public class WebSocketHandler {
     }
 
 
-    private void connect(Session session, String username, Integer gameID) throws IOException, DataAccessException {
+    private void connect(Session session, AuthData auth, Integer gameID) throws IOException, DataAccessException {
+        String username = "";
+        if (auth != null){
+            username = auth.username();
+        }
+
         connections.add(username, session);
         if (username.isEmpty()){
             var invalidAuthTokenMessage = "Error: invalid authToken";
             ServerMessage errorMessage = new ErrorMessage(invalidAuthTokenMessage);
-            connections.broadcast(username, errorMessage, "rootClient");
+            connections.broadcast(session, errorMessage, "rootClient");
         }
         else if(!gameDataAccess.verifyGameID(gameID)){
             var invalidIDMessage = "Error: invalid game ID";
             ServerMessage errorMessage = new ErrorMessage(invalidIDMessage);
-            connections.broadcast(username, errorMessage, "rootClient");
+            connections.broadcast(session, errorMessage, "rootClient");
 
         }
 
@@ -94,32 +96,52 @@ public class WebSocketHandler {
 
 
             ServerMessage loadGameMessage = new LoadGameMessage(game);
-            connections.broadcast(username, loadGameMessage, "rootClient");
+            connections.broadcast(session, loadGameMessage, "rootClient");
 
             var message = "connected to game";
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(username, notificationMessage, "otherClients");
+            connections.broadcast(session, notificationMessage, "otherClients");
         }
     }
 
-    private void makeMove(String username, Integer gameID, ChessMove move) throws IOException, InvalidMoveException {
+    private void makeMove(Session session, AuthData auth, Integer gameID, ChessMove move) throws IOException, InvalidMoveException {
+        String username = "";
+        if (auth != null){
+            username = auth.username();
+        }
 
-        GameData gameData = gameDataAccess.retrieveGame(gameID);
-        ChessGame game = gameData.game();
 
-        game.makeMove(move);
+        if (username.isEmpty()){
+            var invalidAuthTokenMessage = "Error: invalid authToken";
+            ServerMessage errorMessage = new ErrorMessage(invalidAuthTokenMessage);
+            connections.broadcast(session, errorMessage, "rootClient");
+        }
 
-        var message = String.format("%s moved", username);
 
-        ServerMessage loadGameMessage = new LoadGameMessage(message);
-        connections.broadcast(username, loadGameMessage, "allClients");
 
-        ServerMessage notificationMessage = new NotificationMessage(message);
-        connections.broadcast(username, notificationMessage, "otherClients");
+        else {
+            GameData gameData = gameDataAccess.retrieveGame(gameID);
+            ChessGame game = gameData.game();
+
+            game.makeMove(move);
+
+            var message = String.format("%s moved", username);
+
+            ServerMessage loadGameMessage = new LoadGameMessage(message);
+            connections.broadcast(session, loadGameMessage, "allClients");
+
+            ServerMessage notificationMessage = new NotificationMessage(message);
+            connections.broadcast(session, notificationMessage, "otherClients");
+        }
 
     }
 
-    private void leave(String username, Integer gameID) throws IOException, DataAccessException {
+    private void leave(Session session, AuthData auth, Integer gameID) throws IOException, DataAccessException {
+        String username = "";
+        if (auth != null){
+            username = auth.username();
+        }
+
         GameData gameData = gameDataAccess.retrieveGame(gameID);
         connections.remove(username);
 
@@ -128,7 +150,7 @@ public class WebSocketHandler {
             gameDataAccess.removePlayer(playerInfo);
             var message = String.format("%s has left as white team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(username, notificationMessage, "otherClients");
+            connections.broadcast(session, notificationMessage, "otherClients");
         }
 
         else if(Objects.equals(username, gameData.blackUsername())){
@@ -136,13 +158,13 @@ public class WebSocketHandler {
             gameDataAccess.removePlayer(playerInfo);
             var message = String.format("%s has left as black team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(username, notificationMessage, "otherClients");
+            connections.broadcast(session, notificationMessage, "otherClients");
         }
 
         else{
             var message = String.format("%s has left", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(username, notificationMessage, "otherClients");
+            connections.broadcast(session, notificationMessage, "otherClients");
         }
 
 

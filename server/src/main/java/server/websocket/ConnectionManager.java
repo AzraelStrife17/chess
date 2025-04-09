@@ -21,7 +21,7 @@ public class ConnectionManager {
         connections.remove(username);
     }
 
-    public void broadcast(String excludeUsername, ServerMessage serverMessage, String receivers) throws IOException {
+    public void broadcast(Session excludeSession, ServerMessage serverMessage, String receivers) throws IOException {
         var removeList = new ArrayList<Connection>();
 
         String jsonMessage = new Gson().toJson(serverMessage);
@@ -29,13 +29,13 @@ public class ConnectionManager {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (Objects.equals(receivers, "rootClient")){
-                    if(c.username.equals(excludeUsername)){
+                    if(c.session.equals(excludeSession)){
                         c.send(jsonMessage);
                     }
 
                 }
                 else if (Objects.equals(receivers, "otherClients")) {
-                    if (!c.username.equals(excludeUsername)) {
+                    if (!c.session.equals(excludeSession)) {
                         c.send(jsonMessage);
                     }
                 }
