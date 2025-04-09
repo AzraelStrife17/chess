@@ -43,9 +43,12 @@ public class WebSocketHandler {
         try {
             UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
-            AuthToken authToken = new AuthToken(command.getAuthToken());
-            AuthData auth = authDataAccess.getAuth(authToken);
-            String username = auth.username();
+            AuthToken authTokenModel = new AuthToken(command.getAuthToken());
+            AuthData auth = authDataAccess.getAuth(authTokenModel);
+            String username = "";
+            if (auth != null){
+                username = auth.username();
+            }
 
             Integer gameID = command.getGameID();
 
@@ -58,9 +61,14 @@ public class WebSocketHandler {
     }
 
 
-    private void connect(Session session, String username, Integer gameID) throws IOException {
+    private void connect(Session session, String username, Integer gameID) throws IOException, DataAccessException {
         connections.add(username, session);
-        if(!gameDataAccess.verifyGameID(gameID)){
+        if (username.isEmpty()){
+            var invalidAuthTokenMessage = "Error: invalid authToken";
+            ServerMessage errorMessage = new ErrorMessage(invalidAuthTokenMessage);
+            connections.broadcast(username, errorMessage);
+        }
+        else if(!gameDataAccess.verifyGameID(gameID)){
             var invalidIDMessage = "Error: invalid game ID";
             ServerMessage errorMessage = new ErrorMessage(invalidIDMessage);
             connections.broadcast(username, errorMessage);
