@@ -118,20 +118,46 @@ public class WebSocketHandler {
         }
 
 
-
         else {
             GameData gameData = gameDataAccess.retrieveGame(gameID);
             ChessGame game = gameData.game();
 
-            game.makeMove(move);
+            if(Objects.equals(username, gameData.whiteUsername())){
+                if(game.getTeamTurn() != ChessGame.TeamColor.WHITE){
+                    var invalidTurnMessage = "Error: currently black's turn";
+                    ServerMessage errorMessage = new ErrorMessage(invalidTurnMessage);
+                    connections.broadcast(session, errorMessage, "rootClient");
+                }
+            }
 
-            var message = String.format("%s moved", username);
+            if(Objects.equals(username, gameData.blackUsername())){
+                if(game.getTeamTurn() != ChessGame.TeamColor.BLACK){
+                    var invalidTurnMessage = "Error: currently white's turn";
+                    ServerMessage errorMessage = new ErrorMessage(invalidTurnMessage);
+                    connections.broadcast(session, errorMessage, "rootClient");
+                }
+            }
 
-            ServerMessage loadGameMessage = new LoadGameMessage(message);
-            connections.broadcast(session, loadGameMessage, "allClients");
 
-            ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(session, notificationMessage, "otherClients");
+            else {
+                try {
+                    game.makeMove(move);
+                    var message = String.format("%s moved", username);
+
+                    ServerMessage loadGameMessage = new LoadGameMessage(message);
+                    connections.broadcast(session, loadGameMessage, "allClients");
+
+                    ServerMessage notificationMessage = new NotificationMessage(message);
+                    connections.broadcast(session, notificationMessage, "otherClients");
+                }
+                catch (InvalidMoveException e) {
+                    var invalidMoveMessage = "Error: invalid move";
+                    ServerMessage errorMessage = new ErrorMessage(invalidMoveMessage);
+                    connections.broadcast(session, errorMessage, "rootClient");
+                    ;
+                }
+            }
+
         }
 
     }
