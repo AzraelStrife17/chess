@@ -26,6 +26,8 @@ public class SqlGamedata implements GameDAO{
     }
 
 
+
+
     public String joinGame(JoinGameRecord joinGameInfo, AuthData authData) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM GameTable WHERE gameID = ?";
@@ -83,6 +85,24 @@ public class SqlGamedata implements GameDAO{
                 return true;
 
             }
+            return false;
+        }
+    }
+
+    public boolean removePlayer(JoinGameRecord playerInfo) throws DataAccessException {
+        if (playerInfo.playerColor() == ChessGame.TeamColor.BLACK) {
+                var removeBlackPlayerStatement = "UPDATE GameTable SET blackUsername = null WHERE gameID = ?";
+                executeUpdate(removeBlackPlayerStatement, playerInfo.gameID());
+                return true;
+
+        }
+        else if (playerInfo.playerColor() == ChessGame.TeamColor.WHITE) {
+                var addWhitePlayerStatement = "UPDATE GameTable SET whiteUsername = null WHERE gameID = ?";
+                executeUpdate(addWhitePlayerStatement, playerInfo.gameID());
+                return true;
+
+        }
+        else{
             return false;
         }
     }

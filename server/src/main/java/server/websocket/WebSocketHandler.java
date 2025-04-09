@@ -11,6 +11,7 @@ import model.AuthData;
 import dataaccess.AuthDAO;
 import model.AuthToken;
 import model.GameData;
+import model.JoinGameRecord;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -48,6 +49,12 @@ public class WebSocketHandler {
         try {
             UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
+            ChessMove move = null;
+            if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
+                MakeMoveCommand moveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
+                move = moveCommand.getMove();
+            }
+
             AuthToken authTokenModel = new AuthToken(command.getAuthToken());
             AuthData auth = authDataAccess.getAuth(authTokenModel);
             String username = "";
@@ -59,8 +66,8 @@ public class WebSocketHandler {
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, gameID);
-                case MAKE_MOVE -> makeMove(username, gameID);
-                case LEAVE -> leave(session, username, gameID);
+                case MAKE_MOVE -> makeMove(username, gameID, move);
+                case LEAVE -> leave(username, gameID);
             }
         } catch (JsonSyntaxException | DataAccessException | InvalidMoveException e) {
             throw new RuntimeException(e);
@@ -85,6 +92,7 @@ public class WebSocketHandler {
         else {
             String game = String.valueOf(gameID);
 
+
             ServerMessage loadGameMessage = new LoadGameMessage(game);
             connections.broadcast(username, loadGameMessage);
 
@@ -94,10 +102,11 @@ public class WebSocketHandler {
         }
     }
 
-    private void makeMove(String username, Integer gameID) throws IOException, InvalidMoveException {
+    private void makeMove(String username, Integer gameID, ChessMove move) throws IOException, InvalidMoveException {
         GameData gameData = gameDataAccess.retrieveGame(gameID);
         ChessGame game = gameData.game();
 
+        game.makeMove(move);
 
         var message = String.format("%s moved", username);
 
@@ -109,25 +118,27 @@ public class WebSocketHandler {
 
     }
 
-    private void leave(Session session, String username, Integer gameID) throws IOException {
+    private void leave(String username, Integer gameID) throws IOException, DataAccessException {
         GameData gameData = gameDataAccess.retrieveGame(gameID);
+        connections.remove(username);
 
         if (Objects.equals(username, gameData.whiteUsername())){
-            connections.remove(username);
+            JoinGameRecord playerInfo = new JoinGameRecord(ChessGame.TeamColor.WHITE, gameID, null);
+            gameDataAccess.removePlayer(playerInfo);
             var message = String.format("%s has left as white team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(username, notificationMessage);
         }
 
         else if(Objects.equals(username, gameData.blackUsername())){
-            connections.remove(username);
+            JoinGameRecord playerInfo = new JoinGameRecord(ChessGame.TeamColor.BLACK, gameID, null);
+            gameDataAccess.removePlayer(playerInfo);
             var message = String.format("%s has left as black team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(username, notificationMessage);
         }
 
         else{
-            connections.remove(username);
             var message = String.format("%s has left", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(username, notificationMessage);

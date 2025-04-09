@@ -15,5 +15,6 @@ public interface GameDAO {
     void clearGames() throws DataAccessException;
     boolean verifyGameID(Integer gameID);
     GameData retrieveGame(Integer gameID);
+    boolean removePlayer(JoinGameRecord playerInfo) throws DataAccessException;
 
 }
