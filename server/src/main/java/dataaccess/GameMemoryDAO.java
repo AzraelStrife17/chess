@@ -71,4 +71,9 @@ public class GameMemoryDAO implements GameDAO {
         gameData.clear();
         createdIDs.clear();
     }
+
+    @Override
+    public boolean verifyGameID(Integer gameID) {
+        return false;
+    }
 }

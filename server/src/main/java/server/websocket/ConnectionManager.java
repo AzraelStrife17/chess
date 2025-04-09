@@ -33,6 +33,7 @@ public class ConnectionManager {
                     }
 
                 }
+
                 else if (!c.username.equals(excludeUsername)) {
                     c.send(jsonMessage);
                 }

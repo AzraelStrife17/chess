@@ -70,6 +70,22 @@ public class SqlGamedata implements GameDAO{
         }
     }
 
+    public boolean verifyGameID(Integer gameID){
+        try (var conn = DatabaseManager.getConnection()){
+            var statement = "SELECT * FROM GameTable WHERE gameID = ?";
+            try (var ps = conn.prepareStatement(statement)){
+                ps.setString(1, String.valueOf(gameID));
+                ResultSet rs = ps.executeQuery();
+                if(rs.next()){
+                    return true;
+                }
+                return false;
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Collection<GameData> listGames() throws DataAccessException {
         var result = new ArrayList<GameData>();
         try (var conn = DatabaseManager.getConnection()) {

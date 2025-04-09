@@ -3,6 +3,7 @@ package server.websocket;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import dataaccess.DataAccessException;
+import dataaccess.GameDAO;
 import model.AuthData;
 import dataaccess.AuthDAO;
 import model.AuthToken;
@@ -10,6 +11,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
@@ -24,9 +26,11 @@ public class WebSocketHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
     private final AuthDAO authDataAccess;
+    private final GameDAO gameDataAccess;
 
-    public WebSocketHandler(AuthDAO authDataAccess) {
+    public WebSocketHandler(AuthDAO authDataAccess, GameDAO gameDataAccess) {
         this.authDataAccess = authDataAccess;
+        this.gameDataAccess = gameDataAccess;
     }
 
     @OnOpen
@@ -44,6 +48,12 @@ public class WebSocketHandler {
             String username = auth.username();
 
             Integer gameID = command.getGameID();
+            if(!gameDataAccess.verifyGameID(gameID)){
+                var invalidIDMessage = "invalid game ID";
+                ServerMessage errorMessage = new ErrorMessage(invalidIDMessage);
+                connections.broadcast(username, errorMessage);
+
+            }
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, gameID);

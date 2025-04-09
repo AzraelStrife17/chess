@@ -12,5 +12,6 @@ public interface GameDAO {
     String joinGame(JoinGameRecord joinGameInfo, AuthData authData) throws DataAccessException;
     Collection<GameData> listGames() throws DataAccessException;
     void clearGames() throws DataAccessException;
+    boolean verifyGameID(Integer gameID);
 
 }

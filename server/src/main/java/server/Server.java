@@ -30,7 +30,7 @@ public class Server {
             AuthDAO authData = new SqlAuthdata();  // Same for AuthDAO
             GameDAO gameData = new SqlGamedata();
 
-            webSocketHandler = new WebSocketHandler(authData);
+            webSocketHandler = new WebSocketHandler(authData, gameData);
             this.userService = new UserService(userData, authData);
             this.clearService = new ClearService(userData, authData, gameData);
             this.gameService = new GameService(authData, gameData);
