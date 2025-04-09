@@ -138,6 +138,11 @@ public class WebSocketHandler {
                 }
             }
 
+            if(Objects.equals(username, gameData.whiteUsername())|| !Objects.equals(username, gameData.blackUsername())){
+                var invalidTurnMessage = "Error: observer not allowed to make moves";
+                ServerMessage errorMessage = new ErrorMessage(invalidTurnMessage);
+                connections.broadcast(session, errorMessage, "rootClient");
+            }
 
             else {
                 try {
