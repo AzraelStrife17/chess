@@ -12,14 +12,17 @@ import spark.*;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Objects;
+import server.websocket.WebSocketHandler;
 
 import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 
 public class Server {
+    private final WebSocketHandler webSocketHandler;
     private final UserService userService;
     private final GameService gameService;
     private final ClearService clearService;
+
 
     public Server() {
         try {
@@ -27,6 +30,7 @@ public class Server {
             AuthDAO authData = new SqlAuthdata();  // Same for AuthDAO
             GameDAO gameData = new SqlGamedata();
 
+            webSocketHandler = new WebSocketHandler(authData);
             this.userService = new UserService(userData, authData);
             this.clearService = new ClearService(userData, authData, gameData);
             this.gameService = new GameService(authData, gameData);
@@ -50,6 +54,7 @@ public class Server {
 
 
         // Register your endpoints and handle exceptions here.
+        Spark.webSocket("/ws", webSocketHandler);
         Spark.delete("/db", this::clearDatabase);
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::loginUser);
