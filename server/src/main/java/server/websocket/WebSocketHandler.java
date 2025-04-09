@@ -48,12 +48,6 @@ public class WebSocketHandler {
             String username = auth.username();
 
             Integer gameID = command.getGameID();
-            if(!gameDataAccess.verifyGameID(gameID)){
-                var invalidIDMessage = "invalid game ID";
-                ServerMessage errorMessage = new ErrorMessage(invalidIDMessage);
-                connections.broadcast(username, errorMessage);
-
-            }
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(session, username, gameID);
@@ -66,14 +60,23 @@ public class WebSocketHandler {
 
     private void connect(Session session, String username, Integer gameID) throws IOException {
         connections.add(username, session);
-        String game = String.valueOf(gameID);
+        if(!gameDataAccess.verifyGameID(gameID)){
+            var invalidIDMessage = "Error: invalid game ID";
+            ServerMessage errorMessage = new ErrorMessage(invalidIDMessage);
+            connections.broadcast(username, errorMessage);
 
-        ServerMessage loadGameMessage = new LoadGameMessage(game);
-        connections.broadcast(username, loadGameMessage);
+        }
 
-        var message = "connected to game";
-        ServerMessage notificationMessage = new NotificationMessage(message);
-        connections.broadcast(username, notificationMessage);
+        else {
+            String game = String.valueOf(gameID);
+
+            ServerMessage loadGameMessage = new LoadGameMessage(game);
+            connections.broadcast(username, loadGameMessage);
+
+            var message = "connected to game";
+            ServerMessage notificationMessage = new NotificationMessage(message);
+            connections.broadcast(username, notificationMessage);
+        }
     }
 
 

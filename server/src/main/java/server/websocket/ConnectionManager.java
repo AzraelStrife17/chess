@@ -33,7 +33,11 @@ public class ConnectionManager {
                     }
 
                 }
-
+                else if (serverMessage.getServerMessageType() == ServerMessage.ServerMessageType.ERROR){
+                    if(c.username.equals(excludeUsername)){
+                        c.send(jsonMessage);
+                    }
+                }
                 else if (!c.username.equals(excludeUsername)) {
                     c.send(jsonMessage);
                 }
