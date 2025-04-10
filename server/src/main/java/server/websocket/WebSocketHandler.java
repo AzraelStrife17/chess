@@ -233,18 +233,31 @@ public class WebSocketHandler {
 
         GameData gameData = gameDataAccess.retrieveGame(gameID);
 
-        if(Objects.equals(username, gameData.whiteUsername())){
+        String resignCheck = getResign();
+        if(!Objects.equals(resignCheck, "NoPlayerResigned")){
+            var playerResignedAlready = String.format("Error: %s", resignCheck);
+            ServerMessage errorMessage = new ErrorMessage(playerResignedAlready);
+            connections.broadcast(session, errorMessage, "rootClient");
+        }
+
+        else if(Objects.equals(username, gameData.whiteUsername())){
             setResign("White Resigned");
             var message = String.format("%s has forfeited for white team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(session, notificationMessage, "allClients");
         }
 
-        else{
+        else if(Objects.equals(username, gameData.blackUsername())){
             setResign("Black Resigned");
             var message = String.format("%s has forfeited for black team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(session, notificationMessage, "allClients");
+        }
+
+        else{
+            var errorObserverMessage = "Error: Observer can not resign";
+            ServerMessage errorMessage = new ErrorMessage(errorObserverMessage);
+            connections.broadcast(session, errorMessage, "rootClient");
         }
 
 
