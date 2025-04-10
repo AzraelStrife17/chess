@@ -107,6 +107,12 @@ public class SqlGamedata implements GameDAO{
         }
     }
 
+    public boolean updateGame(Integer gameID, ChessGame chessGame) throws DataAccessException {
+        var updateGameState = "UPDATE GameTable SET ChessGame == ? WHERE gameID = ?";
+        executeUpdate(updateGameState, gameID);
+        return true;
+    }
+
     public boolean verifyGameID(Integer gameID){
         try (var conn = DatabaseManager.getConnection()){
             var statement = "SELECT * FROM GameTable WHERE gameID = ?";

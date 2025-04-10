@@ -86,4 +86,9 @@ public class GameMemoryDAO implements GameDAO {
     public boolean removePlayer(JoinGameRecord playerInfo) throws DataAccessException {
         return false;
     }
+
+    @Override
+    public boolean updateGame(Integer gameID, ChessGame game) throws DataAccessException {
+        return false;
+    }
 }

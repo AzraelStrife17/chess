@@ -16,5 +16,6 @@ public interface GameDAO {
     boolean verifyGameID(Integer gameID);
     GameData retrieveGame(Integer gameID);
     boolean removePlayer(JoinGameRecord playerInfo) throws DataAccessException;
+    boolean updateGame(Integer gameID, ChessGame game) throws DataAccessException;
 
 }
