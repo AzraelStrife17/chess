@@ -22,7 +22,6 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
-import javax.websocket.OnOpen;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -37,12 +36,6 @@ public class WebSocketHandler {
     public WebSocketHandler(AuthDAO authDataAccess, GameDAO gameDataAccess) {
         this.authDataAccess = authDataAccess;
         this.gameDataAccess = gameDataAccess;
-    }
-
-
-    @OnOpen
-    public void onOpen(Session session) {
-        System.out.println("WebSocket connection opened");
     }
 
     @OnWebSocketMessage

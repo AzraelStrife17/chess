@@ -1,18 +1,21 @@
 package client;
 
-import websocket.ServerMessageHandler;
+import exception.ResponseException;
+import websocket.NotificationHandler;
 import websocket.messages.ServerMessage;
 
+import javax.websocket.DeploymentException;
+import java.io.IOException;
 import java.util.Scanner;
 
 import static client.EscapeSequences.*;
 
 
-public class Repl implements ServerMessageHandler {
+public class Repl implements NotificationHandler {
     private final Client client;
 
 
-    public Repl(String serverUrl) {
+    public Repl(String serverUrl) throws ResponseException, DeploymentException, IOException {
         this.client = new Client(serverUrl, this);
     }
 
@@ -42,8 +45,8 @@ public class Repl implements ServerMessageHandler {
     }
 
 
-    public void notify(ServerMessage.ServerMessageType serverMessageType) {
-        System.out.println(RED + serverMessageType);
+    public void notify(ServerMessage message) {
+        System.out.println(RED + message);
         printPrompt();
     }
 }

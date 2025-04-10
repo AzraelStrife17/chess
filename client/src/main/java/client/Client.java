@@ -4,9 +4,11 @@ import chess.ChessGame;
 import exception.ResponseException;
 import model.*;
 import server.ServerFacade;
-import websocket.ServerMessageHandler;
+import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 
+import javax.websocket.DeploymentException;
+import java.io.IOException;
 import java.util.Arrays;
 
 import static client.DrawBoard.*;
@@ -17,15 +19,17 @@ public class Client {
     private final String serverUrl;
     private State state = State.PRELOGIN;
     private AuthData currentAuth;
-    private final ServerMessageHandler serverMessageHandler;
+    private final NotificationHandler serverMessageHandler;
     private WebSocketFacade ws;
 
 
-    public Client(String serverUrl, ServerMessageHandler serverMessageHandler) {
+    public Client(String serverUrl, NotificationHandler serverMessageHandler) throws ResponseException, DeploymentException, IOException {
         this.serverUrl = serverUrl;
         this.server = new ServerFacade(serverUrl);
         this.serverMessageHandler = serverMessageHandler;
+        ws = new WebSocketFacade(serverUrl, serverMessageHandler);
     }
+
 
     public String eval(String input) {
         try {
