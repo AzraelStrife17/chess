@@ -185,7 +185,9 @@ public class Client {
         if (state == state.GAMESTATE){
             return null;
         }
-        else return "must join a game to use this method";
+        else {
+            return "must join a game to use this method";
+        }
     }
 
 
