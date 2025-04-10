@@ -92,16 +92,16 @@ public class WebSocketHandler {
             username = auth.username();
         }
 
-        connections.add(username, session);
+        connections.add(username, gameID, session);
         if (username.isEmpty()){
             var invalidAuthTokenMessage = "Error: invalid authToken";
             ServerMessage errorMessage = new ErrorMessage(invalidAuthTokenMessage);
-            connections.broadcast(session, errorMessage, "rootClient");
+            connections.broadcast(session,gameID, errorMessage, "rootClient");
         }
         else if(!gameDataAccess.verifyGameID(gameID)){
             var invalidIDMessage = "Error: invalid game ID";
             ServerMessage errorMessage = new ErrorMessage(invalidIDMessage);
-            connections.broadcast(session, errorMessage, "rootClient");
+            connections.broadcast(session, gameID, errorMessage, "rootClient");
 
         }
 
@@ -110,11 +110,11 @@ public class WebSocketHandler {
 
 
             ServerMessage loadGameMessage = new LoadGameMessage(game);
-            connections.broadcast(session, loadGameMessage, "rootClient");
+            connections.broadcast(session, gameID, loadGameMessage, "rootClient");
 
             var message = "connected to game";
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(session, notificationMessage, "otherClients");
+            connections.broadcast(session, gameID, notificationMessage, "otherClients");
         }
     }
 
@@ -124,45 +124,43 @@ public class WebSocketHandler {
             username = auth.username();
         }
 
+        GameData gameData = gameDataAccess.retrieveGame(gameID);
+        ChessGame game = gameData.game();
+
         String resignCheck = getResign();
         if(!Objects.equals(resignCheck, "NoPlayerResigned")){
             var playerResignedAlready = String.format("Error: %s", resignCheck);
             ServerMessage errorMessage = new ErrorMessage(playerResignedAlready);
-            connections.broadcast(session, errorMessage, "rootClient");
+            connections.broadcast(session, gameID, errorMessage, "rootClient");
         }
 
 
         else if (username.isEmpty()){
             var invalidAuthTokenMessage = "Error: invalid authToken";
             ServerMessage errorMessage = new ErrorMessage(invalidAuthTokenMessage);
-            connections.broadcast(session, errorMessage, "rootClient");
+            connections.broadcast(session, gameID, errorMessage, "rootClient");
         }
 
 
         else {
-            GameData gameData = gameDataAccess.retrieveGame(gameID);
-            ChessGame game = gameData.game();
 
-            if(Objects.equals(username, gameData.whiteUsername())){
-                if(game.getTeamTurn() != ChessGame.TeamColor.WHITE){
-                    var invalidTurnMessage = "Error: currently black's turn";
-                    ServerMessage errorMessage = new ErrorMessage(invalidTurnMessage);
-                    connections.broadcast(session, errorMessage, "rootClient");
-                }
+
+            if(Objects.equals(username, gameData.whiteUsername()) && game.getTeamTurn() != ChessGame.TeamColor.WHITE){
+                var invalidTurnMessage = "Error: currently black's turn";
+                ServerMessage errorMessage = new ErrorMessage(invalidTurnMessage);
+                connections.broadcast(session, gameID, errorMessage, "rootClient");
             }
 
-            else if(Objects.equals(username, gameData.blackUsername())){
-                if(game.getTeamTurn() != ChessGame.TeamColor.BLACK){
-                    var invalidTurnMessage = "Error: currently white's turn";
-                    ServerMessage errorMessage = new ErrorMessage(invalidTurnMessage);
-                    connections.broadcast(session, errorMessage, "rootClient");
-                }
+            else if(Objects.equals(username, gameData.blackUsername()) && game.getTeamTurn() != ChessGame.TeamColor.BLACK){
+                var invalidTurnMessage = "Error: currently white's turn";
+                ServerMessage errorMessage = new ErrorMessage(invalidTurnMessage);
+                connections.broadcast(session, gameID, errorMessage, "rootClient");
             }
 
             else if(!Objects.equals(username, gameData.whiteUsername()) && !Objects.equals(username, gameData.blackUsername())){
                 var invalidTurnMessage = "Error: observer not allowed to make moves";
                 ServerMessage errorMessage = new ErrorMessage(invalidTurnMessage);
-                connections.broadcast(session, errorMessage, "rootClient");
+                connections.broadcast(session, gameID, errorMessage, "rootClient");
             }
 
             else {
@@ -174,15 +172,15 @@ public class WebSocketHandler {
                     var message = String.format("%s moved", username);
 
                     ServerMessage loadGameMessage = new LoadGameMessage(message);
-                    connections.broadcast(session, loadGameMessage, "allClients");
+                    connections.broadcast(session, gameID, loadGameMessage, "allClients");
 
                     ServerMessage notificationMessage = new NotificationMessage(message);
-                    connections.broadcast(session, notificationMessage, "otherClients");
+                    connections.broadcast(session, gameID, notificationMessage, "otherClients");
                 }
                 catch (InvalidMoveException e) {
                     var invalidMoveMessage = "Error: invalid move";
                     ServerMessage errorMessage = new ErrorMessage(invalidMoveMessage);
-                    connections.broadcast(session, errorMessage, "rootClient");
+                    connections.broadcast(session, gameID, errorMessage, "rootClient");
                     ;
                 } catch (DataAccessException e) {
                     throw new RuntimeException(e);
@@ -207,7 +205,7 @@ public class WebSocketHandler {
             gameDataAccess.removePlayer(playerInfo);
             var message = String.format("%s has left as white team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(session, notificationMessage, "otherClients");
+            connections.broadcast(session, gameID, notificationMessage, "otherClients");
         }
 
         else if(Objects.equals(username, gameData.blackUsername())){
@@ -215,13 +213,13 @@ public class WebSocketHandler {
             gameDataAccess.removePlayer(playerInfo);
             var message = String.format("%s has left as black team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(session, notificationMessage, "otherClients");
+            connections.broadcast(session, gameID, notificationMessage, "otherClients");
         }
 
         else{
             var message = String.format("%s has left", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(session, notificationMessage, "otherClients");
+            connections.broadcast(session, gameID, notificationMessage, "otherClients");
         }
     }
 
@@ -237,27 +235,27 @@ public class WebSocketHandler {
         if(!Objects.equals(resignCheck, "NoPlayerResigned")){
             var playerResignedAlready = String.format("Error: %s", resignCheck);
             ServerMessage errorMessage = new ErrorMessage(playerResignedAlready);
-            connections.broadcast(session, errorMessage, "rootClient");
+            connections.broadcast(session, gameID, errorMessage, "rootClient");
         }
 
         else if(Objects.equals(username, gameData.whiteUsername())){
             setResign("White Resigned");
             var message = String.format("%s has forfeited for white team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(session, notificationMessage, "allClients");
+            connections.broadcast(session, gameID, notificationMessage, "allClients");
         }
 
         else if(Objects.equals(username, gameData.blackUsername())){
             setResign("Black Resigned");
             var message = String.format("%s has forfeited for black team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(session, notificationMessage, "allClients");
+            connections.broadcast(session, gameID, notificationMessage, "allClients");
         }
 
         else{
             var errorObserverMessage = "Error: Observer can not resign";
             ServerMessage errorMessage = new ErrorMessage(errorObserverMessage);
-            connections.broadcast(session, errorMessage, "rootClient");
+            connections.broadcast(session, gameID, errorMessage, "rootClient");
         }
 
 
