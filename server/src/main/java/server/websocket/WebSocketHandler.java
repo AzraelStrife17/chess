@@ -39,18 +39,6 @@ public class WebSocketHandler {
         this.gameDataAccess = gameDataAccess;
     }
 
-    private String resign;
-
-    public String getResign(){
-        if(resign == null){
-            resign = "NoPlayerResigned";
-        }
-        return resign;
-    }
-
-    public void setResign(String resignedPlayer){
-        resign = resignedPlayer;
-    }
 
     @OnOpen
     public void onOpen(Session session) {
@@ -116,6 +104,7 @@ public class WebSocketHandler {
             ServerMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(session, gameID, notificationMessage, "otherClients");
         }
+        gameDataAccess.addEndedGamesStatus(gameID, "NoPlayerResigned");
     }
 
     private void makeMove(Session session, AuthData auth, Integer gameID, ChessMove move) throws IOException, InvalidMoveException {
@@ -127,7 +116,7 @@ public class WebSocketHandler {
         GameData gameData = gameDataAccess.retrieveGame(gameID);
         ChessGame game = gameData.game();
 
-        String resignCheck = getResign();
+        String resignCheck = gameDataAccess.getEndedGamesStatus(gameID);
         if(!Objects.equals(resignCheck, "NoPlayerResigned")){
             var playerResignedAlready = String.format("Error: %s", resignCheck);
             ServerMessage errorMessage = new ErrorMessage(playerResignedAlready);
@@ -231,7 +220,7 @@ public class WebSocketHandler {
 
         GameData gameData = gameDataAccess.retrieveGame(gameID);
 
-        String resignCheck = getResign();
+        String resignCheck = gameDataAccess.getEndedGamesStatus(gameID);
         if(!Objects.equals(resignCheck, "NoPlayerResigned")){
             var playerResignedAlready = String.format("Error: %s", resignCheck);
             ServerMessage errorMessage = new ErrorMessage(playerResignedAlready);
@@ -239,14 +228,14 @@ public class WebSocketHandler {
         }
 
         else if(Objects.equals(username, gameData.whiteUsername())){
-            setResign("White Resigned");
+            gameDataAccess.updateEndedGamesStatus(gameID, "White Resigned");
             var message = String.format("%s has forfeited for white team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(session, gameID, notificationMessage, "allClients");
         }
 
         else if(Objects.equals(username, gameData.blackUsername())){
-            setResign("Black Resigned");
+            gameDataAccess.updateEndedGamesStatus(gameID, "Black Resigned");
             var message = String.format("%s has forfeited for black team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(session, gameID, notificationMessage, "allClients");

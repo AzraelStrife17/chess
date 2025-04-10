@@ -1,9 +1,7 @@
 package dataaccess;
 import chess.ChessGame;
-import chess.ChessGame.TeamColor;
 import model.AuthData;
 import model.GameData;
-import model.GameNameRecord;
 import model.JoinGameRecord;
 
 import java.util.Collection;
@@ -17,5 +15,8 @@ public interface GameDAO {
     GameData retrieveGame(Integer gameID);
     boolean removePlayer(JoinGameRecord playerInfo) throws DataAccessException;
     boolean updateGame(Integer gameID, ChessGame game) throws DataAccessException;
+    void addEndedGamesStatus(Integer gameID, String status);
+    String getEndedGamesStatus(Integer gameID);
+    void updateEndedGamesStatus(Integer gameID, String status);
 
 }

@@ -10,13 +10,32 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class SqlGamedata implements GameDAO{
 
+    final private HashMap<Integer, String> endedGames = new HashMap<>();
+
     public SqlGamedata() throws DataAccessException {
         configureDatabase();
+    }
+
+    public String getEndedGamesStatus(Integer gameID){
+        return endedGames.get(gameID);
+    }
+
+    public void addEndedGamesStatus(Integer gameID, String status){
+        if(!endedGames.containsKey(gameID)) {
+            endedGames.put(gameID, status);
+        }
+    }
+
+    public void updateEndedGamesStatus(Integer gameID, String status){
+        if(endedGames.containsKey(gameID)) {
+            endedGames.put(gameID, status);
+        }
     }
 
     public Integer createGame(String gameName) throws DataAccessException {
@@ -160,6 +179,7 @@ public class SqlGamedata implements GameDAO{
     }
 
     public void clearGames() throws DataAccessException {
+        endedGames.clear();
         var statement = "TRUNCATE GameTable";
         executeUpdate(statement);
     }

@@ -91,4 +91,19 @@ public class GameMemoryDAO implements GameDAO {
     public boolean updateGame(Integer gameID, ChessGame game) throws DataAccessException {
         return false;
     }
+
+    @Override
+    public void addEndedGamesStatus(Integer gameID, String status) {
+
+    }
+
+    @Override
+    public String getEndedGamesStatus(Integer gameID) {
+        return "";
+    }
+
+    @Override
+    public void updateEndedGamesStatus(Integer gameID, String status) {
+
+    }
 }
