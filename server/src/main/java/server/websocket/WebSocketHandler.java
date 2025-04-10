@@ -148,6 +148,8 @@ public class WebSocketHandler {
                 try {
                     game.makeMove(move);
 
+                    gameDataAccess.updateGame(gameID, game);
+
                     var message = String.format("%s moved", username);
 
                     ServerMessage loadGameMessage = new LoadGameMessage(message);
@@ -161,6 +163,8 @@ public class WebSocketHandler {
                     ServerMessage errorMessage = new ErrorMessage(invalidMoveMessage);
                     connections.broadcast(session, errorMessage, "rootClient");
                     ;
+                } catch (DataAccessException e) {
+                    throw new RuntimeException(e);
                 }
             }
 
