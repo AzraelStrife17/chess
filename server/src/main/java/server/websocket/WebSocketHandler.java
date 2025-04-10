@@ -39,6 +39,19 @@ public class WebSocketHandler {
         this.gameDataAccess = gameDataAccess;
     }
 
+    private String resign;
+
+    public String getResign(){
+        if(resign == null){
+            resign = "NoPlayerResigned";
+        }
+        return resign;
+    }
+
+    public void setResign(String resignedPlayer){
+        resign = resignedPlayer;
+    }
+
     @OnOpen
     public void onOpen(Session session) {
         System.out.println("WebSocket connection opened");
@@ -65,6 +78,7 @@ public class WebSocketHandler {
                 case CONNECT -> connect(session, auth, gameID);
                 case MAKE_MOVE -> makeMove(session, auth, gameID, move);
                 case LEAVE -> leave(session, auth, gameID);
+                case RESIGN -> resign(session, auth, gameID);
             }
         } catch (JsonSyntaxException | DataAccessException | InvalidMoveException e) {
             throw new RuntimeException(e);
@@ -201,6 +215,29 @@ public class WebSocketHandler {
             var message = String.format("%s has left", username);
             ServerMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(session, notificationMessage, "otherClients");
+        }
+    }
+
+    private void resign(Session session, AuthData auth, Integer gameID) throws IOException {
+        String username = "";
+        if (auth != null){
+            username = auth.username();
+        }
+
+        GameData gameData = gameDataAccess.retrieveGame(gameID);
+
+        if(Objects.equals(username, gameData.whiteUsername())){
+            setResign("WhiteResigned");
+            var message = String.format("%s has forfeited for white team", username);
+            ServerMessage notificationMessage = new NotificationMessage(message);
+            connections.broadcast(session, notificationMessage, "allClients");
+        }
+
+        else{
+            setResign("BlackResigned");
+            var message = String.format("%s has forfeited for black team", username);
+            ServerMessage notificationMessage = new NotificationMessage(message);
+            connections.broadcast(session, notificationMessage, "allClients");
         }
 
 

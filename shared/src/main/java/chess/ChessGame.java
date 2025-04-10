@@ -196,6 +196,7 @@ public class ChessGame {
         return savingKingMoves.isEmpty();
     }
 
+
     /**
      * Determines if the given team is in stalemate, which here is defined as having
      * no valid moves
