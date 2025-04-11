@@ -95,25 +95,30 @@ public class WebSocketHandler {
             if(Objects.equals(username, gameData.whiteUsername())){
                 var role = "white";
                 loadGameMessage = new LoadGameMessage(game, role);
+                connections.broadcast(session, gameID, loadGameMessage, "rootClient");
+                var message = String.format("%s connected to as white player", username);
+                ServerMessage notificationMessage = new NotificationMessage(message);
+                connections.broadcast(session, gameID, notificationMessage, "otherClients");
             }
 
             else if(Objects.equals(username, gameData.blackUsername())){
                 var role = "black";
                 loadGameMessage = new LoadGameMessage(game, role);
+                connections.broadcast(session, gameID, loadGameMessage, "rootClient");
+                var message = String.format("%s connected to as black player", username);
+                ServerMessage notificationMessage = new NotificationMessage(message);
+                connections.broadcast(session, gameID, notificationMessage, "otherClients");
             }
 
             else{
                 var role = "observer";
                 loadGameMessage = new LoadGameMessage(game, role);
+                connections.broadcast(session, gameID, loadGameMessage, "rootClient");
+                var message = String.format("%s connected to as observer", username);
+                ServerMessage notificationMessage = new NotificationMessage(message);
+                connections.broadcast(session, gameID, notificationMessage, "otherClients");
+
             }
-
-
-            connections.broadcast(session, gameID, loadGameMessage, "rootClient");
-
-            var message = "connected to game";
-            ServerMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(session, gameID, notificationMessage, "otherClients");
-
         }
         gameDataAccess.addEndedGamesStatus(gameID, "NoPlayerResigned");
     }

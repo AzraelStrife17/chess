@@ -1,8 +1,6 @@
 package client;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 import exception.ResponseException;
 import model.*;
 import server.ServerFacade;
@@ -13,7 +11,10 @@ import websocket.WebSocketFacade;
 import javax.websocket.DeploymentException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Scanner;
 
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
 import static client.DrawBoard.*;
 
 public class Client {
@@ -23,6 +24,8 @@ public class Client {
     private State state = State.PRELOGIN;
     private AuthData currentAuth;
     private Integer currentGameID;
+    private static ChessGame currentGame;
+    private ChessBoard currentBoard;
     private final NotificationHandler serverMessageHandler;
     private final LoadGameHandler loadGameHandler;
     private WebSocketFacade ws;
@@ -227,13 +230,36 @@ public class Client {
 
                 ChessPosition startPosition = new ChessPosition(startRow, startCol);
                 ChessPosition endPosition = new ChessPosition(endRow, endCol);
+                currentBoard = currentGame.getBoard();
+                ChessPiece piece = currentBoard.getPiece(startPosition);
+                ChessPiece.PieceType promotion = null;
 
+                if(piece.equals(new ChessPiece(WHITE, ChessPiece.PieceType.PAWN))){
+                    if (endRow == 8){
+                        Scanner scanner = new Scanner(System.in);
+                        System.out.print("Select Promotion Piece \n Queen \n Bishop \n Knight \n Rook \n");
+                        String promotionInput = scanner.nextLine();
+                        state = state.PROMOTION;
+                        promotion = selectPromotionPiece(promotionInput);
 
-                ChessMove move = new ChessMove(startPosition, endPosition, null);
+                    }
+                }
+
+                if(piece.equals(new ChessPiece(BLACK, ChessPiece.PieceType.PAWN))){
+                    if (endRow == 1){
+                        Scanner scanner = new Scanner(System.in);
+                        System.out.print("Select Promotion Piece \n Queen \n Bishop \n Knight \n Rook \n");
+                        String promotionInput = scanner.nextLine();
+                        state = state.PROMOTION;
+                        promotion = selectPromotionPiece(promotionInput);
+                    }
+                }
+
+                ChessMove move = new ChessMove(startPosition, endPosition, promotion);
 
                 ws.makeMove(currentAuth.authToken(), currentGameID, move);
 
-                return "successful move";
+                return "";
 
 
             } catch (ResponseException e) {
@@ -243,6 +269,41 @@ public class Client {
         else {
             return "must join a game to use this method";
         }
+    }
+
+    public ChessPiece.PieceType selectPromotionPiece(String promotionInput){
+        if(state == state.PROMOTION){
+
+            try{
+                var selectedPromotion = ChessPiece.PieceType.valueOf(promotionInput.toUpperCase());
+                if(selectedPromotion == ChessPiece.PieceType.QUEEN){
+                    state = state.GAMESTATE;
+                    return selectedPromotion;
+                }
+                if(selectedPromotion == ChessPiece.PieceType.BISHOP){
+                    state = state.GAMESTATE;
+                    return selectedPromotion;
+                }
+                if(selectedPromotion == ChessPiece.PieceType.KNIGHT){
+                    state = state.GAMESTATE;
+                    return selectedPromotion;
+                }
+                if(selectedPromotion == ChessPiece.PieceType.ROOK){
+                    state = state.GAMESTATE;
+                    return selectedPromotion;
+                }
+
+            }
+            catch (IllegalArgumentException e) {
+                throw new RuntimeException("not a valid promotion piece");
+            }
+        }
+
+        return null;
+    }
+
+    public static void loadGame(ChessGame game){
+        currentGame = game;
     }
 
     public String help() {
@@ -267,9 +328,10 @@ public class Client {
                     """;
         }
 
+
         else{
             return """
-                    makemove <start row> <start col> <end row <end col>
+                    makemove <<startPosition> <endPosition>
                     """;
         }
     }

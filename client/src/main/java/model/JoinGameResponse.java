@@ -2,5 +2,5 @@ package model;
 
 import chess.ChessGame;
 
-public record JoinGameResponse(int gameID, ChessGame game) {
+public record JoinGameResponse(String result, ChessGame game) {
 }

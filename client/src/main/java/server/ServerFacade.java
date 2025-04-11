@@ -37,11 +37,11 @@ public class ServerFacade {
         return this.makeRequest("POST", path, request, CreateGameResponse.class);
     }
 
-    public StringResponse joinGameResult(JoinGameRecord request) throws ResponseException {
+    public JoinGameResponse joinGameResult(JoinGameRecord request) throws ResponseException {
         var path = "/game";
         int gameID = getGameID(request.gameID());
         JoinGameRecord updatedRequest = new JoinGameRecord(request.playerColor(), gameID, request.authToken());
-        return this.makeRequest("PUT", path, updatedRequest, StringResponse.class);
+        return this.makeRequest("PUT", path, updatedRequest, JoinGameResponse.class);
     }
 
     public Collection<GameData> listGames(AuthToken request) throws ResponseException {

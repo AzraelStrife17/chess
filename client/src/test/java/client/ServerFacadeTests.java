@@ -126,7 +126,7 @@ public class ServerFacadeTests {
         JoinGameRecord joinInfo = new JoinGameRecord(ChessGame.TeamColor.WHITE, displayID, authData.authToken());
         var joinGameResult = facade.joinGameResult(joinInfo);
 
-        assertNull(joinGameResult.authToken());
+        assertNull(joinGameResult.game());
 
     }
 

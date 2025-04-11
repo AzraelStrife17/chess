@@ -10,6 +10,7 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 import websocket.messages.LoadGameMessage;
+import client.Client;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -51,6 +52,7 @@ public class WebSocketFacade extends Endpoint {
                             extractedGame = loadMessage.getGameMessage();
                             extractedRole = loadMessage.getRole();
                             loadGameHandler.loadGame(extractedGame, extractedRole);
+                            Client.loadGame(extractedGame);
                         }
                         case NOTIFICATION ->{
                             NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);

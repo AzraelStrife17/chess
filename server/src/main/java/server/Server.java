@@ -168,7 +168,7 @@ public class Server {
         JoinGameResponse joinGameSuccess = gameService.joinGame(joinGameInfo);
         if(Objects.equals(joinGameSuccess.result(), "success")){
             res.status(200);
-            return "{}";
+            return new Gson().toJson(joinGameSuccess);
         }
         else if(Objects.equals(joinGameSuccess.result(), "team color taken")){
             res.status(403);
