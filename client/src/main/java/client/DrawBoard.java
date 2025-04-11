@@ -1,12 +1,10 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 
 import static chess.ChessGame.TeamColor.BLACK;
@@ -41,7 +39,9 @@ public class DrawBoard {
 
         out.print(ERASE_SCREEN);
 
-        drawChessBoard("black", testGame);
+        ChessPosition testPosition = new ChessPosition(2, 1);
+
+        drawChessBoard("white", testGame, testPosition);
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -83,17 +83,17 @@ public class DrawBoard {
 
     }
 
-    static String drawChessBoard(String team, ChessGame game) {
+    static String drawChessBoard(String team, ChessGame game, ChessPosition piecePosition) {
         ChessBoard extractedBoard = game.getBoard();
         StringBuilder board = new StringBuilder();
         if(team.equals("black")) {
             drawHeaders(team);
-            drawRowOfSquaresBlack(extractedBoard);
+            drawRowOfSquaresBlack(game, piecePosition);
             drawHeaders(team);
         }
         else{
             drawHeaders(team);
-            drawRowOfSquaresWhite(extractedBoard);
+            drawRowOfSquaresWhite(game, piecePosition);
             drawHeaders(team);
         }
 
@@ -101,11 +101,11 @@ public class DrawBoard {
         return board.toString();
     }
 
-    private static void drawRowOfSquaresBlack(ChessBoard board) {
+    private static void drawRowOfSquaresBlack(ChessGame game, ChessPosition piecePosition) {
         String[] sideHeaders = {"1", "2", "3", "4", "5", "6", "7", "8"};
         for (int boardRow = 0; boardRow < BOARDSIZE; boardRow++) {
             drawHeader(sideHeaders[boardRow]);
-            setBoardBlack(boardRow, board);
+            setBoardBlack(boardRow, game, piecePosition);
             drawHeader(sideHeaders[boardRow]);
 
 
@@ -121,7 +121,7 @@ public class DrawBoard {
 
     }
 
-    private static void setBoardWhite(int boardRow, ChessBoard board) {
+    private static void setBoardWhite(int boardRow, ChessGame game, ChessPosition checkMovePosition) {
 
             for(int col = 1; col < 9; col++){
                 if ((boardRow + col) % 2 == 0) {
@@ -131,7 +131,24 @@ public class DrawBoard {
                 }
 
                 ChessPosition piecePosition = new ChessPosition(boardRow + 1, col);
-                ChessPiece checkForPiece = board.getPiece(piecePosition);
+
+                if(checkMovePosition != null){
+                    int highLightRow = boardRow + 1;
+                    ChessPosition highlightPosition = new ChessPosition(highLightRow, col);
+
+                    Collection<ChessMove> possibleMoves = game.validMoves(checkMovePosition);
+                    for (ChessMove move : possibleMoves){
+                        if(move.getEndPosition().equals(highlightPosition)){
+                            setGreen();
+                        }
+                    }
+                    if(checkMovePosition.equals(piecePosition)){
+                        setYellow();
+                    }
+                }
+
+                ChessBoard extractedBoard = game.getBoard();
+                ChessPiece checkForPiece = extractedBoard.getPiece(piecePosition);
                 if(checkForPiece != null){
                     if (checkForPiece.equals(new ChessPiece(WHITE, PieceType.ROOK))){
                         System.out.print("\033[37m" + WHITEROOK + "\033[37m");
@@ -195,7 +212,7 @@ public class DrawBoard {
 
     }
 
-    private static void setBoardBlack(int boardRow, ChessBoard board) {
+    private static void setBoardBlack(int boardRow, ChessGame game, ChessPosition checkMovePosition) {
 
         for(int col = 8; col > 0; col--){
             if ((boardRow + col) % 2 == 0) {
@@ -203,9 +220,25 @@ public class DrawBoard {
             } else {
                 setRed();
             }
-
             ChessPosition piecePosition = new ChessPosition(boardRow + 1, col);
-            ChessPiece checkForPiece = board.getPiece(piecePosition);
+
+            if(checkMovePosition != null){
+                int highLightRow = boardRow + 1;
+                ChessPosition highlightPosition = new ChessPosition(highLightRow, col);
+
+                Collection<ChessMove> possibleMoves = game.validMoves(checkMovePosition);
+                for (ChessMove move : possibleMoves){
+                    if(move.getEndPosition().equals(highlightPosition)){
+                        setGreen();
+                    }
+                }
+                if(checkMovePosition.equals(piecePosition)){
+                    setYellow();
+                }
+
+            }
+            ChessBoard extractedBoard = game.getBoard();
+            ChessPiece checkForPiece = extractedBoard.getPiece(piecePosition);
             if(checkForPiece != null){
                 if (checkForPiece.equals(new ChessPiece(WHITE, PieceType.ROOK))){
                     System.out.print("\033[37m" + WHITEROOK + "\033[37m");
@@ -269,11 +302,11 @@ public class DrawBoard {
 
     }
 
-    private static void drawRowOfSquaresWhite(ChessBoard board) {
+    private static void drawRowOfSquaresWhite(ChessGame game, ChessPosition piecePosition) {
         String[] sideHeaders = {"1", "2", "3", "4", "5", "6", "7", "8"};
         for (int boardRow = 7; boardRow > -1; --boardRow) {
             drawHeader(sideHeaders[boardRow]);
-            setBoardWhite(boardRow, board);
+            setBoardWhite(boardRow, game, piecePosition);
 
             drawHeader(sideHeaders[boardRow]);
 
@@ -299,5 +332,15 @@ public class DrawBoard {
         System.out.print(SET_BG_COLOR_RED);
         System.out.print(SET_TEXT_COLOR_RED);
     }
+
+    private static void setGreen(){
+        System.out.print(SET_BG_COLOR_GREEN);
+        System.out.print(SET_TEXT_COLOR_GREEN);
+    }
+    private static void setYellow(){
+        System.out.print(SET_BG_COLOR_YELLOW);
+        System.out.print(SET_TEXT_COLOR_YELLOW);
+    }
+
 
 }

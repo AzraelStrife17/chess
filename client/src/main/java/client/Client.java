@@ -54,6 +54,9 @@ public class Client {
                 case "playgame" -> playGame(params);
                 case "observegame" -> observeGame(params);
                 case "makemove" -> makeMove(params);
+                case "redrawboard" -> redrawBoard(params);
+                case "viewmoves" -> viewMoves(params);
+                case "leavegame" -> leaveGame(params);
                 case "quit" -> "quit";
 
                 default -> help();
@@ -263,13 +266,59 @@ public class Client {
 
 
             } catch (ResponseException e) {
-                throw new RuntimeException(e);
+                return "invalid argument example for correct argument 'a2' 'a3'";
             }
         }
         else {
             return "must join a game to use this method";
         }
     }
+
+    public String redrawBoard(String ...params){
+        if(state == state.GAMESTATE){
+            try {
+                String team = params[0].toLowerCase();
+                drawChessBoard(team, currentGame, null);
+                return "";
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return "must be in a game to use";
+    }
+
+    public String viewMoves(String ...params){
+        int row;
+        int col;
+        if(state == state.GAMESTATE){
+            try {
+                String team = params[0].toLowerCase();
+                if(!team.equals("white") && !team.equals("black")){
+                    return "invalid team";
+                }
+                if(params[1].isEmpty()){
+                    return "invalid argument";
+                }
+                col = params[1].charAt(0) - 'a' + 1;
+                row = Integer.parseInt(params[1].substring(1));
+                currentBoard = currentGame.getBoard();
+                ChessPosition highlightPosition = new ChessPosition(row, col);
+                ChessPiece piece = currentBoard.getPiece(highlightPosition);
+                if(piece != null) {
+                    drawChessBoard(team, currentGame, highlightPosition);
+                    return "";
+                }
+                else{
+                    return "no piece found";
+                }
+            } catch (NumberFormatException e) {
+                return "invalid argument";
+            }
+        }
+        return "must be in a game to use";
+    }
+
+
 
     public ChessPiece.PieceType selectPromotionPiece(String promotionInput){
         if(state == state.PROMOTION){
@@ -295,12 +344,31 @@ public class Client {
 
             }
             catch (IllegalArgumentException e) {
-                throw new RuntimeException("not a valid promotion piece");
+                state = state.GAMESTATE;
+                System.out.print("Not a valid Promotion");
+                return null;
             }
         }
 
         return null;
     }
+
+    public String leaveGame(String ...params){
+        if (state == state.GAMESTATE){
+            try {
+                String leave = params[0].toLowerCase();
+                if (leave.equals("leave")) {
+                    return null;
+                }
+            } catch (Exception e) {
+                return "invalid argument";
+            }
+
+        }
+
+        return "must be in game";
+    }
+
 
     public static void loadGame(ChessGame game){
         currentGame = game;
@@ -331,7 +399,10 @@ public class Client {
 
         else{
             return """
-                    makemove <<startPosition> <endPosition>
+                    makemove <startPosition> <endPosition>
+                    redrawboard <white/black> to choose perspective
+                    viewmoves <white/black> to choose perspective <<positionOfPiece>>
+                    leavegame type 'leave' to exit game
                     """;
         }
     }

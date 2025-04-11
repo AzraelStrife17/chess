@@ -55,7 +55,7 @@ public class Repl implements NotificationHandler, LoadGameHandler {
 
     public void loadGame(ChessGame game, String role) {
         System.out.println();
-        String board = drawChessBoard(role, game);
+        String board = drawChessBoard(role, game, null);
         System.out.println(board);
 
     }
