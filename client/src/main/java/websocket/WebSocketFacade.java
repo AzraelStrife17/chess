@@ -1,9 +1,13 @@
 package websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
+import websocket.messages.LoadGameMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -16,14 +20,15 @@ import static websocket.commands.UserGameCommand.CommandType.CONNECT;
 public class WebSocketFacade extends Endpoint {
 
     Session session;
-    NotificationHandler serverMessageHandler;
+    NotificationHandler notificationHandler;
+    LoadGameHandler loadGameHandler;
 
 
-    public WebSocketFacade(String url, NotificationHandler serverMessageHandler) throws ResponseException, DeploymentException, IOException {
+    public WebSocketFacade(String url, NotificationHandler notificationHandler) throws ResponseException, DeploymentException, IOException {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
-            this.serverMessageHandler = serverMessageHandler;
+            this.notificationHandler = notificationHandler;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
@@ -32,7 +37,28 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
-                    serverMessageHandler.notify(serverMessage);
+
+                    String extractedMessage = "";
+                    ChessGame extractedGame = null;
+
+                    switch (serverMessage.getServerMessageType()){
+                        case LOAD_GAME ->{
+                            LoadGameMessage loadMessage = new Gson().fromJson(message, LoadGameMessage.class);
+                            extractedGame = loadMessage.getGameMessage();
+                            loadGameHandler.loadGame(extractedGame);
+                        }
+                        case NOTIFICATION ->{
+                            NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);
+                            extractedMessage = notificationMessage.getNotificationMessage();
+                            notificationHandler.notify(extractedMessage);
+                        }
+                        case ERROR ->{
+                            ErrorMessage errorMessage = new Gson().fromJson(message, ErrorMessage.class);
+                            extractedMessage = errorMessage.getErrorMessage();
+                            notificationHandler.notify(extractedMessage);
+                        }
+                    }
+
                 }
             });
         }

@@ -2,12 +2,12 @@ package client;
 
 import exception.ResponseException;
 import websocket.NotificationHandler;
-import websocket.messages.ServerMessage;
 
 import javax.websocket.DeploymentException;
 import java.io.IOException;
 import java.util.Scanner;
 
+import static client.DrawBoard.drawChessBoard;
 import static client.EscapeSequences.*;
 
 
@@ -45,7 +45,16 @@ public class Repl implements NotificationHandler {
     }
 
 
-    public void notify(ServerMessage message) {
+    public void notify(String message) {
+        if(message.startsWith("Loaded White")){
+            String[] parts = message.split(" ");
+            String gameIDStr = parts[2];
+            int gameID = Integer.parseInt(gameIDStr);
+
+            System.out.println();
+            String board = drawChessBoard("white", gameID);
+            System.out.println(board);
+        }
         System.out.println(RED + message);
         printPrompt();
     }

@@ -87,8 +87,11 @@ public class WebSocketHandler {
         }
 
         else {
-            String game = String.valueOf(gameID);
 
+            GameData gameData = gameDataAccess.retrieveGame(gameID);
+            var game = gameData.game();
+
+            var loadWhite = "Loaded White " + gameID;
 
             ServerMessage loadGameMessage = new LoadGameMessage(game);
             connections.broadcast(session, gameID, loadGameMessage, "rootClient");
@@ -96,6 +99,7 @@ public class WebSocketHandler {
             var message = "connected to game";
             ServerMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(session, gameID, notificationMessage, "otherClients");
+
         }
         gameDataAccess.addEndedGamesStatus(gameID, "NoPlayerResigned");
     }
@@ -153,7 +157,7 @@ public class WebSocketHandler {
 
                     var message = String.format("%s moved", username);
 
-                    ServerMessage loadGameMessage = new LoadGameMessage(message);
+                    ServerMessage loadGameMessage = new LoadGameMessage(game);
                     connections.broadcast(session, gameID, loadGameMessage, "allClients");
 
                     ServerMessage notificationMessage = new NotificationMessage(message);

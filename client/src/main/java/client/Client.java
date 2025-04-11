@@ -167,8 +167,6 @@ public class Client {
                     JoinGameRecord joinInfo = new JoinGameRecord(team, id, currentAuth.authToken());
                     server.joinGameResult(joinInfo);
                     ws.connectToGame(joinInfo.authToken(), joinInfo.gameID());
-                    String board = drawChessBoard(params[1]);
-                    System.out.println(board);
                     state = State.GAMESTATE;
                     return String.format("playing as %s.", params[1]);
                 }
@@ -208,8 +206,6 @@ public class Client {
                 return "Error: ID does not exist";
             }
 
-            String board = drawChessBoard("white");
-            System.out.println(board);
 
             return String.format("watching game %s", params[0]);
         }
