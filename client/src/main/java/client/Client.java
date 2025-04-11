@@ -358,8 +358,10 @@ public class Client {
             try {
                 String leave = params[0].toLowerCase();
                 if (leave.equals("leave")) {
-                    return null;
+
                 }
+
+                return "did not enter 'leave'";
             } catch (Exception e) {
                 return "invalid argument";
             }
