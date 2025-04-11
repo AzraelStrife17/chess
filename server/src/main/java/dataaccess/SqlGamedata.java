@@ -5,6 +5,7 @@ import model.AuthData;
 import model.GameData;
 import model.JoinGameRecord;
 import chess.ChessGame;
+import model.JoinGameResponse;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,7 +48,7 @@ public class SqlGamedata implements GameDAO{
 
 
 
-    public String joinGame(JoinGameRecord joinGameInfo, AuthData authData) throws DataAccessException {
+    public JoinGameResponse joinGame(JoinGameRecord joinGameInfo, AuthData authData) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             var statement = "SELECT * FROM GameTable WHERE gameID = ?";
             try (var ps = conn.prepareStatement(statement)) {
@@ -57,13 +58,14 @@ public class SqlGamedata implements GameDAO{
                     String storedWhite = rs.getString("whiteUsername");
                     String storedBlack = rs.getString("blackUsername");
                     if (addPlayerToTeam(joinGameInfo, authData, storedWhite, storedBlack)) {
-                        return "success";
+                        GameData gameData = retrieveGame(joinGameInfo.gameID());
+                        return new JoinGameResponse("success", gameData.game());
                     }
                     else{
-                        return "team color taken";
+                        return new JoinGameResponse("team color taken", null);
                     }
                 }
-                return "gameID not found";
+                return new JoinGameResponse("gameID not found", null);
             }
         }
         catch (SQLException e) {

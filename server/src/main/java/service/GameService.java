@@ -25,14 +25,14 @@ public class GameService {
         return null;
     }
 
-    public String joinGame(JoinGameRecord joinGameInfo) throws DataAccessException {
+    public JoinGameResponse joinGame(JoinGameRecord joinGameInfo) throws DataAccessException {
         AuthToken authToken = new AuthToken(joinGameInfo.authToken());
         AuthData authExist = authDataAccess.getAuth(authToken);
         if(authExist != null){
             return gameDataAccess.joinGame(joinGameInfo, authExist);
 
         }
-        return "no authToken";
+        return new JoinGameResponse("no authToken", null);
     }
 
     public Collection<GameData> listGames(AuthToken authToken) throws DataAccessException {

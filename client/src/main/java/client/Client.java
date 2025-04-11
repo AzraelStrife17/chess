@@ -1,6 +1,8 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import exception.ResponseException;
 import model.*;
 import server.ServerFacade;
@@ -20,6 +22,7 @@ public class Client {
     private final String serverUrl;
     private State state = State.PRELOGIN;
     private AuthData currentAuth;
+    private Integer currentGameID;
     private final NotificationHandler serverMessageHandler;
     private final LoadGameHandler loadGameHandler;
     private WebSocketFacade ws;
@@ -169,6 +172,7 @@ public class Client {
 
                     JoinGameRecord joinInfo = new JoinGameRecord(team, id, currentAuth.authToken());
                     server.joinGameResult(joinInfo);
+                    currentGameID = id;
                     ws.connectToGame(joinInfo.authToken(), joinInfo.gameID());
                     state = State.GAMESTATE;
                     return String.format("playing as %s.", params[1]);
@@ -209,7 +213,32 @@ public class Client {
 
     public String makeMove(String... params){
         if (state == state.GAMESTATE){
-            return null;
+            int startRow;
+            int endRow;
+            int startCol;
+            int endCol;
+            try {
+                startCol = params[0].charAt(0) - 'a' + 1;
+                startRow = Integer.parseInt(params[0].substring(1));
+
+                endCol = params[1].charAt(0) - 'a' + 1;
+                endRow = Integer.parseInt(params[1].substring(1));
+
+
+                ChessPosition startPosition = new ChessPosition(startRow, startCol);
+                ChessPosition endPosition = new ChessPosition(endRow, endCol);
+
+
+                ChessMove move = new ChessMove(startPosition, endPosition, null);
+
+                ws.makeMove(currentAuth.authToken(), currentGameID, move);
+
+                return "successful move";
+
+
+            } catch (ResponseException e) {
+                throw new RuntimeException(e);
+            }
         }
         else {
             return "must join a game to use this method";
@@ -240,7 +269,7 @@ public class Client {
 
         else{
             return """
-                    makemove <startingpostion> <endpostion>
+                    makemove <start row> <start col> <end row <end col>
                     """;
         }
     }

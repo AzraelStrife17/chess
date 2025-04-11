@@ -3,6 +3,7 @@ import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.JoinGameRecord;
+import model.JoinGameResponse;
 
 import java.util.*;
 
@@ -25,7 +26,7 @@ public class GameMemoryDAO implements GameDAO {
 
     }
 
-    public String joinGame(JoinGameRecord joinGameInfo, AuthData authData){
+    public JoinGameResponse joinGame(JoinGameRecord joinGameInfo, AuthData authData){
         if (checkGameID(joinGameInfo.gameID())){
             GameData game = gameData.get(joinGameInfo.gameID());
             String blackUsername = game.blackUsername();
@@ -38,10 +39,11 @@ public class GameMemoryDAO implements GameDAO {
                     GameData updatedGame = new GameData(joinGameInfo.gameID(), whiteUsername, authData.username(),
                             gameName, chessGame);
                     gameData.put(joinGameInfo.gameID(), updatedGame);
-                    return "success";
+
+                    return new JoinGameResponse("success", null);
 
                 }
-                return "team color taken";
+                return new JoinGameResponse("team color taken", null);
 
             }
             else{
@@ -50,12 +52,12 @@ public class GameMemoryDAO implements GameDAO {
                     GameData updatedGame = new GameData(joinGameInfo.gameID(), authData.username(), blackUsername,
                             gameName, chessGame);
                     gameData.put(joinGameInfo.gameID(), updatedGame);
-                    return "success";
+                    return new JoinGameResponse("success", null);
                 }
-                return "team color taken";
+                return new JoinGameResponse("team color taken", null);
             }
         }
-        return "gameID not found";
+        return new JoinGameResponse("gameID not found", null);
 
     }
 

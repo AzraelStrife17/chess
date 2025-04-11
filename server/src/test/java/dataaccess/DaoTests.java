@@ -156,9 +156,9 @@ public class DaoTests {
         AuthData createdAuth = authData.createAuth("OptimusPrime");
         var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID, null);
 
-        String joinResult = gameData.joinGame(joinGameInfo, createdAuth);
+        JoinGameResponse joinResult = gameData.joinGame(joinGameInfo, createdAuth);
 
-        assertEquals("success", joinResult);
+        assertEquals("success", joinResult.result());
     }
 
     @Test
@@ -167,14 +167,14 @@ public class DaoTests {
         AuthData createdAuth = authData.createAuth("OptimusPrime");
         var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID, null);
 
-        String joinResult = gameData.joinGame(joinGameInfo, createdAuth);
+        JoinGameResponse joinResult = gameData.joinGame(joinGameInfo, createdAuth);
 
-        assertEquals("success", joinResult);
+        assertEquals("success", joinResult.result());
 
         AuthData createdAuth2 = authData.createAuth("Megatron");
-        String joinResult2 = gameData.joinGame(joinGameInfo, createdAuth2);
+        JoinGameResponse joinResult2 = gameData.joinGame(joinGameInfo, createdAuth2);
 
-        assertEquals("team color taken", joinResult2);
+        assertEquals("team color taken", joinResult2.result());
     }
 
     @Test

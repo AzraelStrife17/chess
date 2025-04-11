@@ -135,16 +135,16 @@ public class SqlTests {
         Integer gameID = gameService.createGame(gameCreated);
 
         var joinGameInfo = new JoinGameRecord(TeamColor.BLACK, gameID, authData.authToken());
-        String successfulJoin = gameService.joinGame(joinGameInfo);
-        assertEquals("success", successfulJoin);
+        JoinGameResponse successfulJoin = gameService.joinGame(joinGameInfo);
+        assertEquals("success", successfulJoin.result());
 
         var user2 = new UserData("OptimusPrime", "cyber", "megatronus@gmail.com");
         AuthData authData2 = userService.registerUser(user2);
 
 
         var joinGameInfo2 = new JoinGameRecord(TeamColor.WHITE,gameID,  authData2.authToken());
-        String successfulJoin2 = gameService.joinGame(joinGameInfo2);
-        assertEquals("success", successfulJoin2);
+        JoinGameResponse successfulJoin2 = gameService.joinGame(joinGameInfo2);
+        assertEquals("success", successfulJoin2.result());
         clearService.clearDatabase();
     }
 
@@ -157,18 +157,18 @@ public class SqlTests {
         Integer gameID = gameService.createGame(createdGame);
 
         var joinGameInfoBlack = new JoinGameRecord(TeamColor.BLACK, gameID, authData1.authToken());
-        String successfulJoin1 = gameService.joinGame(joinGameInfoBlack);
+        JoinGameResponse successfulJoin1 = gameService.joinGame(joinGameInfoBlack);
 
         var user2 = new UserData("Bond", "007", "JAMES@gmail.com");
         AuthData authData2 = userService.registerUser(user2);
 
 
         var joinGameInfo2 = new JoinGameRecord(TeamColor.BLACK, gameID, authData2.authToken());
-        String failJoin = gameService.joinGame(joinGameInfo2);
+        JoinGameResponse failJoin = gameService.joinGame(joinGameInfo2);
         clearService.clearDatabase();
 
-        assertEquals("success", successfulJoin1);
-        assertEquals("team color taken", failJoin);
+        assertEquals("success", successfulJoin1.result());
+        assertEquals("team color taken", failJoin.result());
     }
 
     @Test
