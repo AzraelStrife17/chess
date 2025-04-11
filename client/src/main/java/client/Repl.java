@@ -1,6 +1,8 @@
 package client;
 
+import chess.ChessGame;
 import exception.ResponseException;
+import websocket.LoadGameHandler;
 import websocket.NotificationHandler;
 
 import javax.websocket.DeploymentException;
@@ -11,12 +13,12 @@ import static client.DrawBoard.drawChessBoard;
 import static client.EscapeSequences.*;
 
 
-public class Repl implements NotificationHandler {
+public class Repl implements NotificationHandler, LoadGameHandler {
     private final Client client;
 
 
     public Repl(String serverUrl) throws ResponseException, DeploymentException, IOException {
-        this.client = new Client(serverUrl, this);
+        this.client = new Client(serverUrl, this, this);
     }
 
     public void run() {
@@ -46,16 +48,15 @@ public class Repl implements NotificationHandler {
 
 
     public void notify(String message) {
-        if(message.startsWith("Loaded White")){
-            String[] parts = message.split(" ");
-            String gameIDStr = parts[2];
-            int gameID = Integer.parseInt(gameIDStr);
-
-            System.out.println();
-            String board = drawChessBoard("white", gameID);
-            System.out.println(board);
-        }
         System.out.println(RED + message);
         printPrompt();
+    }
+
+
+    public void loadGame(ChessGame game, String role) {
+        System.out.println();
+        String board = drawChessBoard(role, game);
+        System.out.println(board);
+
     }
 }

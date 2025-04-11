@@ -4,6 +4,7 @@ import chess.ChessGame;
 import exception.ResponseException;
 import model.*;
 import server.ServerFacade;
+import websocket.LoadGameHandler;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 
@@ -20,14 +21,16 @@ public class Client {
     private State state = State.PRELOGIN;
     private AuthData currentAuth;
     private final NotificationHandler serverMessageHandler;
+    private final LoadGameHandler loadGameHandler;
     private WebSocketFacade ws;
 
 
-    public Client(String serverUrl, NotificationHandler serverMessageHandler) throws ResponseException, DeploymentException, IOException {
+    public Client(String serverUrl, NotificationHandler serverMessageHandler, LoadGameHandler loadGameHandler) throws ResponseException, DeploymentException, IOException {
         this.serverUrl = serverUrl;
         this.server = new ServerFacade(serverUrl);
         this.serverMessageHandler = serverMessageHandler;
-        ws = new WebSocketFacade(serverUrl, serverMessageHandler);
+        this.loadGameHandler = loadGameHandler;
+        ws = new WebSocketFacade(serverUrl, serverMessageHandler, loadGameHandler);
     }
 
 
@@ -179,17 +182,6 @@ public class Client {
         return "Login to use";
     }
 
-    public String makeMove(String... params){
-        if (state == state.GAMESTATE){
-            return null;
-        }
-        else {
-            return "must join a game to use this method";
-        }
-    }
-
-
-
     public String observeGame(String... params) throws ResponseException {
         if (state == State.POSTLOGIN) {
 
@@ -206,10 +198,22 @@ public class Client {
                 return "Error: ID does not exist";
             }
 
+            JoinGameRecord joinInfo = new JoinGameRecord(null, id, currentAuth.authToken());
+            ws.connectToGame(joinInfo.authToken(), joinInfo.gameID());
+            state = State.GAMESTATE;
 
             return String.format("watching game %s", params[0]);
         }
         return "Login to use";
+    }
+
+    public String makeMove(String... params){
+        if (state == state.GAMESTATE){
+            return null;
+        }
+        else {
+            return "must join a game to use this method";
+        }
     }
 
     public String help() {

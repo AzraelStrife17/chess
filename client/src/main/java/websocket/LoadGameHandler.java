@@ -3,5 +3,5 @@ package websocket;
 import chess.ChessGame;
 
 public interface LoadGameHandler {
-    void loadGame(ChessGame game);
+    void loadGame(ChessGame game, String role);
 }

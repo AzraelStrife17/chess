@@ -1,9 +1,17 @@
 package client;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
 
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
+import static chess.ChessPiece.PieceType;
 import static ui.EscapeSequences.*;
 
 public class DrawBoard {
@@ -29,9 +37,11 @@ public class DrawBoard {
         // Create an instance of the DrawBoard class and call the method to draw the chessboard
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
+        ChessGame testGame = new ChessGame();
+
         out.print(ERASE_SCREEN);
 
-        drawChessBoard("white", 1);
+        drawChessBoard("black", testGame);
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -73,16 +83,17 @@ public class DrawBoard {
 
     }
 
-    static String drawChessBoard(String team, int gameID) {
+    static String drawChessBoard(String team, ChessGame game) {
+        ChessBoard extractedBoard = game.getBoard();
         StringBuilder board = new StringBuilder();
         if(team.equals("black")) {
             drawHeaders(team);
-            drawRowOfSquaresBlack();
+            drawRowOfSquaresBlack(extractedBoard);
             drawHeaders(team);
         }
         else{
             drawHeaders(team);
-            drawRowOfSquaresWhite();
+            drawRowOfSquaresWhite(extractedBoard);
             drawHeaders(team);
         }
 
@@ -90,15 +101,13 @@ public class DrawBoard {
         return board.toString();
     }
 
-    private static void drawRowOfSquaresBlack() {
+    private static void drawRowOfSquaresBlack(ChessBoard board) {
         String[] sideHeaders = {"1", "2", "3", "4", "5", "6", "7", "8"};
-        for (int boardRow = 0; boardRow < BOARDSIZE; ++boardRow) {
+        for (int boardRow = 0; boardRow < BOARDSIZE; boardRow++) {
             drawHeader(sideHeaders[boardRow]);
-            for (int boardCol = 0; boardCol < BOARDSIZE; ++boardCol) {
-                setBoard(boardRow, boardCol);
+            setBoard(boardRow, board);
+            drawHeader(sideHeaders[boardRow]);
 
-            }
-            drawHeader(sideHeaders[boardRow]);
 
             System.out.print(SET_BG_COLOR_BLACK);
             System.out.print(SET_TEXT_COLOR_WHITE);
@@ -109,71 +118,89 @@ public class DrawBoard {
 
 
 
+
     }
 
-    private static void setBoard(int boardRow, int boardCol) {
-        if ((boardRow + boardCol) % 2 == 0) {
-            setWhite();
-        } else {
-            setRed();
-        }
+    private static void setBoard(int boardRow, ChessBoard board) {
 
-        if (boardRow == 0 && (boardCol == 0 || boardCol == 7)) {
-            System.out.print("\033[37m" + WHITEROOK + "\033[37m");
-        }
-        else if (boardRow == 7 && (boardCol == 0 || boardCol == 7)) {
-            System.out.print("\033[30m" + BLACKROOK + "\033[30m");
-        }
-        else if (boardRow == 0 && (boardCol == 1 || boardCol == 6)) {
-            System.out.print("\033[37m" + WHITEKNIGHT + "\033[37m");
-        }
-        else if (boardRow == 7 && (boardCol == 1 || boardCol == 6)) {
-            System.out.print("\033[30m" + BLACKKNIGHT + "\033[30m");
-        }
+            for(int col = 1; col < 9; col++){
+                if ((boardRow + col) % 2 == 0) {
+                    setWhite();
+                } else {
+                    setRed();
+                }
 
-        else if (boardRow == 0 && (boardCol == 2 || boardCol == 5)) {
-            System.out.print("\033[37m" + WHITEBISHOP + "\033[37m");
-        }
-        else if (boardRow == 7 && (boardCol == 2 || boardCol == 5)) {
-            System.out.print("\033[30m" + BLACKBISHOP + "\033[30m");
-        }
+                ChessPosition piecePosition = new ChessPosition(boardRow + 1, col);
+                ChessPiece checkForPiece = board.getPiece(piecePosition);
+                if(checkForPiece != null){
+                    if (checkForPiece.equals(new ChessPiece(WHITE, PieceType.ROOK))){
+                        System.out.print("\033[37m" + WHITEROOK + "\033[37m");
+                    }
 
-        else if (boardRow == 0 && boardCol == 4) {
-            System.out.print("\033[37m" + WHITEQUEEN + "\033[37m");
-        }
-        else if (boardRow == 7 && boardCol == 4) {
-            System.out.print("\033[30m" + BLACKQUEEN + "\033[30m");
-        }
+                    else if(checkForPiece.equals(new ChessPiece(BLACK, PieceType.ROOK))){
+                        System.out.print("\033[30m" + BLACKROOK + "\033[30m");
 
-        else if (boardRow == 0) {
-            System.out.print("\033[37m" + WHITEKING + "\033[37m");
-        }
-        else if (boardRow == 7) {
-            System.out.print("\033[30m" + BLACKKING + "\033[30m");
-        }
+                    }
 
-        else if (boardRow == 1){
-            System.out.print("\033[37m" + WHITEPAWN + "\033[37m");
-        }
+                    else if (checkForPiece.equals(new ChessPiece(WHITE, PieceType.KNIGHT))){
+                        System.out.print("\033[37m" + WHITEKNIGHT + "\033[37m");
+                    }
 
-        else if (boardRow == 6){
-            System.out.print("\033[30m" + BLACKPAWN + "\033[30m");
-        }
+                    else if(checkForPiece.equals(new ChessPiece(BLACK, PieceType.KNIGHT))){
+                        System.out.print("\033[30m" + BLACKKNIGHT + "\033[30m");
+                    }
+
+                    else if (checkForPiece.equals(new ChessPiece(WHITE, PieceType.BISHOP))){
+                        System.out.print("\033[37m" + WHITEBISHOP + "\033[37m");
+                    }
+
+                    else if(checkForPiece.equals(new ChessPiece(BLACK, PieceType.BISHOP))){
+                        System.out.print("\033[30m" + BLACKBISHOP + "\033[30m");
+                    }
+
+                    else if (checkForPiece.equals(new ChessPiece(WHITE, PieceType.QUEEN))){
+                        System.out.print("\033[37m" + WHITEQUEEN + "\033[37m");
+                    }
+
+                    else if(checkForPiece.equals(new ChessPiece(BLACK, PieceType.QUEEN))){
+                        System.out.print("\033[30m" + BLACKQUEEN + "\033[30m");
+                    }
+
+                    else if (checkForPiece.equals(new ChessPiece(WHITE, PieceType.KING))){
+                        System.out.print("\033[37m" + WHITEKING + "\033[37m");
+                    }
+
+                    else if(checkForPiece.equals(new ChessPiece(BLACK, PieceType.KING))){
+                        System.out.print("\033[30m" + BLACKKING + "\033[30m");
+                    }
+
+                    else if (checkForPiece.equals(new ChessPiece(WHITE, PieceType.PAWN))){
+                        System.out.print("\033[37m" + WHITEPAWN + "\033[37m");
+                    }
+
+                    else if(checkForPiece.equals(new ChessPiece(BLACK, PieceType.PAWN))){
+                        System.out.print("\033[30m" + BLACKPAWN + "\033[30m");
+                    }
+
+                    else {
+                        System.out.print(" \u2003 ");
+                    }
+                }
+
+                else {
+                    System.out.print(" \u2003 ");
+                }
+            }
 
 
-        else {
-            System.out.print(" \u2003 ");
-        }
     }
 
-    private static void drawRowOfSquaresWhite() {
+    private static void drawRowOfSquaresWhite(ChessBoard board) {
         String[] sideHeaders = {"1", "2", "3", "4", "5", "6", "7", "8"};
         for (int boardRow = 7; boardRow > -1; --boardRow) {
             drawHeader(sideHeaders[boardRow]);
-            for (int boardCol = 7; boardCol > -1; --boardCol) {
-                setBoard(boardRow, boardCol);
+            setBoard(boardRow, board);
 
-            }
             drawHeader(sideHeaders[boardRow]);
 
             System.out.print(SET_BG_COLOR_BLACK);

@@ -24,7 +24,7 @@ public class WebSocketFacade extends Endpoint {
     LoadGameHandler loadGameHandler;
 
 
-    public WebSocketFacade(String url, NotificationHandler notificationHandler) throws ResponseException, DeploymentException, IOException {
+    public WebSocketFacade(String url, NotificationHandler notificationHandler, LoadGameHandler loadGameHandler) throws ResponseException, DeploymentException, IOException {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
@@ -39,13 +39,15 @@ public class WebSocketFacade extends Endpoint {
                     ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
 
                     String extractedMessage = "";
+                    String extractedRole = "";
                     ChessGame extractedGame = null;
 
                     switch (serverMessage.getServerMessageType()){
                         case LOAD_GAME ->{
                             LoadGameMessage loadMessage = new Gson().fromJson(message, LoadGameMessage.class);
                             extractedGame = loadMessage.getGameMessage();
-                            loadGameHandler.loadGame(extractedGame);
+                            extractedRole = loadMessage.getRole();
+                            loadGameHandler.loadGame(extractedGame, extractedRole);
                         }
                         case NOTIFICATION ->{
                             NotificationMessage notificationMessage = new Gson().fromJson(message, NotificationMessage.class);

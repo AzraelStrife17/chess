@@ -90,10 +90,24 @@ public class WebSocketHandler {
 
             GameData gameData = gameDataAccess.retrieveGame(gameID);
             var game = gameData.game();
+            ServerMessage loadGameMessage = null;
 
-            var loadWhite = "Loaded White " + gameID;
+            if(Objects.equals(username, gameData.whiteUsername())){
+                var role = "white";
+                loadGameMessage = new LoadGameMessage(game, role);
+            }
 
-            ServerMessage loadGameMessage = new LoadGameMessage(game);
+            else if(Objects.equals(username, gameData.blackUsername())){
+                var role = "black";
+                loadGameMessage = new LoadGameMessage(game, role);
+            }
+
+            else{
+                var role = "observer";
+                loadGameMessage = new LoadGameMessage(game, role);
+            }
+
+
             connections.broadcast(session, gameID, loadGameMessage, "rootClient");
 
             var message = "connected to game";
@@ -157,7 +171,21 @@ public class WebSocketHandler {
 
                     var message = String.format("%s moved", username);
 
-                    ServerMessage loadGameMessage = new LoadGameMessage(game);
+                    String role = "";
+
+                    if(Objects.equals(username, gameData.whiteUsername())) {
+                        role = "white";
+                    }
+
+                    else if(Objects.equals(username, gameData.blackUsername())) {
+                        role = "black";
+                    }
+
+                    else{
+                        role = "observer";
+                    }
+
+                    ServerMessage loadGameMessage = new LoadGameMessage(game, role);
                     connections.broadcast(session, gameID, loadGameMessage, "allClients");
 
                     ServerMessage notificationMessage = new NotificationMessage(message);

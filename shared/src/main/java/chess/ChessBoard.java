@@ -141,7 +141,6 @@ public class ChessBoard implements Cloneable {
     public ChessBoard clone() {
         try {
             ChessBoard clone = (ChessBoard) super.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
 
             ChessBoard clonedSquares = new ChessBoard();
             for(int row = 1; row < 9; row++){
