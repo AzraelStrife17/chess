@@ -176,25 +176,46 @@ public class WebSocketHandler {
 
                     var message = String.format("%s moved", username);
 
-                    String role = "";
-
                     if(Objects.equals(username, gameData.whiteUsername())) {
-                        role = "white";
+                        ServerMessage loadGameMessage = new LoadGameMessage(game, "white");
+                        connections.broadcast(session, gameID, loadGameMessage, "rootClient");
+
+                        ServerMessage loadGameMessageOther = new LoadGameMessage(game, "black");
+                        connections.broadcast(session, gameID, loadGameMessageOther, "otherClients");
                     }
 
                     else if(Objects.equals(username, gameData.blackUsername())) {
-                        role = "black";
+                        ServerMessage loadGameMessage = new LoadGameMessage(game, "black");
+                        connections.broadcast(session, gameID, loadGameMessage, "rootClient");
+
+                        ServerMessage loadGameMessageOther = new LoadGameMessage(game, "white");
+                        connections.broadcast(session, gameID, loadGameMessageOther, "otherClients");
                     }
 
-                    else{
-                        role = "observer";
-                    }
-
-                    ServerMessage loadGameMessage = new LoadGameMessage(game, role);
-                    connections.broadcast(session, gameID, loadGameMessage, "allClients");
 
                     ServerMessage notificationMessage = new NotificationMessage(message);
                     connections.broadcast(session, gameID, notificationMessage, "otherClients");
+
+                    if(game.isInCheckmate(game.getTeamTurn())){
+                        ChessGame.TeamColor team = game.getTeamTurn();
+                        var playerInCheck = String.format("%s in checkmate", team);
+                        ServerMessage checkmateNotification = new NotificationMessage(playerInCheck);
+                        connections.broadcast(session, gameID, checkmateNotification, "allClients");
+                        gameDataAccess.updateEndedGamesStatus(gameID, "checkmate");
+                    }
+
+                    else if(game.isInCheck(game.getTeamTurn())){
+                        ServerMessage checkNotification = new NotificationMessage("In Check");
+                        connections.broadcast(session, gameID, checkNotification, "allClients");
+                    }
+
+                    else if(game.isInStalemate(game.getTeamTurn())){
+                        ServerMessage stalemateNotification = new NotificationMessage("stalemate");
+                        connections.broadcast(session, gameID, stalemateNotification, "allClients");
+                        gameDataAccess.updateEndedGamesStatus(gameID, "stalemate");
+
+                    }
+
                 }
                 catch (InvalidMoveException e) {
                     var invalidMoveMessage = "Error: invalid move";
