@@ -17,8 +17,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static websocket.commands.UserGameCommand.CommandType.CONNECT;
-import static websocket.commands.UserGameCommand.CommandType.MAKE_MOVE;
+import static websocket.commands.UserGameCommand.CommandType.*;
 
 //need to extend Endpoint for websocket to work properly
 public class WebSocketFacade extends Endpoint {
@@ -92,6 +91,15 @@ public class WebSocketFacade extends Endpoint {
     public void makeMove(String authToken, Integer gameID, ChessMove move) throws ResponseException {
         try{
             var gameCommand = new MakeMoveCommand(move, authToken, gameID);
+            this.session.getBasicRemote().sendText(new Gson().toJson(gameCommand));
+        } catch (IOException ex) {
+            throw new ResponseException(ex.getMessage());
+        }
+    }
+
+    public void leave(String authToken, Integer gameID) throws ResponseException {
+        try{
+            var gameCommand = new UserGameCommand(LEAVE, authToken, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(gameCommand));
         } catch (IOException ex) {
             throw new ResponseException(ex.getMessage());

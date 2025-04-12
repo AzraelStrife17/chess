@@ -211,6 +211,7 @@ public class Client {
             JoinGameRecord joinInfo = new JoinGameRecord(null, id, currentAuth.authToken());
             ws.connectToGame(joinInfo.authToken(), joinInfo.gameID());
             state = State.GAMESTATE;
+            currentGameID = id;
 
             return String.format("watching game %s", params[0]);
         }
@@ -223,6 +224,11 @@ public class Client {
             int endRow;
             int startCol;
             int endCol;
+            int expectedLength = 2;
+
+            if (params.length != expectedLength) {
+                return "Error: wrong amount of arguments";
+            }
             try {
                 startCol = params[0].charAt(0) - 'a' + 1;
                 startRow = Integer.parseInt(params[0].substring(1));
@@ -230,11 +236,25 @@ public class Client {
                 endCol = params[1].charAt(0) - 'a' + 1;
                 endRow = Integer.parseInt(params[1].substring(1));
 
+                if((startRow < 1 || startRow > 8) || (startCol < 1 || startCol > 8)){
+                    return "start position not on the board";
+                }
+
+                if((endRow < 1 || endRow > 8) || (endCol < 1 || endCol > 8)){
+                    return "end position not on the board";
+                }
+
 
                 ChessPosition startPosition = new ChessPosition(startRow, startCol);
                 ChessPosition endPosition = new ChessPosition(endRow, endCol);
+
                 currentBoard = currentGame.getBoard();
                 ChessPiece piece = currentBoard.getPiece(startPosition);
+
+                if(piece == null){
+                    return "no piece found at position";
+                }
+
                 ChessPiece.PieceType promotion = null;
 
                 if(piece.equals(new ChessPiece(WHITE, ChessPiece.PieceType.PAWN))){
@@ -290,20 +310,28 @@ public class Client {
     public String viewMoves(String ...params){
         int row;
         int col;
+        int expectedLength = 2;
+        if (params.length != expectedLength) {
+            return "Error: wrong amount of arguments";
+        }
         if(state == state.GAMESTATE){
             try {
                 String team = params[0].toLowerCase();
                 if(!team.equals("white") && !team.equals("black")){
                     return "invalid team";
                 }
-                if(params[1].isEmpty()){
-                    return "invalid argument";
-                }
+
                 col = params[1].charAt(0) - 'a' + 1;
                 row = Integer.parseInt(params[1].substring(1));
+
+                if((row < 1 || row > 8) || (col < 1 || col > 8)){
+                    return "start position not on the board";
+                }
+
                 currentBoard = currentGame.getBoard();
                 ChessPosition highlightPosition = new ChessPosition(row, col);
                 ChessPiece piece = currentBoard.getPiece(highlightPosition);
+
                 if(piece != null) {
                     drawChessBoard(team, currentGame, highlightPosition);
                     return "";
@@ -341,7 +369,9 @@ public class Client {
                     state = state.GAMESTATE;
                     return selectedPromotion;
                 }
-
+                state = state.GAMESTATE;
+                System.out.print("Not a valid Promotion");
+                return null;
             }
             catch (IllegalArgumentException e) {
                 state = state.GAMESTATE;
@@ -358,7 +388,9 @@ public class Client {
             try {
                 String leave = params[0].toLowerCase();
                 if (leave.equals("leave")) {
-
+                    ws.leave(currentAuth.authToken(), currentGameID);
+                    state = state.POSTLOGIN;
+                    return "left game";
                 }
 
                 return "did not enter 'leave'";

@@ -162,11 +162,12 @@ public class WebSocketHandler {
                 connections.broadcast(session, gameID, errorMessage, "rootClient");
             }
 
-            else if(!Objects.equals(username, gameData.whiteUsername()) && !Objects.equals(username, gameData.blackUsername())){
+            else if((!Objects.equals(username, gameData.blackUsername()) || (!Objects.equals(username, gameData.whiteUsername())))){
                 var invalidTurnMessage = "Error: observer not allowed to make moves";
                 ServerMessage errorMessage = new ErrorMessage(invalidTurnMessage);
                 connections.broadcast(session, gameID, errorMessage, "rootClient");
             }
+
 
             else {
                 try {
@@ -191,7 +192,6 @@ public class WebSocketHandler {
                         ServerMessage loadGameMessageOther = new LoadGameMessage(game, "white");
                         connections.broadcast(session, gameID, loadGameMessageOther, "otherClients");
                     }
-
 
                     ServerMessage notificationMessage = new NotificationMessage(message);
                     connections.broadcast(session, gameID, notificationMessage, "otherClients");
