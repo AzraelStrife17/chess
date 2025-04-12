@@ -56,7 +56,8 @@ public class Client {
                 case "makemove" -> makeMove(params);
                 case "redrawboard" -> redrawBoard(params);
                 case "viewmoves" -> viewMoves(params);
-                case "leavegame" -> leaveGame(params);
+                case "leave" -> leaveGame();
+                case "resign" -> resign();
                 case "quit" -> "quit";
 
                 default -> help();
@@ -383,20 +384,21 @@ public class Client {
         return null;
     }
 
-    public String leaveGame(String ...params){
+    public String resign() throws ResponseException {
         if (state == state.GAMESTATE){
-            try {
-                String leave = params[0].toLowerCase();
-                if (leave.equals("leave")) {
-                    ws.leave(currentAuth.authToken(), currentGameID);
-                    state = state.POSTLOGIN;
-                    return "left game";
-                }
+            ws.resign(currentAuth.authToken(), currentGameID);
+            return "";
+        }
 
-                return "did not enter 'leave'";
-            } catch (Exception e) {
-                return "invalid argument";
-            }
+        return "must be in game";
+    }
+
+
+    public String leaveGame() throws ResponseException {
+        if (state == state.GAMESTATE){
+                ws.leave(currentAuth.authToken(), currentGameID);
+                state = state.POSTLOGIN;
+                return "left game";
 
         }
 
@@ -436,7 +438,8 @@ public class Client {
                     makemove <startPosition> <endPosition>
                     redrawboard <white/black> to choose perspective
                     viewmoves <white/black> to choose perspective <<positionOfPiece>>
-                    leavegame type 'leave' to exit game
+                    resign
+                    leave
                     """;
         }
     }
