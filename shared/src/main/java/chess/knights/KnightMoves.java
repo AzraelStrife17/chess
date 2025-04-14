@@ -17,7 +17,7 @@ public class KnightMoves {
         int row = currentRow + 2;
         int column = currentColumn + 1;
         ChessPosition newPosition1 = new ChessPosition(row, column);
-        if(row <= 8 && column < 8){
+        if(row <= 8 && column <= 8){
             horseMove(board, piecePosition, selectedPiece, validMoves, newPosition1);
         }
 

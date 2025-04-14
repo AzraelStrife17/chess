@@ -2,6 +2,7 @@ package server.websocket;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPosition;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -24,6 +25,8 @@ import websocket.messages.ServerMessage;
 //
 import java.io.IOException;
 import java.util.Objects;
+
+import static chess.ChessGame.TeamColor.BLACK;
 
 
 @WebSocket
@@ -96,7 +99,7 @@ public class WebSocketHandler {
                 var role = "white";
                 loadGameMessage = new LoadGameMessage(game, role);
                 connections.broadcast(session, gameID, loadGameMessage, "rootClient");
-                var message = String.format("%s connected to as white player", username);
+                var message = String.format("%s connected to game as the white player", username);
                 ServerMessage notificationMessage = new NotificationMessage(message);
                 connections.broadcast(session, gameID, notificationMessage, "otherClients");
             }
@@ -105,7 +108,7 @@ public class WebSocketHandler {
                 var role = "black";
                 loadGameMessage = new LoadGameMessage(game, role);
                 connections.broadcast(session, gameID, loadGameMessage, "rootClient");
-                var message = String.format("%s connected to as black player", username);
+                var message = String.format("%s connected to game as the black player", username);
                 ServerMessage notificationMessage = new NotificationMessage(message);
                 connections.broadcast(session, gameID, notificationMessage, "otherClients");
             }
@@ -114,7 +117,7 @@ public class WebSocketHandler {
                 var role = "observer";
                 loadGameMessage = new LoadGameMessage(game, role);
                 connections.broadcast(session, gameID, loadGameMessage, "rootClient");
-                var message = String.format("%s connected to as observer", username);
+                var message = String.format("%s connected to game as an observer", username);
                 ServerMessage notificationMessage = new NotificationMessage(message);
                 connections.broadcast(session, gameID, notificationMessage, "otherClients");
 
@@ -156,7 +159,7 @@ public class WebSocketHandler {
                 connections.broadcast(session, gameID, errorMessage, "rootClient");
             }
 
-            else if(Objects.equals(username, gameData.blackUsername()) && game.getTeamTurn() != ChessGame.TeamColor.BLACK){
+            else if(Objects.equals(username, gameData.blackUsername()) && game.getTeamTurn() != BLACK){
                 var invalidTurnMessage = "Error: currently white's turn";
                 ServerMessage errorMessage = new ErrorMessage(invalidTurnMessage);
                 connections.broadcast(session, gameID, errorMessage, "rootClient");
@@ -174,8 +177,17 @@ public class WebSocketHandler {
                     game.makeMove(move);
 
                     gameDataAccess.updateGame(gameID, game);
+                    var startPosition = move.getStartPosition();
+                    var startRow = startPosition.getRow();
+                    var startCol = startPosition.getColumn();
+                    char startColLetter = (char) ('a' + (startCol - 1));
 
-                    var message = String.format("%s moved", username);
+                    var endPosition = move.getEndPosition();
+                    var endRow = endPosition.getRow();
+                    var endCol = endPosition.getColumn();
+                    char endColLetter = (char) ('a' + (endCol - 1));
+
+                    var message = String.format("%s moved from %c%d to %c%d", username, startColLetter, startRow, endColLetter, endRow);
 
                     if(Objects.equals(username, gameData.whiteUsername())) {
                         ServerMessage loadGameMessage = new LoadGameMessage(game, "white");
@@ -195,17 +207,37 @@ public class WebSocketHandler {
 
                     ServerMessage notificationMessage = new NotificationMessage(message);
                     connections.broadcast(session, gameID, notificationMessage, "otherClients");
-
+                    String playerInCheck = "";
                     if(game.isInCheckmate(game.getTeamTurn())){
                         ChessGame.TeamColor team = game.getTeamTurn();
-                        var playerInCheck = String.format("%s in checkmate", team);
+
+                        if(team == BLACK){
+                            var user = gameData.blackUsername();
+                            playerInCheck = String.format("%s is in checkmate", user);
+                        }
+                        else{
+                            var user = gameData.whiteUsername();
+                            playerInCheck = String.format("%s is in checkmate", user);
+                        }
                         ServerMessage checkmateNotification = new NotificationMessage(playerInCheck);
                         connections.broadcast(session, gameID, checkmateNotification, "allClients");
                         gameDataAccess.updateEndedGamesStatus(gameID, "checkmate");
                     }
 
                     else if(game.isInCheck(game.getTeamTurn())){
-                        ServerMessage checkNotification = new NotificationMessage("In Check");
+                        ChessGame.TeamColor team = game.getTeamTurn();
+                        String check = "";
+
+                        if(team == BLACK){
+                            var user = gameData.blackUsername();
+                            check = String.format("%s is in check", user);
+                        }
+                        else{
+                            var user = gameData.whiteUsername();
+                            check = String.format("%s is in checkmate", user);
+                        }
+
+                        ServerMessage checkNotification = new NotificationMessage(check);
                         connections.broadcast(session, gameID, checkNotification, "allClients");
                     }
 
@@ -249,7 +281,7 @@ public class WebSocketHandler {
         }
 
         else if(Objects.equals(username, gameData.blackUsername())){
-            JoinGameRecord playerInfo = new JoinGameRecord(ChessGame.TeamColor.BLACK, gameID, null);
+            JoinGameRecord playerInfo = new JoinGameRecord(BLACK, gameID, null);
             gameDataAccess.removePlayer(playerInfo);
             var message = String.format("%s has left as black team", username);
             ServerMessage notificationMessage = new NotificationMessage(message);

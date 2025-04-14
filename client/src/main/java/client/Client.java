@@ -11,6 +11,7 @@ import websocket.WebSocketFacade;
 import javax.websocket.DeploymentException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static chess.ChessGame.TeamColor.BLACK;
@@ -25,6 +26,7 @@ public class Client {
     private AuthData currentAuth;
     private Integer currentGameID;
     private static ChessGame currentGame;
+    private static String currentRole;
     private ChessBoard currentBoard;
     private final NotificationHandler serverMessageHandler;
     private final LoadGameHandler loadGameHandler;
@@ -54,7 +56,7 @@ public class Client {
                 case "playgame" -> playGame(params);
                 case "observegame" -> observeGame(params);
                 case "makemove" -> makeMove(params);
-                case "redrawboard" -> redrawBoard(params);
+                case "redrawboard" -> redrawBoard();
                 case "viewmoves" -> viewMoves(params);
                 case "leave" -> leaveGame();
                 case "resign" -> resign();
@@ -231,8 +233,24 @@ public class Client {
                 return "Error: wrong amount of arguments";
             }
             try {
+                if (params[0].length() != expectedLength || params[1].length() != expectedLength){
+                    return "Error: did not input position correctly";
+                }
+                char firstCol = params[0].charAt(0);
+                char firstRow = params[0].charAt(1);
+                if(!Character.isLetter(firstCol) || !Character.isDigit(firstRow)){
+                    return "Error: incorrect format, example 'a1'";
+                }
+
+
                 startCol = params[0].charAt(0) - 'a' + 1;
                 startRow = Integer.parseInt(params[0].substring(1));
+
+                char secondCol = params[1].charAt(0);
+                char secondRow = params[1].charAt(1);
+                if(!Character.isLetter(secondCol) || !Character.isDigit(secondRow)){
+                    return "Error: incorrect format, example 'a1'";
+                }
 
                 endCol = params[1].charAt(0) - 'a' + 1;
                 endRow = Integer.parseInt(params[1].substring(1));
@@ -295,11 +313,10 @@ public class Client {
         }
     }
 
-    public String redrawBoard(String ...params){
+    public String redrawBoard(){
         if(state == state.GAMESTATE){
             try {
-                String team = params[0].toLowerCase();
-                drawChessBoard(team, currentGame, null);
+                drawChessBoard(currentRole, currentGame, null);
                 return "";
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -311,19 +328,25 @@ public class Client {
     public String viewMoves(String ...params){
         int row;
         int col;
-        int expectedLength = 2;
-        if (params.length != expectedLength) {
+        int expectedLengthArgument = 1;
+        int expectedLengthParams = 2;
+        if (params.length != expectedLengthArgument) {
             return "Error: wrong amount of arguments";
         }
         if(state == state.GAMESTATE){
             try {
-                String team = params[0].toLowerCase();
-                if(!team.equals("white") && !team.equals("black")){
-                    return "invalid team";
+                if(params[0].length() != expectedLengthParams){
+                    return "Error: did not input position correctly";
                 }
 
-                col = params[1].charAt(0) - 'a' + 1;
-                row = Integer.parseInt(params[1].substring(1));
+                char inputCol = params[0].charAt(0);
+                char inputRow = params[0].charAt(1);
+                if(!Character.isLetter(inputCol) || !Character.isDigit(inputRow)){
+                    return "Error: incorrect format, example 'a1'";
+                }
+
+                col = params[0].charAt(0) - 'a' + 1;
+                row = Integer.parseInt(params[0].substring(1));
 
                 if((row < 1 || row > 8) || (col < 1 || col > 8)){
                     return "start position not on the board";
@@ -334,7 +357,7 @@ public class Client {
                 ChessPiece piece = currentBoard.getPiece(highlightPosition);
 
                 if(piece != null) {
-                    drawChessBoard(team, currentGame, highlightPosition);
+                    drawChessBoard(currentRole, currentGame, highlightPosition);
                     return "";
                 }
                 else{
@@ -386,8 +409,17 @@ public class Client {
 
     public String resign() throws ResponseException {
         if (state == state.GAMESTATE){
-            ws.resign(currentAuth.authToken(), currentGameID);
-            return "";
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("You sure you want to resign yes/no");
+            String resignVerify = scanner.nextLine();
+
+            if(Objects.equals(resignVerify, "yes")){
+                ws.resign(currentAuth.authToken(), currentGameID);
+                return "confirmed resignation";
+            }
+            else{
+                return "denied resignation";
+            }
         }
 
         return "must be in game";
@@ -406,8 +438,9 @@ public class Client {
     }
 
 
-    public static void loadGame(ChessGame game){
+    public static void loadGame(ChessGame game, String role){
         currentGame = game;
+        currentRole = role;
     }
 
     public String help() {
@@ -436,8 +469,8 @@ public class Client {
         else{
             return """
                     makemove <startPosition> <endPosition>
-                    redrawboard <white/black> to choose perspective
-                    viewmoves <white/black> to choose perspective <<positionOfPiece>>
+                    redrawboard
+                    viewmoves <positionOfPiece>
                     resign
                     leave
                     """;
